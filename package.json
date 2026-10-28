@@ -1,0 +1,8 @@
+{
+  "name": "aula-ingles",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PWA pessoal de preparação para a aula de inglês com professora nativa.",
+  "scripts": { "test": "node --test tests/*.test.js" }
+}
