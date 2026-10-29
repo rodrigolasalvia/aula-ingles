@@ -1,0 +1,641 @@
+{
+ "id": "l001",
+ "number": 1,
+ "date": "2026-10-28",
+ "format": 2,
+ "title": "Comparison, Choices & Envy",
+ "subtitle": "Comparação nas redes, pressão social e inveja",
+ "level": "B2 Speaking",
+ "blocks": [
+  {
+   "id": "b1",
+   "slide": 1,
+   "tag": "B2 Speaking · The Psychology of Comparison",
+   "title": "The Comparison Illusion",
+   "subtitle": "What we see online isn't always the full picture. Are we comparing our real lives to a fake reality?",
+   "topicPt": "O que vemos nas redes é uma versão editada da vida dos outros. A pergunta da aula: estamos comparando a nossa vida real com uma realidade montada?",
+   "scenario": [
+    {
+     "label": "",
+     "en": "A lifestyle influencer posts beautiful photos of her home, expensive dinners, and relaxing weekends. Her followers assume she has a nearly perfect life."
+    },
+    {
+     "label": "",
+     "en": "What they don't see are the staged photographs, financial pressures, exhausting work, and ordinary problems behind the scenes."
+    }
+   ],
+   "scenarioPt": "Uma influenciadora posta só momentos bonitos, e os seguidores acham que a vida dela é perfeita. Eles não veem as fotos encenadas, a pressão financeira, o cansaço e os problemas comuns por trás.",
+   "words": [
+    [
+     "assume",
+     "supor (não é \"assumir\")"
+    ],
+    [
+     "staged",
+     "encenado, montado"
+    ],
+    [
+     "behind the scenes",
+     "nos bastidores"
+    ]
+   ],
+   "highlight": {
+    "en": "What we see online is often a carefully curated image, not the full reality.",
+    "pt": "O que vemos online costuma ser uma imagem selecionada, não a realidade inteira."
+   },
+   "motto": {
+    "en": "Look beyond the highlight reel.",
+    "pt": "Olhe além dos melhores momentos."
+   },
+   "phrases": [
+    {
+     "id": "p01",
+     "en": "present a carefully curated image",
+     "pt": "passar uma imagem cuidadosamente selecionada",
+     "example": "Most people present a carefully curated image on social media.",
+     "tip": "",
+     "keys": [
+      "curated"
+     ]
+    },
+    {
+     "id": "p02",
+     "en": "show only the highlights",
+     "pt": "mostrar só os melhores momentos",
+     "example": "On Instagram, people show only the highlights of their week.",
+     "tip": "",
+     "keys": [
+      "highlight"
+     ]
+    },
+    {
+     "id": "p03",
+     "en": "create a false impression",
+     "pt": "criar uma impressão falsa",
+     "example": "Those photos create a false impression of an easy life.",
+     "tip": "CREATE (não make) a false impression",
+     "keys": [
+      "false impression"
+     ]
+    },
+    {
+     "id": "p04",
+     "en": "take something at face value",
+     "pt": "acreditar em algo sem questionar",
+     "example": "I never take online reviews at face value.",
+     "tip": "AT face value",
+     "keys": [
+      "face value"
+     ]
+    },
+    {
+     "id": "p05",
+     "en": "distort your perception of reality",
+     "pt": "distorcer sua percepção da realidade",
+     "example": "Constant scrolling can distort your perception of reality.",
+     "tip": "perception OF",
+     "keys": [
+      "distort"
+     ]
+    },
+    {
+     "id": "p06",
+     "en": "reveal only part of the story",
+     "pt": "revelar só parte da história",
+     "example": "A single photo reveals only part of the story.",
+     "tip": "",
+     "keys": [
+      "part of the story"
+     ]
+    }
+   ],
+   "discussTitle": "Discuss & Analyze",
+   "questions": [
+    {
+     "id": "d1",
+     "en": "If you know that social media posts are carefully selected, why might they still influence your perception of other people's lives?",
+     "pt": "Se você sabe que os posts são selecionados, por que eles ainda influenciam sua percepção da vida dos outros?",
+     "model": "I think it's because we see these images so often that they start to feel normal. Even if I know that people show only the highlights, my brain doesn't process that every time I scroll. So, little by little, those posts can distort my perception of reality."
+    },
+    {
+     "id": "d2",
+     "en": "Is presenting an idealized version of yourself online a form of dishonesty, or is it simply a matter of privacy?",
+     "pt": "Mostrar uma versão idealizada de si mesmo online é desonestidade ou só uma questão de privacidade?",
+     "model": "In my view, it depends on the intention. Choosing to show only the highlights is simply a matter of privacy. However, if someone deliberately creates a false impression to sell products, I'd say it becomes a form of dishonesty."
+    },
+    {
+     "id": "d3",
+     "en": "How can you distinguish between a genuinely successful life and a convincing public image?",
+     "pt": "Como diferenciar uma vida realmente bem-sucedida de uma imagem pública convincente?",
+     "model": "That's a tricky one, because from the outside they look the same. I'd look at consistency over time and at what people don't show. A single post reveals only part of the story, so it's better not to take anyone's life at face value."
+    }
+   ],
+   "newSentences": [
+    {
+     "en": "On LinkedIn, many professionals present a carefully curated image of their careers.",
+     "pt": "No LinkedIn, muitos profissionais passam uma imagem cuidadosamente selecionada da carreira."
+    },
+    {
+     "en": "Travel photos usually show only the highlights, never the long queues at the airport.",
+     "pt": "Fotos de viagem costumam mostrar só os melhores momentos, nunca as filas do aeroporto."
+    },
+    {
+     "en": "A nice-looking report can create a false impression that the project is on track.",
+     "pt": "Um relatório bonito pode criar a falsa impressão de que o projeto está em dia."
+    },
+    {
+     "en": "I never take a sales pitch at face value; I always ask for evidence.",
+     "pt": "Nunca acredito num discurso de vendas sem questionar; sempre peço evidências."
+    },
+    {
+     "en": "Comparing yourself with influencers can distort your perception of reality.",
+     "pt": "Comparar-se com influenciadores pode distorcer sua percepção da realidade."
+    },
+    {
+     "en": "The interview revealed only part of the story, so I asked more questions.",
+     "pt": "A entrevista revelou só parte da história, então fiz mais perguntas."
+    }
+   ],
+   "practice": [
+    {
+     "id": "b1m1",
+     "type": "mc",
+     "prompt": "Don't believe everything you see online. Never take it ___.",
+     "options": [
+      "at face value",
+      "in face value",
+      "on face value",
+      "by face value"
+     ],
+     "answer": 0,
+     "explain": "A expressão é fixa: take something AT face value."
+    },
+    {
+     "id": "b1m2",
+     "type": "mc",
+     "prompt": "Her feed ___: beaches, parties and perfect dinners. Nothing else.",
+     "options": [
+      "shows only the highlights",
+      "reveals the full reality",
+      "takes it at face value",
+      "has a false perception"
+     ],
+     "answer": 0,
+     "explain": "show only the highlights = mostrar só os melhores momentos."
+    },
+    {
+     "id": "b1o1",
+     "type": "order",
+     "prompt": "Redes sociais podem distorcer sua percepção da realidade.",
+     "answer": "Social media can distort your perception of reality.",
+     "explain": "distort your perception OF reality."
+    },
+    {
+     "id": "b1o2",
+     "type": "order",
+     "prompt": "As fotos criam uma falsa impressão de uma vida fácil.",
+     "answer": "The photos create a false impression of an easy life.",
+     "explain": "create a false impression OF something."
+    },
+    {
+     "id": "b1w1",
+     "type": "write",
+     "prompt": "Escreva uma frase com **take something at face value**, sobre notícias, propagandas ou redes sociais.",
+     "phrases": [
+      "p04"
+     ],
+     "model": "I don't take online reviews at face value; some of them are fake."
+    },
+    {
+     "id": "b1w2",
+     "type": "write",
+     "prompt": "Escreva uma frase com **show only the highlights** ou **present a carefully curated image**, sobre redes sociais ou trabalho.",
+     "phrases": [
+      "p01",
+      "p02"
+     ],
+     "model": "On LinkedIn, people usually show only the highlights of their careers."
+    }
+   ]
+  },
+  {
+   "id": "b2",
+   "slide": 2,
+   "tag": "B2 Speaking · The Comparison Trap",
+   "title": "Are You Choosing for Yourself?",
+   "subtitle": "How much are your decisions really yours — and how much are they influenced by others?",
+   "topicPt": "Até que ponto suas escolhas são suas? O tema é a pressão social: decidir para parecer bem-sucedido, e não pelos próprios valores.",
+   "scenario": [
+    {
+     "label": "",
+     "en": "Sarah has always preferred a simple lifestyle. She enjoys her job, saves money, and rarely feels the need to buy expensive things."
+    },
+    {
+     "label": "",
+     "en": "Recently, several people in her social circle have started buying luxury brands, upgrading their homes, and spending more on their appearance. Sarah begins making similar purchases — not because she genuinely wants them, but because she worries that her choices make her seem less successful."
+    },
+    {
+     "label": "",
+     "en": "A few months later, she has less savings, more financial pressure, and a lifestyle that doesn't really suit her."
+    }
+   ],
+   "scenarioPt": "Sarah sempre viveu de forma simples. Quando os amigos começam a comprar marcas de luxo, ela passa a gastar também, não porque quer, mas por medo de parecer menos bem-sucedida. Resultado: menos dinheiro, mais pressão e uma vida que não combina com ela.",
+   "words": [
+    [
+     "genuinely",
+     "de verdade, sinceramente"
+    ],
+    [
+     "upgrade",
+     "melhorar, trocar por algo melhor"
+    ],
+    [
+     "suit someone",
+     "combinar com alguém"
+    ]
+   ],
+   "highlight": null,
+   "motto": {
+    "en": "Your choices. Your values. Your life.",
+    "pt": "Suas escolhas. Seus valores. Sua vida."
+   },
+   "phrases": [
+    {
+     "id": "p07",
+     "en": "lose sight of your own priorities",
+     "pt": "perder de vista suas prioridades",
+     "example": "When you compare yourself all the time, you lose sight of your own priorities.",
+     "tip": "lose sight OF",
+     "keys": [
+      "(lose|lost|losing|loses) sight of"
+     ]
+    },
+    {
+     "id": "p08",
+     "en": "be driven to prove yourself",
+     "pt": "ser movido pela necessidade de se provar",
+     "example": "After her promotion, she was driven to prove herself.",
+     "tip": "driven TO + verbo",
+     "keys": [
+      "driven to prove"
+     ]
+    },
+    {
+     "id": "p09",
+     "en": "seek external validation",
+     "pt": "buscar aprovação dos outros",
+     "example": "Posting every achievement can be a way to seek external validation.",
+     "tip": "",
+     "keys": [
+      "validation"
+     ]
+    },
+    {
+     "id": "p10",
+     "en": "give in to social pressure",
+     "pt": "ceder à pressão social",
+     "example": "Sarah gave in to social pressure and bought a luxury bag.",
+     "tip": "give in TO",
+     "keys": [
+      "(give|gave|giving|gives|given) in to"
+     ]
+    },
+    {
+     "id": "p11",
+     "en": "make decisions based on appearances",
+     "pt": "decidir com base nas aparências",
+     "example": "If you make decisions based on appearances, you live someone else's life.",
+     "tip": "based ON (não in)",
+     "keys": [
+      "based on appearance"
+     ]
+    },
+    {
+     "id": "p12",
+     "en": "measure success on your own terms",
+     "pt": "medir o sucesso pelos seus próprios critérios",
+     "example": "For me, success means time with my family; I measure it on my own terms.",
+     "tip": "ON your own terms",
+     "keys": [
+      "on (my|your|his|her|our|their|one's) own terms"
+     ]
+    }
+   ],
+   "discussTitle": "Discuss & Justify",
+   "questions": [
+    {
+     "id": "d4",
+     "en": "At what point did Sarah stop making decisions based on her own values? What might have triggered the change?",
+     "pt": "Em que momento Sarah deixou de decidir pelos próprios valores? O que pode ter provocado a mudança?",
+     "model": "I'd say it happened when she started buying things to look successful. What might have triggered the change was seeing her friends upgrade their lifestyles. She gave in to social pressure and lost sight of her own priorities."
+    },
+    {
+     "id": "d5",
+     "en": "Is it possible to enjoy luxury and still be influenced by social pressure? How can you tell the difference?",
+     "pt": "Dá para gostar de luxo e mesmo assim ser influenciado pela pressão social? Como perceber a diferença?",
+     "model": "Yes, both can happen at the same time. One way to tell the difference is to ask yourself: would I still buy it if nobody could see it? If the answer is no, you're probably seeking external validation and making decisions based on appearances."
+    },
+    {
+     "id": "d6",
+     "en": "Should people care about how others perceive their lifestyle, or should personal satisfaction come first? Defend your position.",
+     "pt": "As pessoas devem se importar com como os outros veem seu estilo de vida, ou a satisfação pessoal vem primeiro? Defenda sua posição.",
+     "model": "I'd argue that personal satisfaction should come first. In some contexts, like work, image matters to some extent. That said, if you make decisions based on appearances all the time, you end up living someone else's life. So I measure success on my own terms."
+    }
+   ],
+   "newSentences": [
+    {
+     "en": "When I focus too much on other people's careers, I lose sight of my own priorities.",
+     "pt": "Quando foco demais na carreira dos outros, perco de vista minhas prioridades."
+    },
+    {
+     "en": "In her first year as a manager, she was driven to prove herself.",
+     "pt": "No primeiro ano como gestora, ela era movida pela necessidade de se provar."
+    },
+    {
+     "en": "Some people post every achievement because they seek external validation.",
+     "pt": "Algumas pessoas postam cada conquista porque buscam aprovação dos outros."
+    },
+    {
+     "en": "I almost gave in to social pressure and bought a car I didn't need.",
+     "pt": "Quase cedi à pressão social e comprei um carro de que não precisava."
+    },
+    {
+     "en": "Making decisions based on appearances is a common mistake in hiring.",
+     "pt": "Decidir com base nas aparências é um erro comum em contratações."
+    },
+    {
+     "en": "For me, success means free time with my family; I measure it on my own terms.",
+     "pt": "Para mim, sucesso é ter tempo com a família; meço pelos meus próprios critérios."
+    }
+   ],
+   "practice": [
+    {
+     "id": "b2m1",
+     "type": "mc",
+     "prompt": "Sarah made her decisions based ___ appearances.",
+     "options": [
+      "on",
+      "in",
+      "at",
+      "of"
+     ],
+     "answer": 0,
+     "explain": "based ON. \"Based in\" só para lugar: a company based in São Paulo."
+    },
+    {
+     "id": "b2m2",
+     "type": "mc",
+     "prompt": "She finally ___ social pressure and bought the bag.",
+     "options": [
+      "gave in to",
+      "gave up to",
+      "gave in for",
+      "gave on to"
+     ],
+     "answer": 0,
+     "explain": "give in TO = ceder a. Passado: gave in to."
+    },
+    {
+     "id": "b2o1",
+     "type": "order",
+     "prompt": "Não perca de vista suas próprias prioridades.",
+     "answer": "Don't lose sight of your own priorities.",
+     "explain": "lose sight OF something."
+    },
+    {
+     "id": "b2o2",
+     "type": "order",
+     "prompt": "Prefiro medir o sucesso pelos meus próprios critérios.",
+     "answer": "I prefer to measure success on my own terms.",
+     "explain": "ON my own terms."
+    },
+    {
+     "id": "b2w1",
+     "type": "write",
+     "prompt": "Escreva uma frase com **give in to social pressure**, contando uma situação real ou imaginada.",
+     "phrases": [
+      "p10"
+     ],
+     "model": "At my last job, I gave in to social pressure and worked every weekend."
+    },
+    {
+     "id": "b2w2",
+     "type": "write",
+     "prompt": "Escreva uma frase com **seek external validation** ou **measure success on your own terms**, dando sua opinião.",
+     "phrases": [
+      "p09",
+      "p12"
+     ],
+     "model": "I try to measure success on my own terms, not by what other people think."
+    }
+   ]
+  },
+  {
+   "id": "b3",
+   "slide": 3,
+   "tag": "B2 Speaking · Challenge Your Assumptions",
+   "title": "Is Envy Always a Bad Thing?",
+   "subtitle": "Can envy be a destructive emotion — or can it sometimes push us forward?",
+   "topicPt": "A inveja pode destruir ou motivar. A aula pede que você tome uma posição e defenda: ela ajuda ou atrapalha?",
+   "scenario": [
+    {
+     "label": "Destructive envy",
+     "en": "You become resentful of someone else's success, question your own abilities, or secretly hope they fail."
+    },
+    {
+     "label": "Motivating envy",
+     "en": "Someone's achievements reveal what you want for yourself and encourage you to take action."
+    }
+   ],
+   "scenarioPt": "Inveja destrutiva: ressentir o sucesso do outro, duvidar de si mesmo, torcer em segredo pelo fracasso alheio. Inveja motivadora: o sucesso do outro mostra o que você quer e te leva a agir.",
+   "words": [
+    [
+     "resentful of",
+     "ressentido com"
+    ],
+    [
+     "envy / envious",
+     "inveja / invejoso (jealous = ciúme)"
+    ],
+    [
+     "encourage someone to",
+     "encorajar alguém a"
+    ]
+   ],
+   "highlight": null,
+   "motto": {
+    "en": "Same feeling. Different outcomes.",
+    "pt": "Mesmo sentimento. Resultados diferentes."
+   },
+   "phrases": [
+    {
+     "id": "p13",
+     "en": "be driven by envy",
+     "pt": "ser movido pela inveja",
+     "example": "Some decisions are driven by envy, not by real goals.",
+     "tip": "driven BY + substantivo",
+     "keys": [
+      "driven by envy"
+     ]
+    },
+    {
+     "id": "p14",
+     "en": "turn envy into motivation",
+     "pt": "transformar inveja em motivação",
+     "example": "Instead of complaining, he turned his envy into motivation.",
+     "tip": "turn X INTO Y",
+     "keys": [
+      "into motivation"
+     ]
+    },
+    {
+     "id": "p15",
+     "en": "acknowledge your insecurities",
+     "pt": "reconhecer suas inseguranças",
+     "example": "The first step is to acknowledge your insecurities.",
+     "tip": "",
+     "keys": [
+      "acknowledg"
+     ]
+    },
+    {
+     "id": "p16",
+     "en": "feel threatened by someone's success",
+     "pt": "sentir-se ameaçado pelo sucesso de alguém",
+     "example": "Good leaders don't feel threatened by their team's success.",
+     "tip": "threatened BY",
+     "keys": [
+      "threatened by"
+     ]
+    },
+    {
+     "id": "p17",
+     "en": "channel your energy into something productive",
+     "pt": "canalizar sua energia para algo produtivo",
+     "example": "She channelled her frustration into a new project.",
+     "tip": "channel INTO (não to)",
+     "keys": [
+      "channel"
+     ]
+    },
+    {
+     "id": "p18",
+     "en": "take inspiration from someone",
+     "pt": "inspirar-se em alguém",
+     "example": "I take inspiration from people who started from scratch.",
+     "tip": "inspiration FROM (não in)",
+     "keys": [
+      "inspiration from"
+     ]
+    }
+   ],
+   "discussTitle": "Take a Position",
+   "questions": [
+    {
+     "id": "d7",
+     "en": "Can envy be useful if it reveals something you genuinely want? Or does it always damage your peace of mind?",
+     "pt": "A inveja pode ser útil se revela algo que você realmente quer? Ou ela sempre tira sua paz?",
+     "model": "I believe envy can be useful, as long as you're honest about it. It shows you what you really want. The problem starts when you're driven by envy instead of your own goals. What matters is whether you turn envy into motivation or into resentment."
+    },
+    {
+     "id": "d8",
+     "en": "Imagine your friend gets an opportunity you've wanted for years. What would your first reaction be, and how would you handle it?",
+     "pt": "Imagine que um amigo consegue uma oportunidade que você quer há anos. Qual seria sua primeira reação e como lidaria com isso?",
+     "model": "To be honest, my first reaction would be a mix of happiness and frustration. I might feel a little threatened by his success at first. Then I'd try to acknowledge my insecurities and ask how he got the opportunity. That way, I could take inspiration from him."
+    },
+    {
+     "id": "d9",
+     "en": "Is it better to avoid people who trigger your insecurities, or learn to deal with those feelings? Defend your answer.",
+     "pt": "É melhor evitar pessoas que despertam suas inseguranças ou aprender a lidar com esses sentimentos? Defenda sua resposta.",
+     "model": "I'd say it's better to learn to deal with those feelings. If you avoid everyone who makes you feel insecure, you also avoid people you could take inspiration from. The first step is to acknowledge your insecurities. That said, you don't have to tolerate disrespect."
+    }
+   ],
+   "newSentences": [
+    {
+     "en": "Some of my worst decisions were driven by envy, not by real goals.",
+     "pt": "Algumas das minhas piores decisões foram movidas pela inveja, não por objetivos reais."
+    },
+    {
+     "en": "When my colleague got promoted, I turned my envy into motivation and signed up for a course.",
+     "pt": "Quando meu colega foi promovido, transformei a inveja em motivação e me inscrevi num curso."
+    },
+    {
+     "en": "It isn't easy to acknowledge your insecurities in front of your team.",
+     "pt": "Não é fácil reconhecer suas inseguranças na frente do time."
+    },
+    {
+     "en": "A good leader doesn't feel threatened by the team's success.",
+     "pt": "Um bom líder não se sente ameaçado pelo sucesso do time."
+    },
+    {
+     "en": "After the bad news, she channelled her energy into something productive.",
+     "pt": "Depois da má notícia, ela canalizou a energia para algo produtivo."
+    },
+    {
+     "en": "I take inspiration from people who changed careers after forty.",
+     "pt": "Eu me inspiro em pessoas que mudaram de carreira depois dos quarenta."
+    }
+   ],
+   "practice": [
+    {
+     "id": "b3m1",
+     "type": "mc",
+     "prompt": "I take inspiration ___ people who started from scratch.",
+     "options": [
+      "from",
+      "in",
+      "of",
+      "on"
+     ],
+     "answer": 0,
+     "explain": "take inspiration FROM. O português \"inspirar-se em\" leva ao erro \"in\"."
+    },
+    {
+     "id": "b3m2",
+     "type": "mc",
+     "prompt": "Instead of complaining, he turned his envy ___ motivation.",
+     "options": [
+      "into",
+      "to",
+      "for",
+      "in"
+     ],
+     "answer": 0,
+     "explain": "turn X INTO Y = transformar X em Y."
+    },
+    {
+     "id": "b3o1",
+     "type": "order",
+     "prompt": "Ela se sentiu ameaçada pelo sucesso da colega.",
+     "answer": "She felt threatened by her colleague's success.",
+     "explain": "threatened BY someone's success."
+    },
+    {
+     "id": "b3o2",
+     "type": "order",
+     "prompt": "Tente canalizar sua energia para algo produtivo.",
+     "answer": "Try to channel your energy into something productive.",
+     "explain": "channel your energy INTO something."
+    },
+    {
+     "id": "b3w1",
+     "type": "write",
+     "prompt": "Escreva uma frase com **turn envy into motivation**, sobre alguém que você admira.",
+     "phrases": [
+      "p14"
+     ],
+     "model": "When my friend got a job abroad, I turned my envy into motivation and started studying English every day."
+    },
+    {
+     "id": "b3w2",
+     "type": "write",
+     "prompt": "Escreva uma frase com **take inspiration from someone**, dizendo em quem você se inspira e por quê.",
+     "phrases": [
+      "p18"
+     ],
+     "model": "I take inspiration from my father, who started his own business at fifty."
+    }
+   ]
+  }
+ ]
+}

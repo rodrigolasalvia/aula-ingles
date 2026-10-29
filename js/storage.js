@@ -102,19 +102,33 @@ const record = (key, state, label) => ({ key, ts: Date.now(), label, answers: an
 
 // Espelho do estado atual + cópia do dia. Silencioso: falhas aqui nunca atrapalham a prática.
 let mirrorTimer = null;
+let mirrorPending = null;
+async function writeMirror(json) {
+  try {
+    const s = JSON.parse(json);
+    await tx('readwrite', st => {
+      st.put(record('current', s, 'atual'));
+      st.put(record(`day:${dayKey(Date.now())}`, s, 'cópia do dia'));
+    });
+    await prune();
+  } catch (e) { console.warn('Espelho em IndexedDB indisponível.', e); }
+}
 function mirror(state) {
   clearTimeout(mirrorTimer);
-  const json = JSON.stringify(state);
-  mirrorTimer = setTimeout(async () => {
-    try {
-      const s = JSON.parse(json);
-      await tx('readwrite', st => {
-        st.put(record('current', s, 'atual'));
-        st.put(record(`day:${dayKey(Date.now())}`, s, 'cópia do dia'));
-      });
-      await prune();
-    } catch (e) { console.warn('Espelho em IndexedDB indisponível.', e); }
-  }, 400);
+  mirrorPending = JSON.stringify(state);
+  mirrorTimer = setTimeout(flushMirror, 400);
+}
+// Grava já o espelho pendente (chamado também quando o app vai para segundo plano).
+export function flushMirror() {
+  clearTimeout(mirrorTimer);
+  if (!mirrorPending) return Promise.resolve();
+  const json = mirrorPending;
+  mirrorPending = null;
+  return writeMirror(json);
+}
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushMirror(); });
+  addEventListener('pagehide', () => flushMirror());
 }
 
 export async function snapshot(state, label) {
