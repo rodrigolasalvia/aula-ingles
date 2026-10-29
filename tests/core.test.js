@@ -2,152 +2,100 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import {
-  normalize, tokens, checkItem, checkWrite, detectPhrases, allPhrases, migrateState, emptyState, blockState,
-  blockResult, blockFeedback, lessonReport, recordCount, looksLikeBackup, wordCount, scramble,
+  isCorrect, scramble, sentenceOf, normalize, nextIndex, migrateState, emptyState, progress, recordCount, looksLikeBackup,
 } from '../js/core.js';
 
-const index = JSON.parse(readFileSync(new URL('../data/v2/lessons.json', import.meta.url)));
+const index = JSON.parse(readFileSync(new URL('../data/v3/lessons.json', import.meta.url)));
 const lessons = index.lessons.map(m => ({ meta: m, data: JSON.parse(readFileSync(new URL(`../${m.file}`, import.meta.url))) }));
-
-/* ---------- Conteúdo de cada lição ---------- */
+const words = s => s.trim().split(/\s+/).length;
+const PT = /\b(não|você|para|uma|com|está|também|porque|então)\b|[ãõç]/i;
 
 for (const { meta, data: L } of lessons) {
   test(`${meta.id}: índice e arquivo coerentes`, () => {
-    assert.equal(L.id, meta.id);
-    assert.equal(L.number, meta.number);
-    assert.equal(L.date, meta.date);
-    assert.ok(L.blocks.length >= 1);
+    assert.equal(L.id, meta.id); assert.equal(L.number, meta.number); assert.equal(L.date, meta.date);
   });
 
-  test(`${meta.id}: cada bloco tem todas as partes`, () => {
-    for (const b of L.blocks) {
-      for (const k of ['title', 'subtitle', 'topicPt', 'scenarioPt', 'discussTitle']) assert.ok(b[k], `${b.id} sem ${k}`);
-      assert.ok(b.scenario.length && b.scenario.every(p => p.en), `${b.id} cenário`);
-      assert.ok(b.phrases.length >= 3, `${b.id} phrases`);
-      assert.ok(b.questions.length >= 1 && b.questions.every(q => q.en && q.pt && q.model), `${b.id} discuss`);
-      assert.ok(b.newSentences.length >= 3 && b.newSentences.every(s => s.en && s.pt), `${b.id} frases novas`);
-      assert.ok(b.practice.length >= 3, `${b.id} pratique`);
+  test(`${meta.id}: Understand curto e em inglês`, () => {
+    const u = L.understand;
+    assert.ok(u.scenario.length >= 1);
+    for (const s of u.scenario) assert.ok(words(s.text) <= 60, `${s.title}: resumo longo (${words(s.text)})`);
+    assert.ok(u.expressions.length >= 5 && u.expressions.length <= 10, 'só as expressões mais importantes');
+    for (const x of u.expressions) {
+      assert.ok(words(x.meaning) <= 18, `${x.en}: explicação longa`);
+      assert.ok(x.example);
     }
   });
 
-  test(`${meta.id}: ids únicos`, () => {
-    const ids = L.blocks.flatMap(b => b.practice.map(i => i.id));
+  test(`${meta.id}: 8 a 10 frases para montar e as perguntas da aula`, () => {
+    assert.ok(L.build.length >= 8 && L.build.length <= 10);
+    assert.ok(L.speak.length >= 1);
+  });
+
+  test(`${meta.id}: blocos válidos (3 a 6, sem repetição, frase completa)`, () => {
+    const ids = [...L.build, ...L.speak].map(x => x.id);
     assert.equal(new Set(ids).size, ids.length);
-    const pids = allPhrases(L).map(p => p.id);
-    assert.equal(new Set(pids).size, pids.length);
-    assert.equal(new Set(L.blocks.map(b => b.id)).size, L.blocks.length);
-  });
-
-  test(`${meta.id}: cada expressão é detectada na própria frase e no exemplo`, () => {
-    for (const p of allPhrases(L)) {
-      assert.deepEqual(detectPhrases(p.en, [p]), [p.id], `${p.id} frase`);
-      assert.deepEqual(detectPhrases(p.example, [p]), [p.id], `${p.id} exemplo`);
+    for (const x of [...L.build, ...L.speak]) {
+      assert.ok(x.blocks.length >= 3 && x.blocks.length <= 6, `${x.id}: ${x.blocks.length} blocos`);
+      assert.equal(new Set(x.blocks).size, x.blocks.length, `${x.id}: bloco repetido`);
+      const s = sentenceOf(x.blocks);
+      assert.match(s, /^[A-Z].*[.?!]$/, `${x.id}: frase sem maiúscula ou ponto final`);
+      assert.ok(x.explain && words(x.explain) <= 25, `${x.id}: explicação ausente ou longa`);
+      const w = words(s);
+      assert.ok(w >= 8 && w <= 32, `${x.id}: ${w} palavras`);
+      assert.ok(x.prompt || x.question);
     }
   });
 
-  test(`${meta.id}: cada frase nova usa ao menos uma expressão do bloco`, () => {
-    for (const b of L.blocks) for (const s of b.newSentences) assert.ok(detectPhrases(s.en, b.phrases).length >= 1, s.en);
+  test(`${meta.id}: tudo em inglês (sem tradução para o português)`, () => {
+    const text = JSON.stringify({ u: L.understand, b: L.build, s: L.speak });
+    assert.ok(!PT.test(text), `trecho em português: ${text.match(PT)}`);
   });
 
-  test(`${meta.id}: cada expressão aparece em alguma frase nova`, () => {
-    for (const b of L.blocks) for (const p of b.phrases) assert.ok(b.newSentences.some(s => detectPhrases(s.en, [p]).length), `${p.id} sem frase nova`);
-  });
-
-  test(`${meta.id}: respostas-exemplo usam ao menos 2 expressões e são curtas`, () => {
-    for (const b of L.blocks) for (const q of b.questions) {
-      assert.ok(detectPhrases(q.model, allPhrases(L)).length >= 2, `${q.id}`);
-      const w = wordCount(q.model);
-      assert.ok(w >= 25 && w <= 60, `${q.id}: ${w} palavras`);
-    }
-  });
-
-  test(`${meta.id}: gabaritos aceitos, erradas recusadas, frases-modelo passam na checagem`, () => {
-    for (const b of L.blocks) for (const i of b.practice) {
-      if (i.type === 'mc') {
-        assert.ok(i.prompt.includes('___'), `${i.id} sem lacuna`);
-        assert.equal(new Set(i.options).size, i.options.length);
-        i.options.forEach((_, k) => assert.equal(checkItem(i, k), k === i.answer, `${i.id}:${k}`));
-      } else if (i.type === 'order') {
-        assert.ok(checkItem(i, i.answer));
-        assert.ok(!checkItem(i, [...tokens(i.answer)].reverse().join(' ')));
-        assert.ok(tokens(i.answer).length >= 5 && tokens(i.answer).length <= 12, `${i.id} tamanho`);
-      } else {
-        assert.equal(i.type, 'write');
-        assert.ok(i.phrases.every(pid => b.phrases.some(p => p.id === pid)), `${i.id} expressão de outro bloco`);
-        assert.ok(checkWrite(i, i.model, allPhrases(L)).ok, `${i.id}: modelo não passa`);
-      }
+  test(`${meta.id}: ordem certa aceita, embaralhada recusada`, () => {
+    for (const x of [...L.build, ...L.speak]) {
+      const right = x.blocks.map((_, i) => i);
+      assert.ok(isCorrect(x, right));
+      assert.ok(!isCorrect(x, [...right].reverse()));
+      assert.ok(!isCorrect(x, right.slice(0, -1)), 'incompleta');
+      for (let t = 0; t < 20; t++) assert.ok(!isCorrect(x, scramble(x.blocks)), `${x.id}: embaralhou na ordem certa`);
     }
   });
 }
 
-/* ---------- Correção ---------- */
-
-test('normalize e montagem', () => {
-  assert.equal(normalize(' Social media CAN distort your perception of reality. '), 'social media can distort your perception of reality');
-  const t = tokens('She felt threatened by her colleague\'s success.');
-  const o = scramble(t, () => 0.1);
-  assert.notDeepEqual(o, t.map((_, i) => i));
+test('isCorrect compara texto: blocos iguais podem trocar de lugar', () => {
+  const item = { blocks: ['very', 'very', 'good.'] };
+  assert.ok(isCorrect(item, [1, 0, 2]));
+  assert.ok(normalize('  A  B ') === 'a b');
 });
 
-test('frase escrita: precisa da expressão pedida e de uma frase completa', () => {
-  const L = lessons[0].data;
-  const item = L.blocks[0].practice.find(i => i.id === 'b1w1');
-  assert.ok(checkWrite(item, 'I never take the news at face value nowadays.', allPhrases(L)).ok);
-  assert.ok(!checkWrite(item, 'At face value.', allPhrases(L)).ok, 'curta');
-  assert.ok(!checkWrite(item, 'I always believe everything I read online.', allPhrases(L)).used, 'sem expressão');
+test('nextIndex devolve o primeiro não feito', () => {
+  const items = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+  assert.equal(nextIndex(items, {}), 1);
+  assert.equal(nextIndex(items, { a: true }), 2);
+  assert.equal(nextIndex(items, { a: true, b: true, c: true }), null);
 });
 
-/* ---------- Avaliação e relatório ---------- */
-
-test('resultado do bloco, feedback e relatório', () => {
-  const L = lessons[0].data;
-  const s = emptyState();
-  const b = L.blocks[1];
-  const bs = blockState(s, L.id, b.id);
-  bs.answers.b2m1 = { ok: false, given: '1' };
-  bs.answers.b2m2 = { ok: true, given: '0' };
-  bs.answers.b2o1 = { ok: true, given: "Don't lose sight of your own priorities." };
-  let r = blockResult(L, b, bs);
-  assert.equal(r.complete, false);
-  bs.answers.b2o2 = { ok: true, given: 'I prefer to measure success on my own terms.' };
-  bs.writes.b2w1 = 'Last year I gave in to social pressure and bought an expensive phone.';
-  bs.writes.b2w2 = 'I think people should be happy with themselves.';
-  r = blockResult(L, b, bs);
-  assert.ok(r.complete);
-  assert.equal(r.ok, 3); assert.equal(r.n, 4);
-  const f = blockFeedback(r);
-  assert.ok(f.focus.some(x => x.includes('based ON')));
-  assert.ok(f.focus.some(x => x.includes('faltou a expressão')));
-  bs.done = true;
-  const rep = lessonReport(L, s);
-  assert.match(rep, /BLOCO 2 · Are You Choosing for Yourself\? — 3\/4 certos/);
-  assert.match(rep, /respondi: in \| certo: on/);
-  assert.match(rep, /Minha frase: Last year I gave in/);
-  assert.match(rep, /\(sem a expressão pedida\)/);
-  assert.match(rep, /BLOCO 1 .*não concluído/);
-});
-
-/* ---------- Estado e backup ---------- */
-
-test('migração preserva dados da versão 1 e valida a versão 2', () => {
-  const v1 = { lessons: { l001: { sessions: { s1: { status: 'done', answers: { c1: { ok: true }, c2: { ok: false } } } }, pending: ['c2'], writes: { d2: 'texto' } } }, log: [{ ts: 1 }] };
-  const m = migrateState(v1);
-  assert.deepEqual(m.lessons.l001.sessions, v1.lessons.l001.sessions);
-  assert.deepEqual(m.lessons.l001.writes, { d2: 'texto' });
-  assert.equal(recordCount(m), recordCount(v1));
-  assert.ok(recordCount(m) >= 4);
-  const m2 = migrateState({ lessons: { l001: { blocks: { b1: { answers: { x: { ok: true } }, writes: { w: 'ok', z: 3 }, done: 1 }, bad: 5 } } } });
-  assert.deepEqual(m2.lessons.l001.blocks.b1.writes, { w: 'ok' });
-  assert.equal(m2.lessons.l001.blocks.b1.done, true);
-  assert.ok(!m2.lessons.l001.blocks.bad);
+test('migração: preserva dados das versões 1 e 2 e valida a 3', () => {
+  const old = {
+    lessons: { l001: { sessions: { s1: { answers: { c1: { ok: true } } } }, writes: { d2: 'x' }, blocks: { b1: { answers: { m: { ok: true } }, writes: { w: 'y' }, done: true } } } },
+    log: [{ ts: 1 }], settings: { rate: 1, voice: 'X' },
+  };
+  const m = migrateState(old);
+  assert.deepEqual(m.lessons.l001.sessions, old.lessons.l001.sessions);
+  assert.deepEqual(m.lessons.l001.blocks, old.lessons.l001.blocks);
+  assert.equal(m.settings.voice, 'X');
+  assert.equal(recordCount(m), recordCount(old));
+  const p = progress(m, 'l001');
+  assert.deepEqual(p, { understood: false, build: {}, speak: {} });
+  p.build.e01 = true; p.understood = true;
+  assert.equal(recordCount(m), recordCount(old) + 2);
+  const bad = migrateState({ lessons: { l001: { v3: { understood: 'yes', build: { e01: true, e02: 'x' }, speak: 3 } } } });
+  assert.deepEqual(bad.lessons.l001.v3, { understood: false, build: { e01: true }, speak: {} });
   assert.deepEqual(migrateState(null).lessons, {});
-  assert.equal(migrateState({ settings: { rate: 9 } }).settings.rate, 0.95);
 });
 
 test('backup: aceita exportado e estado puro, recusa outros JSON', () => {
-  const s = emptyState();
-  assert.ok(looksLikeBackup({ app: 'aula-ingles', state: s }));
-  assert.ok(looksLikeBackup(s));
+  assert.ok(looksLikeBackup({ app: 'aula-ingles', state: emptyState() }));
   assert.equal(looksLikeBackup({ foo: 1 }), null);
 });
 
@@ -155,6 +103,7 @@ test('service worker e core com a mesma versão; todo arquivo do app está no ca
   const sw = readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
   const core = readFileSync(new URL('../js/core.js', import.meta.url), 'utf8');
   assert.equal(sw.match(/CACHE_VERSION = '([^']+)'/)[1], core.match(/APP_VERSION = '([^']+)'/)[1]);
+  assert.ok(sw.includes('data/v3/lessons.json'));
   for (const dir of ['js', 'css', 'fonts', 'icons']) {
     for (const f of readdirSync(new URL(`../${dir}`, import.meta.url))) assert.ok(sw.includes(`'${dir}/${f}'`), `${dir}/${f} fora do cache`);
   }

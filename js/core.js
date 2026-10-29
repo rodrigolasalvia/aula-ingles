@@ -1,9 +1,8 @@
-// Lógica pura do app (sem DOM): estado, correção, avaliação e relatório. Testada em tests/core.test.js.
+// Lógica pura do app (sem DOM). Testada em tests/core.test.js.
 
-export const APP_VERSION = '2.0.0';
-export const STATE_VERSION = 2;
-
-/* ---------- Datas ---------- */
+export const APP_VERSION = '3.0.0';
+export const STATE_VERSION = 3;
+export const SLOW_RATE = 0.85;
 
 export function dayKey(ts) {
   const d = new Date(ts);
@@ -18,152 +17,63 @@ export function formatDate(iso) {
 /* ---------- Estado ---------- */
 
 export function emptyState() {
-  return { v: STATE_VERSION, lessons: {}, log: [], settings: { rate: 0.95, voice: '' }, createdAt: Date.now() };
+  return { v: STATE_VERSION, lessons: {}, log: [], settings: { voice: '' }, createdAt: Date.now() };
 }
 
 const isObj = x => x && typeof x === 'object' && !Array.isArray(x);
+const flags = x => (isObj(x) ? Object.fromEntries(Object.entries(x).filter(([, v]) => v === true)) : {});
 
-// Aceita qualquer coisa e devolve um estado válido. Dados da versão 1 (sessions, pending, writes) são mantidos intactos.
+// Aceita qualquer coisa e devolve um estado válido. Dados de versões anteriores ficam guardados intactos.
 export function migrateState(raw) {
   const s = emptyState();
   if (!isObj(raw)) return s;
   if (typeof raw.createdAt === 'number') s.createdAt = raw.createdAt;
-  if (isObj(raw.settings)) {
-    const r = Number(raw.settings.rate);
-    if (r >= 0.6 && r <= 1.3) s.settings.rate = r;
-    if (typeof raw.settings.voice === 'string') s.settings.voice = raw.settings.voice;
-  }
+  if (isObj(raw.settings)) s.settings = { ...raw.settings, voice: typeof raw.settings.voice === 'string' ? raw.settings.voice : '' };
   if (Array.isArray(raw.log)) s.log = raw.log.filter(isObj).slice(-500);
   if (isObj(raw.lessons)) {
     for (const [id, ls] of Object.entries(raw.lessons)) {
       if (!isObj(ls)) continue;
-      const out = { ...ls, blocks: {} };
-      if (isObj(ls.blocks)) {
-        for (const [bid, b] of Object.entries(ls.blocks)) {
-          if (!isObj(b)) continue;
-          out.blocks[bid] = {
-            answers: isObj(b.answers) ? b.answers : {},
-            writes: isObj(b.writes) ? Object.fromEntries(Object.entries(b.writes).filter(([, v]) => typeof v === 'string')) : {},
-            done: !!b.done,
-            doneAt: Number(b.doneAt) || null,
-          };
-        }
-      }
-      s.lessons[id] = out;
+      const p = isObj(ls.v3) ? ls.v3 : {};
+      s.lessons[id] = { ...ls, v3: { understood: p.understood === true, build: flags(p.build), speak: flags(p.speak) } };
     }
   }
   return s;
 }
 
-export function blockState(state, lessonId, blockId) {
-  const ls = state.lessons[lessonId] || (state.lessons[lessonId] = { blocks: {} });
-  if (!ls.blocks) ls.blocks = {};
-  return ls.blocks[blockId] || (ls.blocks[blockId] = { answers: {}, writes: {}, done: false, doneAt: null });
+export function progress(state, lessonId) {
+  const ls = state.lessons[lessonId] || (state.lessons[lessonId] = {});
+  if (!isObj(ls.v3)) ls.v3 = { understood: false, build: {}, speak: {} };
+  return ls.v3;
 }
 
-// Quantidade de registros: usada para nunca trocar um estado rico por um mais pobre.
+// Quantidade de registros (todas as versões): usada para nunca trocar um estado rico por um mais pobre.
 export function recordCount(s) {
   if (!isObj(s)) return 0;
   let n = Array.isArray(s.log) ? s.log.length : 0;
+  const keys = o => Object.keys(isObj(o) ? o : {}).length;
   for (const ls of Object.values(isObj(s.lessons) ? s.lessons : {})) {
     if (!isObj(ls)) continue;
-    for (const b of Object.values(isObj(ls.blocks) ? ls.blocks : {})) {
-      if (!isObj(b)) continue;
-      n += Object.keys(isObj(b.answers) ? b.answers : {}).length + Object.keys(isObj(b.writes) ? b.writes : {}).length;
-    }
-    // registros da versão 1
-    n += Object.keys(isObj(ls.writes) ? ls.writes : {}).length;
-    for (const rec of Object.values(isObj(ls.sessions) ? ls.sessions : {})) {
-      if (isObj(rec)) n += Object.keys(isObj(rec.answers) ? rec.answers : {}).length;
-    }
+    if (isObj(ls.v3)) n += keys(ls.v3.build) + keys(ls.v3.speak) + (ls.v3.understood ? 1 : 0);
+    for (const b of Object.values(isObj(ls.blocks) ? ls.blocks : {})) if (isObj(b)) n += keys(b.answers) + keys(b.writes);
+    n += keys(ls.writes);
+    for (const r of Object.values(isObj(ls.sessions) ? ls.sessions : {})) if (isObj(r)) n += keys(r.answers);
   }
   return n;
 }
 
-/* ---------- Correção ---------- */
+/* ---------- Montagem de frases ---------- */
+
+export const sentenceOf = blocks => blocks.join(' ');
 
 export function normalize(text) {
-  return String(text ?? '').toLowerCase()
-    .replace(/[‘’ʼ`´]/g, "'")
-    .replace(/[.,!?;:"()]/g, '').replace(/\s+/g, ' ').trim();
+  return String(text ?? '').toLowerCase().replace(/[‘’]/g, "'").replace(/\s+/g, ' ').trim();
 }
 
-export const tokens = sentence => String(sentence).trim().split(/\s+/);
-
-export function checkItem(item, given) {
-  if (item.type === 'mc') return Number(given) === item.answer;
-  if (item.type === 'order') return normalize(given) === normalize(item.answer);
-  return false;
+// Compara o texto montado (não os índices): blocos iguais podem trocar de lugar sem erro.
+export function isCorrect(item, pickedIdx) {
+  if (pickedIdx.length !== item.blocks.length) return false;
+  return normalize(sentenceOf(pickedIdx.map(i => item.blocks[i]))) === normalize(sentenceOf(item.blocks));
 }
-
-// Quais expressões da lição aparecem num texto livre.
-export function detectPhrases(text, phrases) {
-  const t = String(text ?? '').toLowerCase().replace(/[‘’]/g, "'");
-  return phrases.filter(p => (p.keys || []).some(k => new RegExp(k, 'i').test(t))).map(p => p.id);
-}
-
-export const wordCount = text => (String(text ?? '').trim().match(/[A-Za-zÀ-ÿ'’-]+/g) || []).length;
-
-// Frase escrita conta como certa quando usa uma das expressões pedidas e tem pelo menos 6 palavras.
-export function checkWrite(item, text, phrases) {
-  const found = detectPhrases(text, phrases.filter(p => item.phrases.includes(p.id)));
-  return { used: found.length > 0, words: wordCount(text), ok: found.length > 0 && wordCount(text) >= 6 };
-}
-
-/* ---------- Avaliação ---------- */
-
-export const allPhrases = lesson => lesson.blocks.flatMap(b => b.phrases);
-
-export function blockResult(lesson, block, bs) {
-  const objective = block.practice.filter(i => i.type !== 'write');
-  const writes = block.practice.filter(i => i.type === 'write');
-  let ok = 0;
-  const errors = [];
-  for (const i of objective) {
-    const a = bs.answers[i.id];
-    if (a && a.ok) ok++;
-    else if (a) errors.push({ item: i, given: a.given });
-  }
-  const written = writes.map(i => ({ item: i, text: bs.writes[i.id] || '', ...checkWrite(i, bs.writes[i.id] || '', allPhrases(lesson)) }));
-  const answered = objective.filter(i => bs.answers[i.id]).length + written.filter(w => w.text).length;
-  return {
-    ok, n: objective.length, errors, written, answered, total: block.practice.length,
-    complete: answered === block.practice.length,
-  };
-}
-
-export function blockFeedback(r) {
-  const good = [], focus = [];
-  if (r.n && r.ok === r.n) good.push('Acertou todos os exercícios de completar e montar frases.');
-  for (const e of r.errors) focus.push(`Reveja: ${e.item.explain}`);
-  const usedAll = r.written.filter(w => w.text).every(w => w.used);
-  if (r.written.some(w => w.text) && usedAll) good.push('Usou as expressões pedidas nas suas frases.');
-  for (const w of r.written) if (w.text && !w.used) focus.push('Na sua frase faltou a expressão pedida. Reescreva usando a expressão inteira.');
-  if (!focus.length) focus.push('Antes da aula, leia em voz alta as frases novas e as suas frases. Na aula, tente usar ao menos 2 expressões de cada bloco.');
-  return { good, focus };
-}
-
-export function lessonReport(lesson, state) {
-  const L = [`AULA DE INGLÊS · Lição ${lesson.number}: ${lesson.title}`, `Relatório de ${formatDate(dayKey(Date.now()))}`];
-  let ok = 0, n = 0;
-  for (const b of lesson.blocks) {
-    const bs = blockState(state, lesson.id, b.id);
-    const r = blockResult(lesson, b, bs);
-    ok += r.ok; n += r.n;
-    L.push('', `BLOCO ${b.slide} · ${b.title} — ${r.ok}/${r.n} certos${bs.done ? '' : ' (não concluído)'}`);
-    for (const e of r.errors) {
-      const mine = e.item.type === 'mc' ? (e.item.options[Number(e.given)] ?? '—') : (e.given || '—');
-      const right = e.item.type === 'mc' ? e.item.options[e.item.answer] : e.item.answer;
-      L.push(`- Erro: ${e.item.prompt} | respondi: ${mine} | certo: ${right}`);
-    }
-    for (const w of r.written) if (w.text) L.push(`- Minha frase: ${w.text.trim()}${w.used ? '' : ' (sem a expressão pedida)'}`);
-  }
-  L.splice(2, 0, `Total: ${ok}/${n} nos exercícios objetivos`);
-  L.push('', 'Peço a avaliação: corrija minhas frases e diga onde fui bem, onde fui mal e onde focar.');
-  return L.join('\n');
-}
-
-/* ---------- Utilidades ---------- */
 
 export function shuffledOrder(n, rnd = Math.random) {
   const a = [...Array(n).keys()];
@@ -171,13 +81,19 @@ export function shuffledOrder(n, rnd = Math.random) {
   return a;
 }
 
-// Embaralha sem devolver a ordem original (quando há mais de uma palavra diferente).
-export function scramble(words, rnd = Math.random) {
-  for (let t = 0; t < 20; t++) {
-    const o = shuffledOrder(words.length, rnd);
-    if (o.some((x, i) => words[x] !== words[i])) return o;
+// Embaralha sem devolver a frase já pronta.
+export function scramble(blocks, rnd = Math.random) {
+  for (let t = 0; t < 30; t++) {
+    const o = shuffledOrder(blocks.length, rnd);
+    if (normalize(sentenceOf(o.map(i => blocks[i]))) !== normalize(sentenceOf(blocks))) return o;
   }
-  return shuffledOrder(words.length, rnd);
+  return [...Array(blocks.length).keys()].reverse();
+}
+
+// Primeiro exercício ainda não feito (1-based); null quando todos estão feitos.
+export function nextIndex(items, done) {
+  const i = items.findIndex(x => !done[x.id]);
+  return i === -1 ? null : i + 1;
 }
 
 export function looksLikeBackup(raw) {

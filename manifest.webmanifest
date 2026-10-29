@@ -1,7 +1,7 @@
 {
   "name": "Aula de Inglês",
   "short_name": "Aula",
-  "description": "Preparação para a aula de conversação: entender, aprender e praticar o material da semana.",
+  "description": "Get ready for your speaking class: read, build, listen, repeat, speak.",
   "lang": "pt-BR",
   "start_url": "./",
   "scope": "./",

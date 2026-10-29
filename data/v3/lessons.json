@@ -1,0 +1,12 @@
+{
+ "lessons": [
+  {
+   "id": "l001",
+   "number": 1,
+   "date": "2026-10-28",
+   "title": "Comparison, Choices & Envy",
+   "subtitle": "Social media, social pressure and envy",
+   "file": "data/v3/l001.json"
+  }
+ ]
+}

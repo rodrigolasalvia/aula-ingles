@@ -1,25 +1,22 @@
 import {
-  APP_VERSION, formatDate, dayKey, migrateState, emptyState, blockState, checkItem, checkWrite,
-  allPhrases, wordCount, tokens, blockResult, blockFeedback, lessonReport, shuffledOrder, scramble, looksLikeBackup,
+  APP_VERSION, SLOW_RATE, formatDate, dayKey, migrateState, emptyState, progress, isCorrect, sentenceOf, scramble,
+  nextIndex, looksLikeBackup,
 } from './core.js';
 import {
   loadState, saveState, hasLocal, recoverRicher, snapshot, listSnapshots, readSnapshot, requestPersistence, answerCount,
 } from './storage.js';
 
-const INDEX_URL = 'data/v2/lessons.json';
-
-/* ---------- Estado e dados ---------- */
+const INDEX_URL = 'data/v3/lessons.json';
 
 let state = loadState();
 let index = [];
 const lessons = {};
 const main = document.getElementById('main');
-let ui = {};          // estado efêmero da tela (ordem das opções, rascunhos)
-let view = null;      // { lesson, block } na página de bloco
+let screen = null; // tela de exercício atual
 
 function save(opts) {
   const ok = saveState(state, opts);
-  if (!ok) toast('Não consegui salvar no aparelho. Exporte um backup em Ajustes.');
+  if (!ok) toast('Could not save on this device. Export a backup in Settings.');
   return ok;
 }
 
@@ -42,15 +39,17 @@ async function getLesson(id) {
   return lessons[id];
 }
 
-/* ---------- Utilidades de tela ---------- */
+/* ---------- Utilidades ---------- */
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-const icon = {
+const ICON = {
   play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>',
   check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>',
 };
-const say = (text, label = 'Ouvir') => `<button class="say" data-action="say" data-text="${esc(text)}" aria-label="${esc(label)}">${icon.play}</button>`;
+// Botões de áudio: velocidade normal e lenta (0.85x). Podem ser tocados quantas vezes quiser.
+const listen = (text, compact = false) => `<div class="listen ${compact ? 'compact' : ''}">
+  <button class="lbtn" data-action="say" data-rate="1" data-text="${esc(text)}">${ICON.play}${compact ? '' : ' Listen'}</button>
+  <button class="lbtn slow" data-action="say" data-rate="${SLOW_RATE}" data-text="${esc(text)}">Slow</button></div>`;
 
 let toastTimer;
 function toast(msg) {
@@ -71,307 +70,215 @@ function loadVoices() {
 }
 if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 
-function speak(text) {
-  if (!('speechSynthesis' in window)) { toast('Este navegador não tem leitura em voz alta.'); return; }
+// Escolhe a voz mais natural disponível: vozes de rede e "Natural/Neural/Google" primeiro, inglês americano ou britânico.
+function bestVoice() {
+  const chosen = voices.find(v => v.name === state.settings.voice);
+  if (chosen) return chosen;
+  const score = v => (/natural|neural|enhanced|premium/i.test(v.name) ? 4 : 0) + (/google/i.test(v.name) ? 3 : 0)
+    + (v.localService === false ? 2 : 0) + (/en[-_]US/i.test(v.lang) ? 2 : /en[-_]GB/i.test(v.lang) ? 1 : 0);
+  return voices.slice().sort((a, b) => score(b) - score(a))[0] || null;
+}
+
+function speak(text, rate = 1) {
+  if (!('speechSynthesis' in window)) { toast('This browser cannot read text aloud.'); return; }
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    const v = voices.find(x => x.name === state.settings.voice) || voices.find(x => /en-US/i.test(x.lang)) || voices[0];
+    const v = bestVoice();
     if (v) u.voice = v;
     u.lang = v ? v.lang : 'en-US';
-    u.rate = state.settings.rate || 0.95;
+    u.rate = rate;
     speechSynthesis.speak(u);
-  } catch { toast('Não consegui reproduzir o áudio.'); }
+  } catch { toast('Could not play the audio.'); }
 }
 
-/* ---------- Roteamento ---------- */
+/* ---------- Rotas ---------- */
 
 async function route() {
   document.getElementById('toast').hidden = true;
   try { speechSynthesis.cancel(); } catch { /* ignore */ }
-  ui = {}; view = null;
+  screen = null;
   const parts = (location.hash.replace(/^#\/?/, '') || '').split('/').filter(Boolean);
   try {
     if (!index.length) await loadIndex();
     if (parts[0] === 'lesson' && parts[1]) {
       const lesson = await getLesson(parts[1]);
       if (!lesson) return notFound();
-      if (parts[2] === 'b' && parts[3]) {
-        const block = lesson.blocks.find(b => b.id === parts[3]);
-        return block ? renderBlock(lesson, block) : notFound();
-      }
-      if (parts[2] === 'report') return renderReport(lesson);
+      if (parts[2] === 'understand') return renderUnderstand(lesson);
+      if (parts[2] === 'build' || parts[2] === 'speak') return renderExercise(lesson, parts[2], parts[3]);
       return renderLesson(lesson, false);
     }
     if (parts[0] === 'lessons') return renderLessons();
     if (parts[0] === 'settings') return renderSettings();
-    return renderHome();
+    if (!index.length) { setTab('home'); main.innerHTML = '<p class="loading">No lessons yet.</p>'; return; }
+    return renderLesson(await getLesson(index[0].id), true);
   } catch (e) {
     console.error(e);
-    main.innerHTML = `<div class="card"><h2 class="card-title">Não consegui carregar o conteúdo</h2>
-      <p class="hint">Verifique a internet e tente de novo. Seu progresso continua salvo no aparelho.</p>
-      <button class="btn" data-action="reload">Tentar de novo</button></div>`;
+    main.innerHTML = `<div class="card"><h2 class="card-title">Could not load the lesson</h2>
+      <p class="hint">Check your internet connection and try again. Your progress is saved on this device.</p>
+      <button class="btn" data-action="reload">Try again</button></div>`;
   } finally {
     window.scrollTo(0, 0);
   }
 }
 
 function notFound() {
-  main.innerHTML = '<div class="card"><p>Página não encontrada.</p><a class="btn" href="#/">Voltar ao início</a></div>';
+  main.innerHTML = '<div class="card"><p>Page not found.</p><a class="btn" href="#/">Go home</a></div>';
 }
 
-/* ---------- Início e lição ---------- */
+/* ---------- Lição ---------- */
 
-function blockChip(lesson, b) {
-  const bs = blockState(state, lesson.id, b.id);
-  const r = blockResult(lesson, b, bs);
-  if (bs.done) return `<span class="chip ok">${icon.check} ${r.ok}/${r.n}</span>`;
-  if (r.answered) return `<span class="chip mid">${r.answered}/${r.total}</span>`;
-  return '<span class="chip">Começar</span>';
-}
-
-function blockList(lesson) {
-  const next = lesson.blocks.find(b => !blockState(state, lesson.id, b.id).done);
-  return `<ol class="steps">${lesson.blocks.map(b => `
-    <li><a class="step ${next && b.id === next.id ? 'next' : ''}" href="#/lesson/${lesson.id}/b/${b.id}">
-      <span class="step-n">${b.slide}</span>
-      <span class="step-body"><strong>${esc(b.title)}</strong><span>${esc(b.topicPt)}</span></span>
-      ${blockChip(lesson, b)}
-    </a></li>`).join('')}</ol>`;
+function nextStep(lesson) {
+  const p = progress(state, lesson.id);
+  if (!p.understood) return { href: `#/lesson/${lesson.id}/understand`, label: 'Start: Understand' };
+  const b = nextIndex(lesson.build, p.build);
+  if (b) return { href: `#/lesson/${lesson.id}/build/${b}`, label: `Continue: Build the sentence (${b}/${lesson.build.length})` };
+  const s = nextIndex(lesson.speak, p.speak);
+  if (s) return { href: `#/lesson/${lesson.id}/speak/${s}`, label: `Continue: Get ready to speak (${s}/${lesson.speak.length})` };
+  return null;
 }
 
 function renderLesson(lesson, isHome) {
   setTab(isHome ? 'home' : 'lessons');
-  const next = lesson.blocks.find(b => !blockState(state, lesson.id, b.id).done);
-  const anyDone = lesson.blocks.some(b => blockState(state, lesson.id, b.id).done);
+  const p = progress(state, lesson.id);
+  const nb = Object.keys(p.build).filter(id => lesson.build.some(x => x.id === id)).length;
+  const ns = Object.keys(p.speak).filter(id => lesson.speak.some(x => x.id === id)).length;
+  const next = nextStep(lesson);
+  const step = (n, title, desc, href, status, done) => `<li><a class="step ${done ? '' : ''}" href="${href}">
+    <span class="step-n">${n}</span><span class="step-body"><strong>${title}</strong><span>${desc}</span></span>
+    <span class="chip ${done ? 'ok' : ''}">${done ? ICON.check : ''}${status}</span></a></li>`;
   main.innerHTML = `
-    ${isHome ? '<header class="page-head"><p class="eyebrow">Aula de Inglês</p><h1>Prepare-se para a aula</h1></header>' : `<a class="back" href="#/lessons">← Lições</a>`}
+    ${isHome ? '<header class="page-head"><p class="eyebrow">Speaking class</p><h1>Get ready for class</h1></header>' : '<a class="back" href="#/lessons">← Lessons</a>'}
     <section class="hero card">
-      <p class="eyebrow">Lição ${lesson.number} · ${formatDate(lesson.date)} · ${esc(lesson.level)}</p>
+      <p class="eyebrow">Lesson ${lesson.number} · ${formatDate(lesson.date)} · ${esc(lesson.level)}</p>
       <h2 class="hero-title">${esc(lesson.title)}</h2>
       <p class="hint">${esc(lesson.subtitle)}</p>
-      ${next ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/b/${next.id}">Abrir bloco ${next.slide}: ${esc(next.title)}</a>`
-        : `<p class="done-note">${icon.check} Os 3 blocos estão feitos. Bom proveito na aula!</p>`}
+      ${next ? `<a class="btn btn-wide" href="${next.href}">${next.label}</a>`
+        : `<p class="done-note">${ICON.check} You're ready for class.</p>`}
     </section>
-    <h2 class="section-title">Blocos (um por lâmina)</h2>
-    ${blockList(lesson)}
-    ${anyDone ? `<a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}/report">Relatório para a avaliação no chat</a>` : ''}
-    ${isHome ? `<div class="card how"><h2 class="card-title">Como usar</h2><ul class="plain">
-      <li><strong>Um bloco por dia</strong>, cerca de 15 minutos: leia, ouça, repita em voz alta e pratique.</li>
-      <li>No fim, toque em <strong>Relatório</strong> e cole no chat do projeto. Eu corrijo suas frases.</li>
-      <li>Na aula, deixe o bloco aberto para consultar as expressões.</li></ul></div>` : ''}`;
-}
-
-async function renderHome() {
-  if (!index.length) { setTab('home'); main.innerHTML = '<p class="loading">Nenhuma lição publicada ainda.</p>'; return; }
-  renderLesson(await getLesson(index[0].id), true);
+    <ol class="steps">
+      ${step(1, 'Understand', 'Read the scenario and the key expressions.', `#/lesson/${lesson.id}/understand`, p.understood ? 'Done' : 'Read', p.understood)}
+      ${step(2, 'Build the sentence', 'Put the blocks in order. Listen and repeat.', `#/lesson/${lesson.id}/build/${nextIndex(lesson.build, p.build) || 1}`, `${nb}/${lesson.build.length}`, nb === lesson.build.length)}
+      ${step(3, 'Get ready to speak', 'Build an answer to each class question, then say it.', `#/lesson/${lesson.id}/speak/${nextIndex(lesson.speak, p.speak) || 1}`, `${ns}/${lesson.speak.length}`, ns === lesson.speak.length)}
+    </ol>`;
 }
 
 function renderLessons() {
   setTab('lessons');
-  main.innerHTML = `<header class="page-head"><p class="eyebrow">Histórico</p><h1>Lições</h1></header>
-    <ul class="list">${index.map(meta => {
-      const ls = state.lessons[meta.id];
-      const done = ls && ls.blocks ? Object.values(ls.blocks).filter(b => b.done).length : 0;
-      return `<li><a class="lesson-row" href="#/lesson/${meta.id}">
-        <span><strong>Lição ${meta.number} · ${esc(meta.title)}</strong><span class="hint">${formatDate(meta.date)} · ${esc(meta.subtitle || '')}</span></span>
-        <span class="chip ${done >= 3 ? 'ok' : ''}">${done}/3</span></a></li>`;
-    }).join('')}</ul>`;
+  main.innerHTML = `<header class="page-head"><p class="eyebrow">All lessons</p><h1>Lessons</h1></header>
+    <ul class="list">${index.map(m => `<li><a class="lesson-row" href="#/lesson/${m.id}">
+      <span><strong>Lesson ${m.number} · ${esc(m.title)}</strong><span class="hint">${formatDate(m.date)} · ${esc(m.subtitle || '')}</span></span></a></li>`).join('')}</ul>`;
 }
 
-/* ---------- Bloco ---------- */
+/* ---------- 1. Understand ---------- */
 
-const SECTIONS = [['s-cen', 'Cenário'], ['s-phr', 'Phrases'], ['s-dis', 'Discuss'], ['s-new', 'Frases novas'], ['s-pra', 'Pratique']];
-
-function renderBlock(lesson, block) {
+function renderUnderstand(lesson) {
   setTab('lessons');
-  view = { lesson, block };
-  const idx = lesson.blocks.indexOf(block);
+  const u = lesson.understand;
   main.innerHTML = `
-    <a class="back" href="#/lesson/${lesson.id}">← Lição ${lesson.number}</a>
-    <header class="page-head">
-      <p class="eyebrow">Lâmina ${block.slide} de ${lesson.blocks.length} · ${esc(block.tag)}</p>
-      <h1>${esc(block.title)}</h1>
-      <p class="sub-en">${esc(block.subtitle)} ${say(block.subtitle)}</p>
-      <p class="pt-box"><span class="pt-label">Em português</span>${esc(block.topicPt)}</p>
-    </header>
-    <nav class="seg" aria-label="Partes do bloco">${SECTIONS.map(([id, l], i) => `<button data-action="goto" data-id="${id}">${i + 1}. ${l}</button>`).join('')}</nav>
-
-    <section id="s-cen" class="sec">
-      <h2 class="sec-title"><span>1</span> The scenario</h2>
-      ${block.scenario.map(p => `<div class="en-block">${p.label ? `<p class="lbl">${esc(p.label)}</p>` : ''}<p>${esc(p.en)}</p>${say(p.en, 'Ouvir o texto')}</div>`).join('')}
-      <p class="pt-box"><span class="pt-label">Em resumo</span>${esc(block.scenarioPt)}</p>
-      <ul class="words">${block.words.map(([en, pt]) => `<li><strong>${esc(en)}</strong> = ${esc(pt)}</li>`).join('')}</ul>
-      ${block.highlight ? `<div class="key"><p class="en">${esc(block.highlight.en)} ${say(block.highlight.en)}</p><p class="pt">${esc(block.highlight.pt)}</p></div>` : ''}
-      <p class="motto">${esc(block.motto.en)} <span>${esc(block.motto.pt)}</span></p>
-    </section>
-
-    <section id="s-phr" class="sec">
-      <h2 class="sec-title"><span>2</span> Useful words &amp; phrases</h2>
-      <p class="hint">Ouça e repita o exemplo inteiro em voz alta.</p>
-      ${block.phrases.map(p => `<div class="phrase">
-        <div class="phrase-head"><p class="en">${esc(p.en)}</p>${say(p.en)}</div>
-        <p class="pt">${esc(p.pt)}${p.tip ? ` <span class="pattern">${esc(p.tip)}</span>` : ''}</p>
-        <p class="example"><span>${esc(p.example)}</span>${say(p.example, 'Ouvir exemplo')}</p>
-      </div>`).join('')}
-    </section>
-
-    <section id="s-dis" class="sec">
-      <h2 class="sec-title"><span>3</span> ${esc(block.discussTitle)}</h2>
-      <p class="hint">São as perguntas da aula. Pense na sua resposta em voz alta antes de abrir o exemplo.</p>
-      ${block.questions.map((q, i) => `<div class="card q">
-        <p class="q-en"><span class="qn">${i + 1}</span> ${esc(q.en)} ${say(q.en)}</p>
-        <p class="pt">${esc(q.pt)}</p>
-        <details><summary>Ver exemplo de resposta</summary><p class="model">${esc(q.model)}</p>${say(q.model, 'Ouvir exemplo de resposta')}</details>
-      </div>`).join('')}
-    </section>
-
-    <section id="s-new" class="sec">
-      <h2 class="sec-title"><span>4</span> Frases novas com o conteúdo</h2>
-      <p class="hint">As mesmas expressões em outras situações. Ouça, repita e veja como elas se encaixam.</p>
-      ${block.newSentences.map(s => `<div class="shadow"><span><span class="en">${esc(s.en)}</span><span class="pt">${esc(s.pt)}</span></span>${say(s.en)}</div>`).join('')}
-    </section>
-
-    <section id="s-pra" class="sec">
-      <h2 class="sec-title"><span>5</span> Pratique: construa frases</h2>
-      <div id="practice"></div>
-      <div id="result"></div>
-    </section>
-    ${idx < lesson.blocks.length - 1 ? `<a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}/b/${lesson.blocks[idx + 1].id}">Ir para o bloco ${idx + 2}</a>` : ''}`;
-  drawPractice();
+    <a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a>
+    <header class="page-head"><p class="eyebrow">Step 1 of 3</p><h1>Understand</h1></header>
+    <h2 class="section-title">The scenario</h2>
+    ${u.scenario.map(s => `<div class="card scen"><h3 class="card-title">${esc(s.title)}</h3><p class="en-text">${esc(s.text)}</p>${listen(s.text)}</div>`).join('')}
+    <h2 class="section-title">Key expressions</h2>
+    ${u.expressions.map(x => `<div class="phrase">
+      <p class="en">${esc(x.en)}</p>
+      <p class="meaning">${esc(x.meaning)}</p>
+      <p class="example">${esc(x.example)}</p>${listen(x.example, true)}
+    </div>`).join('')}
+    <button class="btn btn-wide" data-action="understood">Next: Build the sentence</button>`;
 }
 
-function drawPractice() {
-  const { lesson, block } = view;
-  const bs = blockState(state, lesson.id, block.id);
-  const box = document.getElementById('practice');
-  box.innerHTML = block.practice.map((item, i) => `<div class="card ex" id="ex-${item.id}">${exercise(lesson, item, bs, i + 1)}</div>`).join('');
-  drawResult();
-}
+/* ---------- 2 e 3. Build / Speak ---------- */
 
-function redrawItem(item) {
-  const { lesson, block } = view;
-  const bs = blockState(state, lesson.id, block.id);
-  const el = document.getElementById(`ex-${item.id}`);
-  el.innerHTML = exercise(lesson, item, bs, block.practice.indexOf(item) + 1);
-  drawResult();
-}
-
-function exercise(lesson, item, bs, n) {
-  const head = (instr) => `<p class="tag">Exercício ${n} de ${view.block.practice.length}</p><p class="instr">${instr}</p>`;
-  if (item.type === 'mc') {
-    const a = bs.answers[item.id];
-    const order = ui[`o:${item.id}`] || (ui[`o:${item.id}`] = shuffledOrder(item.options.length));
-    return `${head('Complete a frase')}<p class="prompt">${esc(item.prompt)}</p>
-      <div class="opts">${order.map(i => {
-        let cls = 'opt';
-        if (a) cls += i === item.answer ? ' right' : String(i) === a.given ? ' wrong' : ' dim';
-        return `<button class="${cls}" data-action="mc" data-item="${item.id}" data-i="${i}" ${a ? 'disabled' : ''}>${esc(item.options[i])}</button>`;
-      }).join('')}</div>${a ? fb(a.ok, item.prompt.replace('___', item.options[item.answer]), item.explain) : ''}`;
-  }
-  if (item.type === 'order') {
-    const a = bs.answers[item.id];
-    const words = tokens(item.answer);
-    if (a) return `${head('Monte a frase em inglês')}<p class="pt-q">${esc(item.prompt)}</p>
-      <p class="built done">${esc(a.given)}</p>${fb(a.ok, item.answer, item.explain)}`;
-    const st = ui[`w:${item.id}`] || (ui[`w:${item.id}`] = { perm: scramble(words), picked: [] });
-    const built = st.picked.map((k, j) => `<button class="word on" data-action="unpick" data-item="${item.id}" data-j="${j}">${esc(words[k])}</button>`).join('');
-    const bank = st.perm.map(k => st.picked.includes(k) ? '' : `<button class="word" data-action="pick" data-item="${item.id}" data-k="${k}">${esc(words[k])}</button>`).join('');
-    const full = st.picked.length === words.length;
-    return `${head('Monte a frase em inglês: toque nas palavras na ordem certa')}<p class="pt-q">${esc(item.prompt)}</p>
-      <div class="built">${built || '<span class="hint">Toque nas palavras abaixo…</span>'}</div>
-      <div class="bank">${bank}</div>
-      <div class="two"><button class="btn btn-ghost" data-action="clear" data-item="${item.id}">Limpar</button>
-        <button class="btn" data-action="checkorder" data-item="${item.id}" ${full ? '' : 'disabled'}>Conferir</button></div>`;
-  }
-  // write
-  const saved = bs.writes[item.id];
-  const editing = ui[`e:${item.id}`] || !saved;
-  if (!editing) {
-    const r = checkWrite(item, saved, allPhrases(lesson));
-    return `${head('Escreva a sua frase')}<p class="pt-q">${md(item.prompt)}</p>
-      <div class="mine"><p>${esc(saved)}</p></div>
-      <div class="fb ${r.ok ? 'ok' : 'bad'}"><p class="fb-title">${r.ok ? 'Usou a expressão' : r.used ? 'Frase curta demais' : 'Faltou a expressão pedida'}</p>
-        <p>Exemplo: <span class="en">${esc(item.model)}</span> ${say(item.model)}</p>
-        <p class="hint">A gramática da sua frase eu corrijo no chat, pelo relatório.</p></div>
-      <button class="btn btn-small btn-ghost" data-action="edit" data-item="${item.id}">Reescrever</button>`;
-  }
-  const draft = ui[`d:${item.id}`] ?? saved ?? '';
-  return `${head('Escreva a sua frase')}<p class="pt-q">${md(item.prompt)}</p>
-    <textarea class="input" rows="3" data-draft="${item.id}" autocapitalize="sentences" spellcheck="true" placeholder="Write your sentence in English…">${esc(draft)}</textarea>
-    <button class="btn btn-wide" data-action="savewrite" data-item="${item.id}">Conferir</button>`;
-}
-
-function fb(ok, right, explain) {
-  return `<div class="fb ${ok ? 'ok' : 'bad'}"><p class="fb-title">${ok ? 'Certo!' : 'Não foi dessa vez'}</p>
-    <p class="fb-right"><span>${esc(right)}</span>${say(right)}</p><p>${md(explain)}</p></div>`;
-}
-
-function drawResult() {
-  const { lesson, block } = view;
-  const bs = blockState(state, lesson.id, block.id);
-  const r = blockResult(lesson, block, bs);
-  const box = document.getElementById('result');
-  if (!bs.done) {
-    box.innerHTML = `<p class="hint progress">${r.answered} de ${r.total} exercícios feitos</p>
-      <button class="btn btn-wide" data-action="finish" ${r.complete ? '' : 'disabled'}>Concluir bloco ${block.slide}</button>`;
-    return;
-  }
-  const f = blockFeedback(r);
-  const idx = lesson.blocks.indexOf(block);
-  const next = lesson.blocks[idx + 1];
-  box.innerHTML = `<div class="card result">
-    <p class="eyebrow">Resultado do bloco ${block.slide}</p>
-    <p class="score">${r.ok}/${r.n}</p><p class="hint">certos em completar e montar frases · ${r.written.filter(w => w.ok).length}/${r.written.length} frases com a expressão</p>
-    <h3 class="card-title good-txt">Onde foi bem</h3>${f.good.length ? `<ul class="plain">${f.good.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '<p class="hint">—</p>'}
-    <h3 class="card-title">Onde focar</h3><ul class="plain">${f.focus.map(x => `<li>${md(x)}</li>`).join('')}</ul>
-    ${next ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/b/${next.id}">Próximo: bloco ${next.slide}</a>`
-      : `<a class="btn btn-wide" href="#/lesson/${lesson.id}/report">Relatório para a avaliação no chat</a>`}
-  </div>`;
-}
-
-/* ---------- Relatório ---------- */
-
-function renderReport(lesson) {
+function renderExercise(lesson, kind, nParam) {
   setTab('lessons');
-  const text = lessonReport(lesson, state);
+  const items = kind === 'build' ? lesson.build : lesson.speak;
+  const title = kind === 'build' ? 'Build the sentence' : 'Get ready to speak';
+  if (nParam === 'done' || !nParam) return renderDone(lesson, kind);
+  const n = Math.min(Math.max(parseInt(nParam, 10) || 1, 1), items.length);
+  const item = items[n - 1];
+  screen = { lesson, kind, items, n, item, title, perm: scramble(item.blocks), picked: [], status: 'idle', hidden: false };
+  drawExercise();
+}
+
+function drawExercise() {
+  const { lesson, kind, items, n, item, title, perm, picked, status, hidden } = screen;
+  const pct = Math.round(((n - 1) / items.length) * 100);
+  const question = kind === 'build' ? item.prompt : item.question;
+  const answer = sentenceOf(item.blocks);
+  const built = picked.map((k, j) => `<button class="word on" data-action="unpick" data-j="${j}" ${status === 'right' ? 'disabled' : ''}>${esc(item.blocks[k])}</button>`).join('');
+  const bank = perm.filter(k => !picked.includes(k)).map(k => `<button class="word" data-action="pick" data-k="${k}">${esc(item.blocks[k])}</button>`).join('');
+  const full = picked.length === item.blocks.length;
+
+  let below = '';
+  if (status === 'right') {
+    if (kind === 'speak' && hidden) {
+      below = `<div class="fb ok"><p class="fb-title">Your turn</p>
+        <p>Answer the question out loud, in your own words. Then listen to the example again.</p></div>
+        <div class="two"><button class="btn btn-ghost" data-action="show">Show the answer</button><button class="btn" data-action="next">Next</button></div>`;
+    } else {
+      below = `<div class="fb ok"><p class="fb-title">${ICON.check} Correct!</p><p class="fb-right">${esc(answer)}</p>
+        ${listen(answer)}<p class="explain">${esc(item.explain)}</p></div>
+        ${kind === 'speak' ? '<button class="btn btn-ghost btn-wide" data-action="hide">Try without looking</button>' : ''}
+        <button class="btn btn-wide" data-action="next">Next</button>`;
+    }
+  } else {
+    below = `${status === 'wrong' ? '<p class="wrong-msg">Not quite. Tap a block to remove it and try again.</p>' : ''}
+      <div class="two"><button class="btn btn-ghost" data-action="clear" ${picked.length ? '' : 'disabled'}>Start over</button>
+      <button class="btn" data-action="check" ${full ? '' : 'disabled'}>Check</button></div>`;
+  }
+
   main.innerHTML = `
-    <a class="back" href="#/lesson/${lesson.id}">← Lição ${lesson.number}</a>
-    <header class="page-head"><p class="eyebrow">Lição ${lesson.number}</p><h1>Relatório</h1></header>
-    <div class="card report">
-      <p class="hint">Copie e cole no chat do projeto (ou mande print). Eu corrijo suas frases e digo onde focar.</p>
-      <button class="btn btn-wide" data-action="copy">Copiar relatório</button>
-      <pre class="report-text">${esc(text)}</pre>
+    <div class="s-top"><a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a><span class="count">${title} · ${n}/${items.length}</span></div>
+    <div class="bar"><span data-w="${pct}"></span></div>
+    <div class="card qcard"><p class="eyebrow">${kind === 'build' ? 'Question' : 'Class question'}</p>
+      <p class="q-en">${esc(question)}</p>${listen(question, true)}</div>
+    <p class="instr">${status === 'right' ? '' : 'Tap the blocks to build the answer. Tap a block again to remove it.'}</p>
+    <div class="built ${status}">${(kind === 'speak' && hidden && status === 'right') ? '<span class="hint">Answer hidden.</span>' : built || '<span class="hint">Your answer appears here…</span>'}</div>
+    ${status === 'right' ? '' : `<div class="bank">${bank}</div>`}
+    ${below}`;
+}
+
+function renderDone(lesson, kind) {
+  const isBuild = kind === 'build';
+  main.innerHTML = `
+    <a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a>
+    <div class="card done-card">
+      <p class="big-check">${ICON.check}</p>
+      <h1>${isBuild ? 'Well done!' : "You're ready for class."}</h1>
+      <p class="hint">${isBuild ? `You built all ${lesson.build.length} sentences. Now prepare your answers to the class questions.`
+        : 'In class, use the expressions in your own answers. The examples are ideas, not scripts.'}</p>
+      ${isBuild ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/speak/1">Next: Get ready to speak</a>` : `<a class="btn btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`}
+      <a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}/${kind}/1">Practice again</a>
     </div>`;
-  view = { lesson, reportText: text };
 }
 
-/* ---------- Ajustes ---------- */
+/* ---------- Settings ---------- */
 
 async function renderSettings() {
   setTab('settings');
   const snaps = await listSnapshots();
   loadVoices();
   main.innerHTML = `
-    <header class="page-head"><p class="eyebrow">Aula de Inglês · v${APP_VERSION}</p><h1>Ajustes</h1></header>
-    <div class="card"><h2 class="card-title">Voz</h2>
-      <label class="field">Voz em inglês
-        <select class="input" data-setting="voice"><option value="">Automática</option>
+    <header class="page-head"><p class="eyebrow">Speaking class · v${APP_VERSION}</p><h1>Settings</h1></header>
+    <div class="card"><h2 class="card-title">Voice</h2>
+      <p class="hint">"Automatic" picks the most natural English voice on this phone.</p>
+      <label class="field">English voice
+        <select class="input" data-setting="voice"><option value="">Automatic</option>
           ${voices.map(v => `<option value="${esc(v.name)}" ${v.name === state.settings.voice ? 'selected' : ''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}
         </select></label>
-      <label class="field">Velocidade: <span id="rate-v">${state.settings.rate}</span>
-        <input type="range" min="0.7" max="1.2" step="0.05" value="${state.settings.rate}" data-setting="rate"></label>
-      <button class="btn btn-ghost" data-action="say" data-text="Take inspiration from people you admire, but measure success on your own terms.">${icon.play} Testar voz</button>
+      ${listen('Take inspiration from people you admire, but measure success on your own terms.')}
     </div>
-    <div class="card"><h2 class="card-title">Backup do progresso</h2>
-      <p class="hint">O progresso fica só neste aparelho, com cópias automáticas internas. Exporte um backup de vez em quando, principalmente antes de trocar de celular.</p>
-      <div class="two"><button class="btn" data-action="export">Exportar backup</button><label class="btn btn-ghost">Importar backup<input type="file" accept="application/json,.json" data-action="import" hidden></label></div>
-      <p class="hint">Registros salvos: ${answerCount(state)}</p>
+    <div class="card"><h2 class="card-title">Backup</h2>
+      <p class="hint">Your progress is saved only on this phone. Export a backup before changing phones.</p>
+      <div class="two"><button class="btn" data-action="export">Export backup</button><label class="btn btn-ghost">Import backup<input type="file" accept="application/json,.json" data-action="import" hidden></label></div>
+      <p class="hint">Saved records: ${answerCount(state)}</p>
     </div>
-    <div class="card"><h2 class="card-title">Cópias automáticas</h2>
-      ${snaps.length ? `<ul class="list">${snaps.slice(0, 12).map(s => `<li class="snap"><span>${new Date(s.ts).toLocaleString('pt-BR')} · ${esc(s.label)} · ${s.answers} registros</span>
-        <button class="btn btn-small btn-ghost" data-action="restore" data-key="${esc(s.key)}">Restaurar</button></li>`).join('')}</ul>`
-        : '<p class="hint">Ainda não há cópias.</p>'}
+    <div class="card"><h2 class="card-title">Automatic copies</h2>
+      ${snaps.length ? `<ul class="list">${snaps.slice(0, 10).map(s => `<li class="snap"><span>${new Date(s.ts).toLocaleString('en-GB')} · ${s.answers} records</span>
+        <button class="btn btn-small btn-ghost" data-action="restore" data-key="${esc(s.key)}">Restore</button></li>`).join('')}</ul>`
+        : '<p class="hint">No copies yet.</p>'}
     </div>`;
 }
 
@@ -387,78 +294,55 @@ function exportBackup() {
 async function importBackup(file) {
   try {
     const s = looksLikeBackup(JSON.parse(await file.text()));
-    if (!s) throw new Error('formato');
-    if (!confirm('Substituir o progresso atual pelo do backup? O atual fica guardado em Cópias automáticas.')) return;
-    await snapshot(state, 'antes de importar');
+    if (!s) throw new Error('format');
+    if (!confirm('Replace your current progress with this backup? The current progress is kept as an automatic copy.')) return;
+    await snapshot(state, 'before import');
     state = migrateState(s);
-    save({ reason: 'antes de importar' });
-    toast('Backup importado.');
+    save({ reason: 'before import' });
+    toast('Backup imported.');
     route();
-  } catch { toast('Arquivo inválido. Use um backup exportado por este app.'); }
+  } catch { toast('Invalid file. Use a backup exported by this app.'); }
 }
 
 /* ---------- Eventos ---------- */
 
-function itemById(id) { return view && view.block ? view.block.practice.find(i => i.id === id) : null; }
-
 main.addEventListener('click', async e => {
   const el = e.target.closest('[data-action]');
-  if (!el) return;
+  if (!el || el.disabled) return;
   const a = el.dataset.action;
-  if (a === 'say') return speak(el.dataset.text);
+  if (a === 'say') return speak(el.dataset.text, Number(el.dataset.rate) || 1);
   if (a === 'reload') return location.reload();
   if (a === 'export') return exportBackup();
-  if (a === 'goto') return document.getElementById(el.dataset.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   if (a === 'restore') {
     const snap = await readSnapshot(el.dataset.key);
-    if (!snap || !confirm('Restaurar esta cópia? O estado atual fica guardado como cópia.')) return;
-    await snapshot(state, 'antes de restaurar');
-    state = snap; save({ reason: 'antes de restaurar' }); toast('Cópia restaurada.'); return route();
+    if (!snap || !confirm('Restore this copy? Your current progress is kept as a copy.')) return;
+    await snapshot(state, 'before restore');
+    state = snap; save({ reason: 'before restore' }); toast('Copy restored.'); return route();
   }
-  if (a === 'copy') {
-    const text = view.reportText;
-    try { await navigator.clipboard.writeText(text); toast('Relatório copiado. Cole no chat do projeto.'); }
-    catch { toast('Não consegui copiar sozinho: selecione o texto do relatório e copie.'); }
+  if (a === 'understood') {
+    const id = location.hash.split('/')[2];
+    progress(state, id).understood = true; save(); requestPersistence();
+    location.hash = `#/lesson/${id}/build/1`;
     return;
   }
-  if (!view || !view.block) return;
-  const { lesson, block } = view;
-  const bs = blockState(state, lesson.id, block.id);
-  const item = itemById(el.dataset.item);
-  if (a === 'mc' && item && !bs.answers[item.id]) {
-    const i = Number(el.dataset.i);
-    bs.answers[item.id] = { ok: checkItem(item, i), given: String(i), ts: Date.now() };
-    save(); requestPersistence(); return redrawItem(item);
+  if (!screen) return;
+  const s = screen;
+  if (a === 'pick') { s.picked.push(Number(el.dataset.k)); s.status = 'idle'; return drawExercise(); }
+  if (a === 'unpick') { s.picked.splice(Number(el.dataset.j), 1); s.status = 'idle'; return drawExercise(); }
+  if (a === 'clear') { s.picked = []; s.status = 'idle'; return drawExercise(); }
+  if (a === 'check') {
+    if (isCorrect(s.item, s.picked)) {
+      s.status = 'right';
+      progress(state, s.lesson.id)[s.kind][s.item.id] = true;
+      save(); requestPersistence();
+    } else s.status = 'wrong';
+    return drawExercise();
   }
-  if (a === 'pick' && item) { ui[`w:${item.id}`].picked.push(Number(el.dataset.k)); return redrawItem(item); }
-  if (a === 'unpick' && item) { ui[`w:${item.id}`].picked.splice(Number(el.dataset.j), 1); return redrawItem(item); }
-  if (a === 'clear' && item) { ui[`w:${item.id}`].picked = []; return redrawItem(item); }
-  if (a === 'checkorder' && item && !bs.answers[item.id]) {
-    const words = tokens(item.answer);
-    const given = ui[`w:${item.id}`].picked.map(k => words[k]).join(' ');
-    bs.answers[item.id] = { ok: checkItem(item, given), given, ts: Date.now() };
-    save(); requestPersistence(); return redrawItem(item);
+  if (a === 'hide') { s.hidden = true; try { speechSynthesis.cancel(); } catch { /* ignore */ } return drawExercise(); }
+  if (a === 'show') { s.hidden = false; return drawExercise(); }
+  if (a === 'next') {
+    location.hash = `#/lesson/${s.lesson.id}/${s.kind}/${s.n < s.items.length ? s.n + 1 : 'done'}`;
   }
-  if (a === 'edit' && item) { ui[`e:${item.id}`] = true; ui[`d:${item.id}`] = bs.writes[item.id]; return redrawItem(item); }
-  if (a === 'savewrite' && item) {
-    const text = (ui[`d:${item.id}`] ?? '').trim();
-    if (wordCount(text) < 4) { toast('Escreva uma frase completa antes de conferir.'); return; }
-    bs.writes[item.id] = text;
-    ui[`e:${item.id}`] = false;
-    save(); requestPersistence(); return redrawItem(item);
-  }
-  if (a === 'finish' && !bs.done) {
-    bs.done = true; bs.doneAt = Date.now();
-    const r = blockResult(lesson, block, bs);
-    state.log.push({ ts: bs.doneAt, lesson: lesson.id, block: block.id, ok: r.ok, n: r.n });
-    save(); return drawResult();
-  }
-});
-
-main.addEventListener('input', e => {
-  const t = e.target;
-  if (t.dataset.draft) ui[`d:${t.dataset.draft}`] = t.value;
-  if (t.dataset.setting === 'rate') { state.settings.rate = Number(t.value); document.getElementById('rate-v').textContent = t.value; save(); }
 });
 
 main.addEventListener('change', e => {
@@ -467,9 +351,13 @@ main.addEventListener('change', e => {
   if (t.dataset.action === 'import' && t.files && t.files[0]) importBackup(t.files[0]);
 });
 
+// Larguras de barras via CSSOM: a CSP proíbe atributos style inline.
+new MutationObserver(() => main.querySelectorAll('[data-w]').forEach(el => { el.style.width = `${el.dataset.w}%`; }))
+  .observe(main, { childList: true, subtree: true });
+
 window.addEventListener('hashchange', route);
 
-/* ---------- Atualizações (service worker) ---------- */
+/* ---------- Atualizações ---------- */
 
 function setupSW() {
   if (!('serviceWorker' in navigator)) return;
@@ -490,7 +378,7 @@ function setupSW() {
       w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) offer(w); });
     });
     setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
-  }).catch(err => console.warn('Service worker indisponível', err));
+  }).catch(err => console.warn('Service worker unavailable', err));
 }
 
 (async function boot() {

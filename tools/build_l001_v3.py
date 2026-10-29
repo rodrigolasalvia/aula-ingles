@@ -1,0 +1,103 @@
+"""Lição 1 (formato v3) · 28/10/2026 · Comparison, Choices & Envy
+Gera data/v3/l001.json e atualiza data/v3/lessons.json. Rode: python3 tools/build_l001_v3.py
+
+Formato: READ → BUILD → LISTEN → REPEAT → SPEAK
+- understand: resumo curto em inglês (um parágrafo por lâmina) + expressões-chave com explicação breve em inglês
+- build: 8 a 10 frases; "blocks" na ordem CORRETA (o app embaralha); 3 a 6 blocos cada
+- speak: as perguntas da aula, com resposta curta dividida em blocos
+Tudo em inglês. Nada traduzido para o português.
+"""
+import json, pathlib
+
+LESSON = {
+  "id": "l001", "number": 1, "date": "2026-10-28", "format": 3,
+  "title": "Comparison, Choices & Envy",
+  "subtitle": "Social media, social pressure and envy",
+  "level": "B2 Speaking",
+
+  "understand": {
+    "scenario": [
+      {"title": "The Comparison Illusion",
+       "text": "An influencer posts beautiful photos of her home, dinners and weekends. Her followers assume her life is nearly perfect, but they don't see the staged photos, the money worries or the hard work behind the scenes."},
+      {"title": "Are You Choosing for Yourself?",
+       "text": "Sarah has always liked a simple life. When her friends start buying luxury brands, she starts spending too — not because she wants to, but because she's afraid of looking less successful. Months later, she has less money and a lifestyle that doesn't suit her."},
+      {"title": "Is Envy Always a Bad Thing?",
+       "text": "Envy can be destructive: you feel resentful and secretly hope others fail. But it can also be motivating: someone's success shows you what you want and pushes you to take action."},
+    ],
+    "expressions": [
+      {"en": "a carefully curated image", "meaning": "a version of your life that is selected and edited to look good.",
+       "example": "Most profiles show a carefully curated image, not real life."},
+      {"en": "take something at face value", "meaning": "to believe something exactly as it looks, without questioning it.",
+       "example": "Don't take every perfect post at face value."},
+      {"en": "distort your perception of reality", "meaning": "to make you see things in a way that isn't accurate.",
+       "example": "Constant scrolling can distort your perception of reality."},
+      {"en": "give in to social pressure", "meaning": "to do something because others expect it, not because you want to.",
+       "example": "Sarah gave in to social pressure and bought things she didn't need."},
+      {"en": "lose sight of your priorities", "meaning": "to forget what really matters to you.",
+       "example": "When you compare yourself all the time, you lose sight of your priorities."},
+      {"en": "seek external validation", "meaning": "to need approval from other people to feel good about yourself.",
+       "example": "Posting every achievement can be a way to seek external validation."},
+      {"en": "measure success on your own terms", "meaning": "to judge success by your own values, not by other people's.",
+       "example": "I prefer to measure success on my own terms."},
+      {"en": "turn envy into motivation", "meaning": "to use the feeling of wanting what others have as a push to act.",
+       "example": "She turned her envy into motivation and started a course."},
+      {"en": "take inspiration from someone", "meaning": "to use someone's example to motivate you.",
+       "example": "I take inspiration from people who changed careers later in life."},
+    ],
+  },
+
+  "build": [
+    {"id": "e01", "prompt": "Why do the influencer's followers think her life is perfect?",
+     "blocks": ["Her followers", "only see the highlights,", "not the staged photos", "or the financial pressure."],
+     "explain": "\"The highlights\" are the best moments. A \"staged\" photo is planned to look natural."},
+    {"id": "e02", "prompt": "What is the main message of the first slide?",
+     "blocks": ["What we see online", "is often", "a carefully curated image,", "not the full reality."],
+     "explain": "\"Curated\" means carefully selected and organised, like the objects in a museum."},
+    {"id": "e03", "prompt": "How do you react when you see a perfect post?",
+     "blocks": ["I try not to take", "perfect posts", "at face value", "because they reveal", "only part of the story."],
+     "explain": "\"Take something at face value\" means to accept it as true without questioning it. Remember: AT face value."},
+    {"id": "e04", "prompt": "Can social media change how we see the world?",
+     "blocks": ["Constant comparison", "can distort", "your perception", "of reality."],
+     "explain": "\"Distort\" means to change something so it is no longer accurate. Notice: perception OF reality."},
+    {"id": "e05", "prompt": "Why did Sarah change her lifestyle?",
+     "blocks": ["Sarah started buying", "expensive things", "because", "she wanted to fit in."],
+     "explain": "\"Fit in\" means to feel accepted by a group."},
+    {"id": "e06", "prompt": "What happened to Sarah's priorities?",
+     "blocks": ["She gave in to", "social pressure", "and lost sight of", "her own priorities."],
+     "explain": "\"Give in to\" means to stop resisting. \"Lose sight of\" means to forget what is really important."},
+    {"id": "e07", "prompt": "Why do some people post every achievement?",
+     "blocks": ["Some people post", "every achievement", "because they", "seek external validation."],
+     "explain": "\"External validation\" is approval that comes from other people, not from yourself."},
+    {"id": "e08", "prompt": "How do you define success?",
+     "blocks": ["Instead of making decisions", "based on appearances,", "I prefer to measure success", "on my own terms."],
+     "explain": "\"On your own terms\" means according to your own rules and values. Remember: based ON, not based in."},
+    {"id": "e09", "prompt": "When can envy be positive?",
+     "blocks": ["Envy can be useful", "if you turn it", "into motivation", "and take action."],
+     "explain": "\"Turn X into Y\" means to transform X into Y. Envy helps when it pushes you to act."},
+    {"id": "e10", "prompt": "How do confident people react to someone else's success?",
+     "blocks": ["Confident people", "don't feel threatened by", "other people's success;", "they take inspiration from it."],
+     "explain": "Notice the prepositions: threatened BY, inspiration FROM."},
+  ],
+
+  "speak": [
+    {"id": "q1", "question": "Is presenting an idealized version of yourself online a form of dishonesty, or is it simply a matter of privacy?",
+     "blocks": ["In my view,", "it depends on the intention.", "Showing only the highlights", "is a matter of privacy,", "but creating a false impression", "to sell something is dishonest."],
+     "explain": "\"It depends on…\" is a simple way to give a balanced opinion."},
+    {"id": "q2", "question": "Should people care about how others perceive their lifestyle, or should personal satisfaction come first? Defend your position.",
+     "blocks": ["I'd argue that", "personal satisfaction should come first.", "Other people's opinions matter", "to some extent,", "but I'd rather measure success", "on my own terms."],
+     "explain": "\"I'd argue that…\" and \"I'd rather…\" make your position clear and polite."},
+    {"id": "q3", "question": "Imagine your friend gets an opportunity you've wanted for years. What would your first reaction be, and how would you handle it?",
+     "blocks": ["To be honest,", "I'd feel a bit envious at first.", "Then I'd congratulate my friend", "and try to turn that feeling", "into motivation."],
+     "explain": "Use \"would\" ('d) to talk about imaginary situations: I'd feel, I'd congratulate."},
+  ],
+}
+
+root = pathlib.Path(__file__).resolve().parent.parent / "data" / "v3"
+root.mkdir(parents=True, exist_ok=True)
+(root / f"{LESSON['id']}.json").write_text(json.dumps(LESSON, ensure_ascii=False, indent=1), encoding="utf-8")
+idx_path = root / "lessons.json"
+idx = json.loads(idx_path.read_text()) if idx_path.exists() else {"lessons": []}
+meta = {k: LESSON[k] for k in ("id", "number", "date", "title", "subtitle")} | {"file": f"data/v3/{LESSON['id']}.json"}
+idx["lessons"] = [l for l in idx["lessons"] if l["id"] != LESSON["id"]] + [meta]
+idx_path.write_text(json.dumps(idx, ensure_ascii=False, indent=1), encoding="utf-8")
+print("ok", len(LESSON["build"]), "build ·", len(LESSON["speak"]), "speak")
