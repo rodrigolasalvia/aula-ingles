@@ -2,7 +2,7 @@
 // Código e visual: cache primeiro (versão nova só com o botão "Atualizar").
 // Lições (pasta data/): rede primeiro, para lições novas aparecerem sem atualizar o app; cache como reserva offline.
 // Ao publicar mudança de código, aumente CACHE_VERSION (igual a APP_VERSION em js/core.js).
-const CACHE_VERSION = '3.0.0';
+const CACHE_VERSION = '4.0.0';
 const CACHE = `aula-ingles-${CACHE_VERSION}`;
 const DATA = 'aula-ingles-data';
 const ASSETS = [
@@ -19,9 +19,9 @@ self.addEventListener('install', event => {
     // Pré-carrega as lições publicadas para uso offline (falha aqui não impede a instalação).
     try {
       const d = await caches.open(DATA);
-      const res = await fetch('data/v3/lessons.json', { cache: 'no-cache' });
+      const res = await fetch('data/v4/lessons.json', { cache: 'no-cache' });
       if (res.ok) {
-        await d.put('data/v3/lessons.json', res.clone());
+        await d.put('data/v4/lessons.json', res.clone());
         const { lessons = [] } = await res.json();
         await Promise.all(lessons.map(l => fetch(l.file, { cache: 'no-cache' }).then(r => r.ok && d.put(l.file, r))));
       }

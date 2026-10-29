@@ -1,12 +1,12 @@
 """Simulação de uso no celular (Chromium, 390x844). Rode: python3 tests/e2e.py [pasta_para_prints]
-Percorre Understand → Build → Speak da lição mais recente, com erro e nova tentativa, áudio, Try without looking,
-progresso após recarregar, dados antigos preservados, recuperação de dados corrompidos e uso offline."""
+Percorre as lâminas da lição mais recente: erro e nova tentativa, frases fixas na tela, áudio normal e lento,
+Try without looking, progresso após recarregar, dados antigos preservados, recuperação e uso offline."""
 import functools, http.server, json, pathlib, sys, threading
 from playwright.sync_api import sync_playwright
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SHOTS = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else None
-PORT = 8767
+PORT = 8768
 
 class Quiet(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a): pass
@@ -14,13 +14,12 @@ class Quiet(http.server.SimpleHTTPRequestHandler):
 srv = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), functools.partial(Quiet, directory=str(ROOT)))
 threading.Thread(target=srv.serve_forever, daemon=True).start()
 BASE = f"http://127.0.0.1:{PORT}/"
-IDX = json.loads((ROOT / "data/v3/lessons.json").read_text())
+IDX = json.loads((ROOT / "data/v4/lessons.json").read_text())
 LATEST = sorted(IDX["lessons"], key=lambda l: l["date"])[-1]
 L = json.loads((ROOT / LATEST["file"]).read_text())
 LID = L["id"]
 errors = []
-OLD = {"v": 2, "lessons": {LID: {"blocks": {"b1": {"answers": {"b1m1": {"ok": True, "given": "0"}}, "writes": {"b1w1": "I never take it at face value."}, "done": True}}}},
-       "log": [{"ts": 1}], "settings": {"rate": 0.95, "voice": ""}}
+OLD = {"v": 3, "lessons": {LID: {"v3": {"understood": True, "build": {"e01": True}, "speak": {}}}}, "log": [{"ts": 1}], "settings": {"voice": ""}}
 
 def shot(page, name):
     if SHOTS:
@@ -32,19 +31,24 @@ def check(cond, msg):
     print("  ✓", msg)
 
 def tap_blocks(page, blocks):
+    page.wait_for_selector(".qitem.active .bank button.word")
     for b in blocks:
-        btns = page.locator(".bank button.word")
+        btns = page.locator(".qitem.active .bank button.word")
         for k in range(btns.count()):
             if btns.nth(k).inner_text().strip() == b:
                 btns.nth(k).click(); break
         else:
             raise AssertionError(f"bloco não encontrado: {b}")
 
+def build(page, item):
+    tap_blocks(page, item["blocks"])
+    page.click(".qitem.active [data-action=check]")
+    page.wait_for_selector(f"#q-{item['id']}.done")
+
 with sync_playwright() as p:
     browser = p.chromium.launch()
     ctx = browser.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
-    ctx.add_init_script("""window.__spoken = [];
-      window.speechSynthesis.speak = u => window.__spoken.push([u.text, u.rate]);""")
+    ctx.add_init_script("window.__spoken = []; window.speechSynthesis.speak = u => window.__spoken.push([u.text, u.rate]);")
     page = ctx.new_page()
     page.on("pageerror", lambda e: errors.append(f"pageerror: {e}"))
     page.on("console", lambda m: m.type == "error" and errors.append(f"console: {m.text}"))
@@ -53,85 +57,77 @@ with sync_playwright() as p:
     page.goto(BASE)
     page.evaluate("s => localStorage.setItem('aula-ingles:state', JSON.stringify(s))", OLD)
     page.reload(); page.wait_for_selector(".hero")
-    check("Start: Understand" in page.inner_text(".hero"), "tela inicial mostra por onde começar")
+    check(page.locator(".steps .step").count() == len(L["slides"]), "tela inicial mostra as lâminas")
+    check("Start: Slide 1" in page.inner_text(".hero"), "botão para começar na lâmina 1")
     shot(page, "01-home")
 
-    print("1. Understand")
-    page.click(".hero .btn"); page.wait_for_selector(".phrase")
-    check(page.locator(".scen").count() == len(L["understand"]["scenario"]), "resumo do cenário")
-    check(page.locator(".phrase").count() == len(L["understand"]["expressions"]), "expressões-chave")
-    page.locator(".scen .lbtn.slow").first.click()
-    sp = page.evaluate("window.__spoken")
-    check(abs(sp[-1][1] - 0.85) < 0.001 and sp[-1][0] == L["understand"]["scenario"][0]["text"], "Slow toca a 0.85x")
-    shot(page, "02-understand")
-    page.click("[data-action=understood]")
-
-    print("2. Build the sentence")
-    page.wait_for_selector(".bank")
-    check("1/10" in page.inner_text(".count") or f"1/{len(L['build'])}" in page.inner_text(".count"), "indicador de progresso 1/N")
-    first = L["build"][0]
+    s1 = L["slides"][0]
+    print("Lâmina 1")
+    page.click(".hero .btn"); page.wait_for_selector(".qlist")
+    check(page.locator("details.understand[open]").count() == 1, "resumo e expressões abertos na primeira visita")
+    check(page.locator(".qitem").count() == len(s1["items"]), "todas as perguntas da lâmina na tela")
+    page.locator("details.understand .lbtn.slow").click()
+    sp = page.evaluate("window.__spoken")[-1]
+    check(sp[0] == s1["summary"] and abs(sp[1] - 0.85) < 0.001, "Slow lê o resumo a 0.85x")
+    shot(page, "02-slide-start")
+    first = s1["items"][0]
     tap_blocks(page, list(reversed(first["blocks"])))
-    shot(page, "03-build-filled")
-    page.click("[data-action=check]")
-    check(page.locator(".wrong-msg").count() == 1, "ordem errada: mensagem para tentar de novo")
-    shot(page, "04-build-wrong")
-    page.locator(".built button.word").first.click()
-    check(page.locator(".built button.word").count() == len(first["blocks"]) - 1, "tocar no bloco o remove")
-    page.click("[data-action=clear]")
-    tap_blocks(page, first["blocks"]); page.click("[data-action=check]")
-    page.wait_for_selector(".fb.ok")
-    check(first["explain"] in page.inner_text(".fb.ok"), "certo: mostra a explicação")
-    page.locator(".fb .lbtn").first.click()
-    check(page.evaluate("window.__spoken")[-1] == [" ".join(first["blocks"]), 1], "Listen toca a frase completa em velocidade normal")
-    shot(page, "05-build-right")
-    page.click("[data-action=next]"); page.wait_for_selector(".bank")
-    page.reload(); page.wait_for_selector(".bank")
-    page.goto(BASE); page.wait_for_selector(".hero")
-    check("(2/" in page.inner_text(".hero"), "progresso guardado: continua da frase 2")
-    page.click(".hero .btn"); page.wait_for_selector(".bank")
-    for item in L["build"][1:]:
-        page.wait_for_selector(".bank button.word")
-        tap_blocks(page, item["blocks"]); page.click("[data-action=check]"); page.wait_for_selector(".fb.ok")
-        page.click("[data-action=next]")
-    page.wait_for_selector(".done-card")
-    shot(page, "06-build-done")
-    page.click(".done-card .btn:not(.btn-ghost)")
+    page.click(".qitem.active [data-action=check]")
+    check(page.locator(".wrong-msg").count() == 1, "ordem errada: pede nova tentativa")
+    page.locator(".qitem.active .built button.word").first.click()
+    check(page.locator(".qitem.active .built button.word").count() == len(first["blocks"]) - 1, "tocar no bloco o remove")
+    page.click(".qitem.active [data-action=clear]")
+    build(page, first)
+    check(" ".join(first["blocks"]) in page.inner_text(f"#q-{first['id']}"), "frase certa fica fixa na tela")
+    check(first["explain"] in page.inner_text(f"#q-{first['id']}"), "mostra a explicação")
+    page.locator(f"#q-{first['id']} .lbtn").first.click()
+    check(page.evaluate("window.__spoken")[-1] == [" ".join(first["blocks"]), 1], "Listen toca a frase em velocidade normal")
+    check(page.locator(f"#q-{s1['items'][1]['id']}.active").count() == 1, "próxima pergunta abre sozinha")
+    shot(page, "03-slide-one-done")
+    # Pular para outra pergunta e voltar
+    page.click(f"#q-{s1['items'][3]['id']} [data-action=activate]")
+    check(page.locator(f"#q-{s1['items'][3]['id']}.active").count() == 1, "dá para escolher qualquer pergunta")
+    build(page, s1["items"][3])
+    page.reload(); page.wait_for_selector(".qlist")
+    check(page.locator(".qitem.done").count() == 2, "recarregar mantém as frases fixas")
+    for item in s1["items"]:
+        if page.locator(f"#q-{item['id']}.done").count() == 0:
+            if page.locator(f"#q-{item['id']}.active").count() == 0:
+                page.click(f"#q-{item['id']} [data-action=activate]")
+            build(page, item)
+    check(page.locator(".qitem.done").count() == len(s1["items"]), "lâmina 1 completa")
+    check(all(" ".join(i["blocks"]) in page.inner_text(".qlist") for i in s1["items"]), "as 5 respostas ficam na tela")
+    shot(page, "04-slide-complete")
+    page.click("[data-action=hide]")
+    check(all(" ".join(i["blocks"]) not in page.inner_text(".qlist") for i in s1["items"]), "Try without looking esconde as respostas")
+    check(all(i["question"] in page.inner_text(".qlist") for i in s1["items"]), "perguntas continuam visíveis")
+    shot(page, "05-slide-hidden")
+    page.click("[data-action=show]")
+    check(" ".join(s1["items"][0]["blocks"]) in page.inner_text(".qlist"), "Show answers mostra de novo")
 
-    print("3. Get ready to speak")
-    page.wait_for_selector(".bank")
-    shot(page, "07-speak")
-    for n, item in enumerate(L["speak"]):
-        page.wait_for_selector(".bank button.word")
-        tap_blocks(page, item["blocks"]); page.click("[data-action=check]"); page.wait_for_selector(".fb.ok")
-        if n == 0:
-            shot(page, "08-speak-right")
-            page.click("[data-action=hide]")
-            check(" ".join(item["blocks"]) not in page.inner_text("main"), "Try without looking esconde a resposta")
-            shot(page, "09-speak-hidden")
-            page.click("[data-action=show]")
-            check(" ".join(item["blocks"]) in page.inner_text("main"), "Show the answer mostra de novo")
-        page.click("[data-action=next]")
-    page.wait_for_selector(".done-card")
+    print("Outras lâminas")
+    for s in L["slides"][1:]:
+        page.goto(f"{BASE}#/lesson/{LID}/slide/{s['n']}"); page.wait_for_selector(".qlist")
+        for item in s["items"]:
+            build(page, item)
+        if s["n"] == 3: shot(page, "06-slide3-complete")
     page.goto(BASE); page.wait_for_selector(".hero")
     check("ready for class" in page.inner_text(".hero"), "lição completa")
-    shot(page, "10-home-done")
     st = page.evaluate("JSON.parse(localStorage.getItem('aula-ingles:state'))")
-    check(st["lessons"][LID]["blocks"]["b1"]["done"] is True, "dados da versão anterior preservados")
+    check(st["lessons"][LID]["v3"]["build"]["e01"] is True, "dados da versão anterior preservados")
 
     print("Proteção dos dados e offline")
     page.wait_for_timeout(600)
     page.evaluate("localStorage.setItem('aula-ingles:state', '{x'); localStorage.removeItem('aula-ingles:state:prev')")
     page.reload(); page.wait_for_selector(".hero"); page.wait_for_timeout(500)
     st = page.evaluate("JSON.parse(localStorage.getItem('aula-ingles:state'))")
-    check(len(st["lessons"][LID]["v3"]["build"]) == len(L["build"]), "dados corrompidos: progresso recuperado")
-    page.goto(f"{BASE}#/settings"); page.wait_for_selector(".card")
-    shot(page, "11-settings")
-    page.goto(BASE); page.wait_for_selector(".hero")
+    total = sum(len(s["items"]) for s in L["slides"])
+    check(len(st["lessons"][LID]["v4"]["done"]) == total, "dados corrompidos: progresso recuperado")
     page.evaluate("navigator.serviceWorker.ready.then(() => true)")
     page.reload(); page.wait_for_selector(".hero")
     ctx.set_offline(True)
-    page.goto(f"{BASE}#/lesson/{LID}/build/3"); page.reload(); page.wait_for_selector(".bank", timeout=5000)
-    check(True, "sem internet: app e exercícios abrem")
+    page.goto(f"{BASE}#/lesson/{LID}/slide/2"); page.reload(); page.wait_for_selector(".qlist", timeout=5000)
+    check(True, "sem internet: app e lâminas abrem")
     ctx.set_offline(False)
     browser.close()
 

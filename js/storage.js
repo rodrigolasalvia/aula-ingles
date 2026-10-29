@@ -113,10 +113,12 @@ async function writeMirror(json) {
     await prune();
   } catch (e) { console.warn('Espelho em IndexedDB indisponível.', e); }
 }
+// Grava a cópia interna logo após cada gravação (as respostas são poucas); gravações em fila, a mais recente vence.
+let mirrorChain = Promise.resolve();
 function mirror(state) {
   clearTimeout(mirrorTimer);
   mirrorPending = JSON.stringify(state);
-  mirrorTimer = setTimeout(flushMirror, 400);
+  mirrorChain = mirrorChain.then(flushMirror);
 }
 // Grava já o espelho pendente (chamado também quando o app vai para segundo plano).
 export function flushMirror() {

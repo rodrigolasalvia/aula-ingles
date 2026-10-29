@@ -1,18 +1,18 @@
 import {
-  APP_VERSION, SLOW_RATE, formatDate, dayKey, migrateState, emptyState, progress, isCorrect, sentenceOf, scramble,
-  nextIndex, looksLikeBackup,
+  APP_VERSION, SLOW_RATE, formatDate, dayKey, migrateState, emptyState, slideProgress, doneCount, nextSlide,
+  isCorrect, sentenceOf, scramble, looksLikeBackup,
 } from './core.js';
 import {
   loadState, saveState, hasLocal, recoverRicher, snapshot, listSnapshots, readSnapshot, requestPersistence, answerCount,
 } from './storage.js';
 
-const INDEX_URL = 'data/v3/lessons.json';
+const INDEX_URL = 'data/v4/lessons.json';
 
 let state = loadState();
 let index = [];
 const lessons = {};
 const main = document.getElementById('main');
-let screen = null; // tela de exercício atual
+let view = null; // tela da lâmina: { lesson, slide, active, perm, picked, status, hidden }
 
 function save(opts) {
   const ok = saveState(state, opts);
@@ -46,7 +46,7 @@ const ICON = {
   play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>',
   check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>',
 };
-// Botões de áudio: velocidade normal e lenta (0.85x). Podem ser tocados quantas vezes quiser.
+// Áudio: velocidade normal e lenta (0.85x), quantas vezes quiser.
 const listen = (text, compact = false) => `<div class="listen ${compact ? 'compact' : ''}">
   <button class="lbtn" data-action="say" data-rate="1" data-text="${esc(text)}">${ICON.play}${compact ? '' : ' Listen'}</button>
   <button class="lbtn slow" data-action="say" data-rate="${SLOW_RATE}" data-text="${esc(text)}">Slow</button></div>`;
@@ -70,7 +70,7 @@ function loadVoices() {
 }
 if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 
-// Escolhe a voz mais natural disponível: vozes de rede e "Natural/Neural/Google" primeiro, inglês americano ou britânico.
+// Voz mais natural disponível: "Natural/Neural/Google" e vozes de rede primeiro; inglês americano ou britânico.
 function bestVoice() {
   const chosen = voices.find(v => v.name === state.settings.voice);
   if (chosen) return chosen;
@@ -97,15 +97,17 @@ function speak(text, rate = 1) {
 async function route() {
   document.getElementById('toast').hidden = true;
   try { speechSynthesis.cancel(); } catch { /* ignore */ }
-  screen = null;
+  view = null;
   const parts = (location.hash.replace(/^#\/?/, '') || '').split('/').filter(Boolean);
   try {
     if (!index.length) await loadIndex();
     if (parts[0] === 'lesson' && parts[1]) {
       const lesson = await getLesson(parts[1]);
       if (!lesson) return notFound();
-      if (parts[2] === 'understand') return renderUnderstand(lesson);
-      if (parts[2] === 'build' || parts[2] === 'speak') return renderExercise(lesson, parts[2], parts[3]);
+      if (parts[2] === 'slide' && parts[3]) {
+        const slide = lesson.slides.find(s => String(s.n) === parts[3]);
+        return slide ? renderSlide(lesson, slide) : notFound();
+      }
       return renderLesson(lesson, false);
     }
     if (parts[0] === 'lessons') return renderLessons();
@@ -126,41 +128,28 @@ function notFound() {
   main.innerHTML = '<div class="card"><p>Page not found.</p><a class="btn" href="#/">Go home</a></div>';
 }
 
-/* ---------- Lição ---------- */
-
-function nextStep(lesson) {
-  const p = progress(state, lesson.id);
-  if (!p.understood) return { href: `#/lesson/${lesson.id}/understand`, label: 'Start: Understand' };
-  const b = nextIndex(lesson.build, p.build);
-  if (b) return { href: `#/lesson/${lesson.id}/build/${b}`, label: `Continue: Build the sentence (${b}/${lesson.build.length})` };
-  const s = nextIndex(lesson.speak, p.speak);
-  if (s) return { href: `#/lesson/${lesson.id}/speak/${s}`, label: `Continue: Get ready to speak (${s}/${lesson.speak.length})` };
-  return null;
-}
+/* ---------- Lição: as 3 lâminas ---------- */
 
 function renderLesson(lesson, isHome) {
   setTab(isHome ? 'home' : 'lessons');
-  const p = progress(state, lesson.id);
-  const nb = Object.keys(p.build).filter(id => lesson.build.some(x => x.id === id)).length;
-  const ns = Object.keys(p.speak).filter(id => lesson.speak.some(x => x.id === id)).length;
-  const next = nextStep(lesson);
-  const step = (n, title, desc, href, status, done) => `<li><a class="step ${done ? '' : ''}" href="${href}">
-    <span class="step-n">${n}</span><span class="step-body"><strong>${title}</strong><span>${desc}</span></span>
-    <span class="chip ${done ? 'ok' : ''}">${done ? ICON.check : ''}${status}</span></a></li>`;
+  const done = slideProgress(state, lesson.id);
+  const next = nextSlide(lesson, done);
   main.innerHTML = `
     ${isHome ? '<header class="page-head"><p class="eyebrow">Speaking class</p><h1>Get ready for class</h1></header>' : '<a class="back" href="#/lessons">← Lessons</a>'}
     <section class="hero card">
       <p class="eyebrow">Lesson ${lesson.number} · ${formatDate(lesson.date)} · ${esc(lesson.level)}</p>
       <h2 class="hero-title">${esc(lesson.title)}</h2>
-      <p class="hint">${esc(lesson.subtitle)}</p>
-      ${next ? `<a class="btn btn-wide" href="${next.href}">${next.label}</a>`
+      <p class="hint">${lesson.slides.length} slides · ${lesson.slides.reduce((n, s) => n + s.items.length, 0)} questions to build</p>
+      ${next ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/slide/${next.n}">${doneCount(next, done) ? 'Continue' : 'Start'}: Slide ${next.n}</a>`
         : `<p class="done-note">${ICON.check} You're ready for class.</p>`}
     </section>
-    <ol class="steps">
-      ${step(1, 'Understand', 'Read the scenario and the key expressions.', `#/lesson/${lesson.id}/understand`, p.understood ? 'Done' : 'Read', p.understood)}
-      ${step(2, 'Build the sentence', 'Put the blocks in order. Listen and repeat.', `#/lesson/${lesson.id}/build/${nextIndex(lesson.build, p.build) || 1}`, `${nb}/${lesson.build.length}`, nb === lesson.build.length)}
-      ${step(3, 'Get ready to speak', 'Build an answer to each class question, then say it.', `#/lesson/${lesson.id}/speak/${nextIndex(lesson.speak, p.speak) || 1}`, `${ns}/${lesson.speak.length}`, ns === lesson.speak.length)}
-    </ol>`;
+    <ol class="steps">${lesson.slides.map(s => {
+      const c = doneCount(s, done), all = c === s.items.length;
+      return `<li><a class="step ${next && next.id === s.id ? 'next' : ''}" href="#/lesson/${lesson.id}/slide/${s.n}">
+        <span class="step-n">${s.n}</span>
+        <span class="step-body"><strong>${esc(s.title)}</strong><span>${esc(s.question)}</span></span>
+        <span class="chip ${all ? 'ok' : ''}">${all ? ICON.check : ''}${c}/${s.items.length}</span></a></li>`;
+    }).join('')}</ol>`;
 }
 
 function renderLessons() {
@@ -170,88 +159,91 @@ function renderLessons() {
       <span><strong>Lesson ${m.number} · ${esc(m.title)}</strong><span class="hint">${formatDate(m.date)} · ${esc(m.subtitle || '')}</span></span></a></li>`).join('')}</ul>`;
 }
 
-/* ---------- 1. Understand ---------- */
+/* ---------- Lâmina: entender + construir; as frases certas ficam na tela ---------- */
 
-function renderUnderstand(lesson) {
-  setTab('lessons');
-  const u = lesson.understand;
-  main.innerHTML = `
-    <a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a>
-    <header class="page-head"><p class="eyebrow">Step 1 of 3</p><h1>Understand</h1></header>
-    <h2 class="section-title">The scenario</h2>
-    ${u.scenario.map(s => `<div class="card scen"><h3 class="card-title">${esc(s.title)}</h3><p class="en-text">${esc(s.text)}</p>${listen(s.text)}</div>`).join('')}
-    <h2 class="section-title">Key expressions</h2>
-    ${u.expressions.map(x => `<div class="phrase">
-      <p class="en">${esc(x.en)}</p>
-      <p class="meaning">${esc(x.meaning)}</p>
-      <p class="example">${esc(x.example)}</p>${listen(x.example, true)}
-    </div>`).join('')}
-    <button class="btn btn-wide" data-action="understood">Next: Build the sentence</button>`;
+function firstPending(slide, done) {
+  const i = slide.items.findIndex(x => !done[x.id]);
+  return i === -1 ? null : i;
 }
 
-/* ---------- 2 e 3. Build / Speak ---------- */
-
-function renderExercise(lesson, kind, nParam) {
-  setTab('lessons');
-  const items = kind === 'build' ? lesson.build : lesson.speak;
-  const title = kind === 'build' ? 'Build the sentence' : 'Get ready to speak';
-  if (nParam === 'done' || !nParam) return renderDone(lesson, kind);
-  const n = Math.min(Math.max(parseInt(nParam, 10) || 1, 1), items.length);
-  const item = items[n - 1];
-  screen = { lesson, kind, items, n, item, title, perm: scramble(item.blocks), picked: [], status: 'idle', hidden: false };
-  drawExercise();
+function activate(i) {
+  view.active = i;
+  view.picked = [];
+  view.status = 'idle';
+  view.perm = i == null ? [] : scramble(view.slide.items[i].blocks);
 }
 
-function drawExercise() {
-  const { lesson, kind, items, n, item, title, perm, picked, status, hidden } = screen;
-  const pct = Math.round(((n - 1) / items.length) * 100);
-  const question = kind === 'build' ? item.prompt : item.question;
-  const answer = sentenceOf(item.blocks);
-  const built = picked.map((k, j) => `<button class="word on" data-action="unpick" data-j="${j}" ${status === 'right' ? 'disabled' : ''}>${esc(item.blocks[k])}</button>`).join('');
+function renderSlide(lesson, slide) {
+  setTab('lessons');
+  view = { lesson, slide, hidden: false };
+  activate(firstPending(slide, slideProgress(state, lesson.id)));
+  drawSlide();
+}
+
+function builder(item) {
+  const { perm, picked, status } = view;
+  const built = picked.map((k, j) => `<button class="word on" data-action="unpick" data-j="${j}">${esc(item.blocks[k])}</button>`).join('');
   const bank = perm.filter(k => !picked.includes(k)).map(k => `<button class="word" data-action="pick" data-k="${k}">${esc(item.blocks[k])}</button>`).join('');
-  const full = picked.length === item.blocks.length;
-
-  let below = '';
-  if (status === 'right') {
-    if (kind === 'speak' && hidden) {
-      below = `<div class="fb ok"><p class="fb-title">Your turn</p>
-        <p>Answer the question out loud, in your own words. Then listen to the example again.</p></div>
-        <div class="two"><button class="btn btn-ghost" data-action="show">Show the answer</button><button class="btn" data-action="next">Next</button></div>`;
-    } else {
-      below = `<div class="fb ok"><p class="fb-title">${ICON.check} Correct!</p><p class="fb-right">${esc(answer)}</p>
-        ${listen(answer)}<p class="explain">${esc(item.explain)}</p></div>
-        ${kind === 'speak' ? '<button class="btn btn-ghost btn-wide" data-action="hide">Try without looking</button>' : ''}
-        <button class="btn btn-wide" data-action="next">Next</button>`;
-    }
-  } else {
-    below = `${status === 'wrong' ? '<p class="wrong-msg">Not quite. Tap a block to remove it and try again.</p>' : ''}
-      <div class="two"><button class="btn btn-ghost" data-action="clear" ${picked.length ? '' : 'disabled'}>Start over</button>
-      <button class="btn" data-action="check" ${full ? '' : 'disabled'}>Check</button></div>`;
-  }
-
-  main.innerHTML = `
-    <div class="s-top"><a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a><span class="count">${title} · ${n}/${items.length}</span></div>
-    <div class="bar"><span data-w="${pct}"></span></div>
-    <div class="card qcard"><p class="eyebrow">${kind === 'build' ? 'Question' : 'Class question'}</p>
-      <p class="q-en">${esc(question)}</p>${listen(question, true)}</div>
-    <p class="instr">${status === 'right' ? '' : 'Tap the blocks to build the answer. Tap a block again to remove it.'}</p>
-    <div class="built ${status}">${(kind === 'speak' && hidden && status === 'right') ? '<span class="hint">Answer hidden.</span>' : built || '<span class="hint">Your answer appears here…</span>'}</div>
-    ${status === 'right' ? '' : `<div class="bank">${bank}</div>`}
-    ${below}`;
+  return `<p class="instr">Tap the blocks to build your answer. Tap a block again to remove it.</p>
+    <div class="built ${status}">${built || '<span class="hint">Your answer appears here…</span>'}</div>
+    <div class="bank">${bank}</div>
+    ${status === 'wrong' ? '<p class="wrong-msg">Not quite. Tap a block to remove it and try again.</p>' : ''}
+    <div class="two"><button class="btn btn-ghost" data-action="clear" ${picked.length ? '' : 'disabled'}>Start over</button>
+      <button class="btn" data-action="check" ${picked.length === item.blocks.length ? '' : 'disabled'}>Check</button></div>`;
 }
 
-function renderDone(lesson, kind) {
-  const isBuild = kind === 'build';
+function drawSlide(scrollToActive = false) {
+  const { lesson, slide, active, hidden, justDone } = view;
+  const done = slideProgress(state, lesson.id);
+  const c = doneCount(slide, done);
+  const idx = lesson.slides.indexOf(slide);
+  const nextS = lesson.slides[idx + 1];
+
+  const cards = slide.items.map((item, i) => {
+    const isDone = !!done[item.id];
+    const isActive = i === active;
+    const answer = sentenceOf(item.blocks);
+    let body = '';
+    if (isDone) {
+      body = hidden
+        ? '<p class="hidden-answer">Say your answer out loud.</p>'
+        : `<p class="answer">${esc(answer)}</p>${listen(answer, true)}${justDone === item.id ? `<p class="explain">${esc(item.explain)}</p>` : ''}`;
+    } else if (isActive) {
+      body = builder(item);
+    } else {
+      body = `<button class="btn btn-small btn-ghost" data-action="activate" data-i="${i}">Build this answer</button>`;
+    }
+    return `<li class="qitem ${isDone ? 'done' : ''} ${isActive ? 'active' : ''}" id="q-${item.id}">
+      <p class="qmeta"><span class="qn">${isDone ? ICON.check : i + 1}</span>${item.kind === 'class' ? 'Class question' : 'Warm-up'}</p>
+      <p class="q-en">${esc(item.question)}</p>
+      ${isActive && !isDone ? listen(item.question, true) : ''}
+      ${body}</li>`;
+  }).join('');
+
   main.innerHTML = `
-    <a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a>
-    <div class="card done-card">
-      <p class="big-check">${ICON.check}</p>
-      <h1>${isBuild ? 'Well done!' : "You're ready for class."}</h1>
-      <p class="hint">${isBuild ? `You built all ${lesson.build.length} sentences. Now prepare your answers to the class questions.`
-        : 'In class, use the expressions in your own answers. The examples are ideas, not scripts.'}</p>
-      ${isBuild ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/speak/1">Next: Get ready to speak</a>` : `<a class="btn btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`}
-      <a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}/${kind}/1">Practice again</a>
-    </div>`;
+    <div class="s-top"><a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a><span class="count">Slide ${slide.n} of ${lesson.slides.length}</span></div>
+    <header class="page-head slide-head"><h1>${esc(slide.title)}</h1><p class="sub-en">${esc(slide.question)}</p></header>
+
+    <details class="card understand" ${c === 0 ? 'open' : ''}>
+      <summary>Understand the slide</summary>
+      <p class="en-text">${esc(slide.summary)}</p>${listen(slide.summary)}
+      <ul class="xlist">${slide.expressions.map(x => `<li><span class="x-en">${esc(x.en)}</span><span class="x-m">${esc(x.meaning)}</span></li>`).join('')}</ul>
+    </details>
+
+    <div class="list-head">
+      <h2 class="section-title">Your answers · ${c}/${slide.items.length}</h2>
+      ${c ? `<button class="btn btn-small btn-ghost" data-action="${hidden ? 'show' : 'hide'}">${hidden ? 'Show answers' : 'Try without looking'}</button>` : ''}
+    </div>
+    <div class="bar"><span data-w="${Math.round((c / slide.items.length) * 100)}"></span></div>
+    <ol class="qlist">${cards}</ol>
+    ${c === slide.items.length ? `<div class="card done-card small"><p class="big-check">${ICON.check}</p>
+      <p><strong>Slide ${slide.n} done.</strong> Your answers stay here for class. Tap "Try without looking" to practise speaking.</p>
+      ${nextS ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/slide/${nextS.n}">Next: Slide ${nextS.n}</a>` : `<a class="btn btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`}</div>`
+      : ''}`;
+
+  if (scrollToActive && active != null) {
+    document.getElementById(`q-${slide.items[active].id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 /* ---------- Settings ---------- */
@@ -319,29 +311,23 @@ main.addEventListener('click', async e => {
     await snapshot(state, 'before restore');
     state = snap; save({ reason: 'before restore' }); toast('Copy restored.'); return route();
   }
-  if (a === 'understood') {
-    const id = location.hash.split('/')[2];
-    progress(state, id).understood = true; save(); requestPersistence();
-    location.hash = `#/lesson/${id}/build/1`;
-    return;
-  }
-  if (!screen) return;
-  const s = screen;
-  if (a === 'pick') { s.picked.push(Number(el.dataset.k)); s.status = 'idle'; return drawExercise(); }
-  if (a === 'unpick') { s.picked.splice(Number(el.dataset.j), 1); s.status = 'idle'; return drawExercise(); }
-  if (a === 'clear') { s.picked = []; s.status = 'idle'; return drawExercise(); }
-  if (a === 'check') {
-    if (isCorrect(s.item, s.picked)) {
-      s.status = 'right';
-      progress(state, s.lesson.id)[s.kind][s.item.id] = true;
-      save(); requestPersistence();
-    } else s.status = 'wrong';
-    return drawExercise();
-  }
-  if (a === 'hide') { s.hidden = true; try { speechSynthesis.cancel(); } catch { /* ignore */ } return drawExercise(); }
-  if (a === 'show') { s.hidden = false; return drawExercise(); }
-  if (a === 'next') {
-    location.hash = `#/lesson/${s.lesson.id}/${s.kind}/${s.n < s.items.length ? s.n + 1 : 'done'}`;
+  if (!view) return;
+  const item = view.active != null ? view.slide.items[view.active] : null;
+  if (a === 'pick') { view.picked.push(Number(el.dataset.k)); view.status = 'idle'; return drawSlide(); }
+  if (a === 'unpick') { view.picked.splice(Number(el.dataset.j), 1); view.status = 'idle'; return drawSlide(); }
+  if (a === 'clear') { view.picked = []; view.status = 'idle'; return drawSlide(); }
+  if (a === 'activate') { activate(Number(el.dataset.i)); return drawSlide(true); }
+  if (a === 'hide') { view.hidden = true; try { speechSynthesis.cancel(); } catch { /* ignore */ } return drawSlide(); }
+  if (a === 'show') { view.hidden = false; return drawSlide(); }
+  if (a === 'check' && item) {
+    if (!isCorrect(item, view.picked)) { view.status = 'wrong'; return drawSlide(); }
+    const done = slideProgress(state, view.lesson.id);
+    done[item.id] = true;
+    save(); requestPersistence();
+    view.justDone = item.id;
+    activate(firstPending(view.slide, done));
+    drawSlide();
+    document.getElementById(`q-${item.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 });
 

@@ -1,0 +1,284 @@
+{
+ "id": "l001",
+ "number": 1,
+ "date": "2026-10-28",
+ "format": 4,
+ "title": "Comparison, Choices & Envy",
+ "subtitle": "Social media, social pressure and envy",
+ "level": "B2 Speaking",
+ "slides": [
+  {
+   "id": "s1",
+   "n": 1,
+   "title": "The Comparison Illusion",
+   "question": "Are we comparing our real lives to a fake reality?",
+   "summary": "An influencer posts beautiful photos of her home, dinners and weekends. Her followers assume her life is nearly perfect, but they don't see the staged photos, the money worries or the hard work behind the scenes.",
+   "expressions": [
+    {
+     "en": "present a carefully curated image",
+     "meaning": "show a version of your life that is selected and edited to look good."
+    },
+    {
+     "en": "show only the highlights",
+     "meaning": "show only the best moments."
+    },
+    {
+     "en": "create a false impression",
+     "meaning": "make people believe something that isn't true."
+    },
+    {
+     "en": "take something at face value",
+     "meaning": "believe something exactly as it looks, without questioning it."
+    },
+    {
+     "en": "distort your perception of reality",
+     "meaning": "make you see things in a way that isn't accurate."
+    }
+   ],
+   "items": [
+    {
+     "id": "s1a",
+     "kind": "warm-up",
+     "question": "Why do the influencer's followers think her life is perfect?",
+     "blocks": [
+      "Her followers",
+      "only see the highlights,",
+      "not the staged photos",
+      "or the money worries."
+     ],
+     "explain": "\"The highlights\" are the best moments. A \"staged\" photo is planned to look natural."
+    },
+    {
+     "id": "s1b",
+     "kind": "warm-up",
+     "question": "What is the main message of this slide?",
+     "blocks": [
+      "What we see online",
+      "is often",
+      "a carefully curated image,",
+      "not the full reality."
+     ],
+     "explain": "\"Curated\" means carefully selected and organised."
+    },
+    {
+     "id": "s1c",
+     "kind": "class",
+     "question": "If you know that social media posts are carefully selected, why might they still influence your perception of other people's lives?",
+     "blocks": [
+      "We see these images",
+      "so often that",
+      "they start to feel normal",
+      "and distort our perception of reality."
+     ],
+     "explain": "\"So often that…\" shows a result. \"Distort\" means to change something so it's no longer accurate."
+    },
+    {
+     "id": "s1d",
+     "kind": "class",
+     "question": "Is presenting an idealized version of yourself online a form of dishonesty, or is it simply a matter of privacy?",
+     "blocks": [
+      "In my view,",
+      "showing only the highlights is privacy,",
+      "but creating a false impression",
+      "to sell something is dishonest."
+     ],
+     "explain": "\"In my view\" introduces your opinion. \"But\" sets the limit between the two ideas."
+    },
+    {
+     "id": "s1e",
+     "kind": "class",
+     "question": "How can you distinguish between a genuinely successful life and a convincing public image?",
+     "blocks": [
+      "I'd look at",
+      "what people don't show,",
+      "because a single post",
+      "reveals only part of the story."
+     ],
+     "explain": "\"I'd look at…\" is a simple way to suggest a method. Remember: don't take a post at face value."
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "n": 2,
+   "title": "Are You Choosing for Yourself?",
+   "question": "How much are your decisions really yours — and how much are they influenced by others?",
+   "summary": "Sarah has always liked a simple life. When her friends start buying luxury brands, she starts spending too — not because she wants to, but because she's afraid of looking less successful. Months later, she has less money and a lifestyle that doesn't suit her.",
+   "expressions": [
+    {
+     "en": "give in to social pressure",
+     "meaning": "do something because others expect it, not because you want to."
+    },
+    {
+     "en": "lose sight of your own priorities",
+     "meaning": "forget what really matters to you."
+    },
+    {
+     "en": "seek external validation",
+     "meaning": "need approval from other people to feel good about yourself."
+    },
+    {
+     "en": "make decisions based on appearances",
+     "meaning": "choose things to look good, not because they are right for you."
+    },
+    {
+     "en": "measure success on your own terms",
+     "meaning": "judge success by your own values, not other people's."
+    }
+   ],
+   "items": [
+    {
+     "id": "s2a",
+     "kind": "warm-up",
+     "question": "Why did Sarah change her lifestyle?",
+     "blocks": [
+      "Sarah started buying",
+      "expensive things",
+      "because",
+      "she wanted to fit in."
+     ],
+     "explain": "\"Fit in\" means to feel accepted by a group."
+    },
+    {
+     "id": "s2b",
+     "kind": "warm-up",
+     "question": "What was the result for Sarah?",
+     "blocks": [
+      "A few months later,",
+      "she had less money",
+      "and a lifestyle",
+      "that didn't suit her."
+     ],
+     "explain": "\"Suit someone\" means to be right for that person."
+    },
+    {
+     "id": "s2c",
+     "kind": "class",
+     "question": "At what point did Sarah stop making decisions based on her own values? What might have triggered the change?",
+     "blocks": [
+      "It happened when",
+      "her friends upgraded their lifestyles.",
+      "She gave in to social pressure",
+      "and lost sight of her priorities."
+     ],
+     "explain": "\"Give in to\" means to stop resisting. \"Lose sight of\" means to forget what is important."
+    },
+    {
+     "id": "s2d",
+     "kind": "class",
+     "question": "Is it possible to enjoy luxury and still be influenced by social pressure? How can you tell the difference?",
+     "blocks": [
+      "Yes, it is.",
+      "Ask yourself:",
+      "would I still buy it",
+      "if nobody could see it?"
+     ],
+     "explain": "A simple test. If the answer is no, you're probably seeking external validation."
+    },
+    {
+     "id": "s2e",
+     "kind": "class",
+     "question": "Should people care about how others perceive their lifestyle, or should personal satisfaction come first? Defend your position.",
+     "blocks": [
+      "I'd argue that",
+      "personal satisfaction should come first,",
+      "so I try to measure success",
+      "on my own terms."
+     ],
+     "explain": "\"I'd argue that…\" makes your position clear. \"On your own terms\" = by your own rules."
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "n": 3,
+   "title": "Is Envy Always a Bad Thing?",
+   "question": "Can envy be a destructive emotion — or can it sometimes push us forward?",
+   "summary": "Envy can be destructive: you feel resentful of someone's success, question your own abilities or secretly hope they fail. But it can also be motivating: someone's achievements show you what you want and encourage you to take action.",
+   "expressions": [
+    {
+     "en": "turn envy into motivation",
+     "meaning": "use the feeling of wanting what others have as a push to act."
+    },
+    {
+     "en": "feel threatened by someone's success",
+     "meaning": "feel that someone's success is a danger to you."
+    },
+    {
+     "en": "acknowledge your insecurities",
+     "meaning": "accept and admit what makes you feel insecure."
+    },
+    {
+     "en": "channel your energy into something productive",
+     "meaning": "use your energy for something useful."
+    },
+    {
+     "en": "take inspiration from someone",
+     "meaning": "use someone's example to motivate you."
+    }
+   ],
+   "items": [
+    {
+     "id": "s3a",
+     "kind": "warm-up",
+     "question": "What is destructive envy?",
+     "blocks": [
+      "Destructive envy is when",
+      "you feel resentful",
+      "of someone's success",
+      "and secretly hope they fail."
+     ],
+     "explain": "\"Resentful of\" means feeling angry because something seems unfair."
+    },
+    {
+     "id": "s3b",
+     "kind": "warm-up",
+     "question": "What is motivating envy?",
+     "blocks": [
+      "Motivating envy shows you",
+      "what you really want",
+      "and encourages you",
+      "to take action."
+     ],
+     "explain": "Notice the structure: encourage someone TO do something."
+    },
+    {
+     "id": "s3c",
+     "kind": "class",
+     "question": "Can envy be useful if it reveals something you genuinely want? Or does it always damage your peace of mind?",
+     "blocks": [
+      "I think envy can be useful",
+      "if you turn it into motivation",
+      "instead of",
+      "letting it become resentment."
+     ],
+     "explain": "\"Instead of\" is followed by the -ING form: instead of letting."
+    },
+    {
+     "id": "s3d",
+     "kind": "class",
+     "question": "Imagine your friend gets an opportunity you've wanted for years. What would your first reaction be, and how would you handle it?",
+     "blocks": [
+      "At first,",
+      "I might feel a bit threatened,",
+      "but I'd congratulate my friend",
+      "and take inspiration from him."
+     ],
+     "explain": "Use \"would\" ('d) and \"might\" for imaginary situations. Notice: inspiration FROM."
+    },
+    {
+     "id": "s3e",
+     "kind": "class",
+     "question": "Is it better to avoid people who trigger your insecurities, or learn to deal with those feelings? Defend your answer.",
+     "blocks": [
+      "It's better to",
+      "acknowledge your insecurities",
+      "and learn to deal with them,",
+      "not to avoid people."
+     ],
+     "explain": "\"Learn to deal with\" = learn how to handle something. Avoiding people doesn't solve the feeling."
+    }
+   ]
+  }
+ ]
+}

@@ -1,7 +1,7 @@
 // Lógica pura do app (sem DOM). Testada em tests/core.test.js.
 
-export const APP_VERSION = '3.0.0';
-export const STATE_VERSION = 3;
+export const APP_VERSION = '4.0.0';
+export const STATE_VERSION = 4;
 export const SLOW_RATE = 0.85;
 
 export function dayKey(ts) {
@@ -34,7 +34,8 @@ export function migrateState(raw) {
     for (const [id, ls] of Object.entries(raw.lessons)) {
       if (!isObj(ls)) continue;
       const p = isObj(ls.v3) ? ls.v3 : {};
-      s.lessons[id] = { ...ls, v3: { understood: p.understood === true, build: flags(p.build), speak: flags(p.speak) } };
+      const q = isObj(ls.v4) ? ls.v4 : {};
+      s.lessons[id] = { ...ls, v3: { understood: p.understood === true, build: flags(p.build), speak: flags(p.speak) }, v4: { done: flags(q.done) } };
     }
   }
   return s;
@@ -46,6 +47,20 @@ export function progress(state, lessonId) {
   return ls.v3;
 }
 
+// Progresso do formato atual (uma tela por lâmina): perguntas já montadas corretamente.
+export function slideProgress(state, lessonId) {
+  const ls = state.lessons[lessonId] || (state.lessons[lessonId] = {});
+  if (!isObj(ls.v4) || !isObj(ls.v4.done)) ls.v4 = { done: {} };
+  return ls.v4.done;
+}
+
+export const doneCount = (slide, done) => slide.items.filter(i => done[i.id]).length;
+
+// Primeira lâmina com pergunta pendente (ou null).
+export function nextSlide(lesson, done) {
+  return lesson.slides.find(s => doneCount(s, done) < s.items.length) || null;
+}
+
 // Quantidade de registros (todas as versões): usada para nunca trocar um estado rico por um mais pobre.
 export function recordCount(s) {
   if (!isObj(s)) return 0;
@@ -54,6 +69,7 @@ export function recordCount(s) {
   for (const ls of Object.values(isObj(s.lessons) ? s.lessons : {})) {
     if (!isObj(ls)) continue;
     if (isObj(ls.v3)) n += keys(ls.v3.build) + keys(ls.v3.speak) + (ls.v3.understood ? 1 : 0);
+    if (isObj(ls.v4)) n += keys(ls.v4.done);
     for (const b of Object.values(isObj(ls.blocks) ? ls.blocks : {})) if (isObj(b)) n += keys(b.answers) + keys(b.writes);
     n += keys(ls.writes);
     for (const r of Object.values(isObj(ls.sessions) ? ls.sessions : {})) if (isObj(r)) n += keys(r.answers);
