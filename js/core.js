@@ -1,7 +1,7 @@
 // Lógica pura do app (sem DOM). Testada em tests/core.test.js.
 
-export const APP_VERSION = '4.0.0';
-export const STATE_VERSION = 4;
+export const APP_VERSION = '5.0.0';
+export const STATE_VERSION = 5;
 export const SLOW_RATE = 0.85;
 
 export function dayKey(ts) {
@@ -35,7 +35,13 @@ export function migrateState(raw) {
       if (!isObj(ls)) continue;
       const p = isObj(ls.v3) ? ls.v3 : {};
       const q = isObj(ls.v4) ? ls.v4 : {};
-      s.lessons[id] = { ...ls, v3: { understood: p.understood === true, build: flags(p.build), speak: flags(p.speak) }, v4: { done: flags(q.done) } };
+      const r = isObj(ls.practice) ? ls.practice : {};
+      s.lessons[id] = {
+        ...ls,
+        v3: { understood: p.understood === true, build: flags(p.build), speak: flags(p.speak) },
+        v4: { done: flags(q.done) },
+        practice: { runs: Array.isArray(r.runs) ? r.runs.filter(validRun).slice(-50) : [], current: validCurrent(r.current) ? r.current : null },
+      };
     }
   }
   return s;
@@ -70,6 +76,10 @@ export function recordCount(s) {
     if (!isObj(ls)) continue;
     if (isObj(ls.v3)) n += keys(ls.v3.build) + keys(ls.v3.speak) + (ls.v3.understood ? 1 : 0);
     if (isObj(ls.v4)) n += keys(ls.v4.done);
+    if (isObj(ls.practice)) {
+      for (const run of Array.isArray(ls.practice.runs) ? ls.practice.runs : []) if (isObj(run)) n += keys(run.answers);
+      if (isObj(ls.practice.current)) n += keys(ls.practice.current.answers);
+    }
     for (const b of Object.values(isObj(ls.blocks) ? ls.blocks : {})) if (isObj(b)) n += keys(b.answers) + keys(b.writes);
     n += keys(ls.writes);
     for (const r of Object.values(isObj(ls.sessions) ? ls.sessions : {})) if (isObj(r)) n += keys(r.answers);
@@ -115,4 +125,84 @@ export function nextIndex(items, done) {
 export function looksLikeBackup(raw) {
   const s = raw && raw.state ? raw.state : raw;
   return isObj(s) && (isObj(s.lessons) || Array.isArray(s.log)) ? s : null;
+}
+
+/* ---------- Practice: exercícios objetivos com percentual ---------- */
+
+const validRun = r => isObj(r) && Number.isFinite(r.ok) && Number.isFinite(r.n) && r.n > 0 && isObj(r.answers);
+const validCurrent = c => isObj(c) && Array.isArray(c.order) && c.order.every(x => typeof x === 'string')
+  && Number.isInteger(c.pos) && c.pos >= 0 && isObj(c.answers);
+
+export function practiceState(state, lessonId) {
+  const ls = state.lessons[lessonId] || (state.lessons[lessonId] = {});
+  if (!isObj(ls.practice)) ls.practice = { runs: [], current: null };
+  if (!Array.isArray(ls.practice.runs)) ls.practice.runs = [];
+  return ls.practice;
+}
+
+const CONTRACTIONS = [
+  [/\bdon't\b/g, 'do not'], [/\bdoesn't\b/g, 'does not'], [/\bdidn't\b/g, 'did not'], [/\bisn't\b/g, 'is not'],
+  [/\baren't\b/g, 'are not'], [/\bcan't\b/g, 'cannot'], [/\bwon't\b/g, 'will not'], [/\bi'm\b/g, 'i am'],
+  [/\bi'd\b/g, 'i would'], [/\bit's\b/g, 'it is'], [/\bthat's\b/g, 'that is'], [/\bshe's\b/g, 'she is'], [/\bhe's\b/g, 'he is'],
+];
+
+// Texto digitado: ignora maiúsculas, pontuação, espaços extras e contrações.
+export function normalizeTyped(text) {
+  let t = normalize(text).replace(/[“”]/g, '"');
+  for (const [re, rep] of CONTRACTIONS) t = t.replace(re, rep);
+  return t.replace(/[.,!?;:"()]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+export function correctAnswer(item) {
+  if (item.type === 'mc') return item.prompt.replace('___', item.options[item.answer]);
+  if (item.type === 'gap') return item.prompt.replace('___', item.accept[0]);
+  if (item.type === 'fix') return item.accept[0];
+  return sentenceOf(item.blocks);
+}
+
+// given: índice (mc), texto (gap/fix) ou lista de índices dos blocos (order).
+export function checkPractice(item, given) {
+  if (item.type === 'mc') return Number(given) === item.answer;
+  if (item.type === 'gap' || item.type === 'fix') {
+    const g = normalizeTyped(given);
+    return !!g && item.accept.some(a => normalizeTyped(a) === g);
+  }
+  if (item.type === 'order') return Array.isArray(given) && isCorrect(item, given);
+  return false;
+}
+
+export function startRun(lesson, ps, rnd = Math.random) {
+  ps.current = { order: shuffledOrder(lesson.practice.length, rnd).map(i => lesson.practice[i].id), pos: 0, answers: {}, startedAt: Date.now() };
+  return ps.current;
+}
+
+export function recordPractice(ps, item, given, ok) {
+  ps.current.answers[item.id] = { ok: !!ok, given: Array.isArray(given) ? given.join(',') : String(given) };
+}
+
+export function runScore(lesson, answers) {
+  const ids = Object.keys(answers).filter(id => lesson.practice.some(p => p.id === id));
+  const ok = ids.filter(id => answers[id].ok).length;
+  const bySkill = {};
+  for (const id of ids) {
+    const item = lesson.practice.find(p => p.id === id);
+    const b = bySkill[item.skill] || (bySkill[item.skill] = { ok: 0, n: 0 });
+    b.n++; if (answers[id].ok) b.ok++;
+  }
+  return { ok, n: ids.length, pct: ids.length ? Math.round((ok / ids.length) * 100) : 0, bySkill };
+}
+
+export function finishRun(lesson, ps, now = Date.now()) {
+  const sc = runScore(lesson, ps.current.answers);
+  const run = { ts: now, ok: sc.ok, n: sc.n, pct: sc.pct, answers: ps.current.answers };
+  ps.runs.push(run);
+  ps.current = null;
+  return run;
+}
+
+export function practiceSummary(ps) {
+  const runs = (ps && ps.runs) || [];
+  if (!runs.length) return null;
+  const last = runs[runs.length - 1];
+  return { last: last.pct, best: Math.max(...runs.map(r => r.pct)), count: runs.length };
 }

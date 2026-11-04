@@ -104,12 +104,71 @@ SLIDES = [
   },
 ]
 
+# ---------- Practice: cerca de 10 exercícios objetivos, um por vez, com percentual no fim ----------
+# source: "teacher" (exercício da professora, reproduzido) ou "extra" (criado a partir do tema).
+# Tipos: mc (escolha), gap (digitar a palavra), fix (corrigir a frase), order (montar com blocos, na ordem correta).
+# Gabarito: o da professora quando ela mandar; senão, criado aqui.
+def mc(id, skill, slide, prompt, options, answer, explain, tip, source="extra"):
+    return {"id": id, "type": "mc", "skill": skill, "slide": slide, "source": source, "prompt": prompt,
+            "options": options, "answer": answer, "explain": explain, "tip": tip}
+
+def gap(id, skill, slide, prompt, accept, explain, tip, source="extra"):
+    return {"id": id, "type": "gap", "skill": skill, "slide": slide, "source": source, "prompt": prompt,
+            "accept": accept, "explain": explain, "tip": tip}
+
+def fix(id, skill, slide, wrong, accept, explain, tip, source="extra"):
+    return {"id": id, "type": "fix", "skill": skill, "slide": slide, "source": source, "prompt": wrong,
+            "accept": accept, "explain": explain, "tip": tip}
+
+def order(id, skill, slide, prompt, blocks, explain, tip, source="extra"):
+    return {"id": id, "type": "order", "skill": skill, "slide": slide, "source": source, "prompt": prompt,
+            "blocks": blocks, "explain": explain, "tip": tip}
+
+PRACTICE = [
+  mc("x01", "Prepositions", 1, "Don't take every perfect post ___ face value.", ["at", "in", "on", "by"], 0,
+     "The expression is fixed: take something AT face value.",
+     "Use it with news, reviews or sales promises: \"I never take reviews at face value.\""),
+  mc("x02", "Vocabulary", 1, "An influencer who shows only beautiful, edited moments presents a carefully ___ image.",
+     ["curated", "cured", "curious", "careful"], 0,
+     "\"Curated\" means carefully selected and organised.",
+     "Common at work too: \"a curated list of suppliers\"."),
+  gap("x03", "Prepositions", 1, "Constant comparison can distort your perception ___ reality.", ["of"],
+      "We say perception OF something.",
+      "Also: \"the perception of risk\", \"the perception of quality\"."),
+  mc("x04", "Prepositions", 2, "Sarah made her choices based ___ appearances.", ["on", "in", "at", "of"], 0,
+     "Based ON. \"Based in\" is only for places: a company based in London.",
+     "In meetings: \"This decision is based on data.\""),
+  fix("x05", "Phrasal verbs", 2, "She gave on to social pressure and bought a luxury bag.",
+      ["She gave in to social pressure and bought a luxury bag."],
+      "The phrasal verb is GIVE IN TO (= stop resisting).",
+      "\"Don't give in to pressure from the supplier.\""),
+  order("x06", "Expressions", 2, "Build the sentence: what happened to Sarah?",
+        ["She lost sight of", "her own priorities", "and started", "seeking external validation."],
+        "Lose sight OF something = forget what matters. After \"started\" you can use -ING: started seeking.",
+        "\"In a busy week, it's easy to lose sight of your priorities.\""),
+  gap("x07", "Expressions", 2, "I prefer to measure success on my own ___.", ["terms"],
+      "The expression is \"on your own terms\" = by your own rules.",
+      "\"I want to retire on my own terms.\""),
+  mc("x08", "Word forms", 3, "He felt ___ of his colleague's promotion.", ["envious", "envy", "enviable", "envying"], 0,
+     "After \"feel\" we need an adjective: envious. \"Enviable\" means something others want (an enviable job).",
+     "\"Envious\" = wanting what someone else has; \"jealous\" = afraid of losing someone."),
+  fix("x09", "Prepositions", 3, "I take inspiration in people who changed careers.",
+      ["I take inspiration from people who changed careers."],
+      "Take inspiration FROM someone — not \"in\".",
+      "\"I take inspiration from leaders who listen to their teams.\""),
+  order("x10", "Expressions", 3, "Build the sentence: when can envy be useful?",
+        ["Envy can be useful", "if you turn it", "into motivation", "instead of resentment."],
+        "Turn X INTO Y = transform X into Y.",
+        "\"She turned the feedback into an action plan.\""),
+]
+
 LESSON = {
   "id": "l001", "number": 1, "date": "2026-10-28", "format": 4,
   "title": "Comparison, Choices & Envy",
   "subtitle": "Social media, social pressure and envy",
   "level": "B2 Speaking",
   "slides": SLIDES,
+  "practice": PRACTICE,
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / "data" / "v4"

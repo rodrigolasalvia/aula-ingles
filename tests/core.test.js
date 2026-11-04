@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import {
   isCorrect, scramble, sentenceOf, normalize, migrateState, emptyState, slideProgress, doneCount, nextSlide,
-  recordCount, looksLikeBackup,
+  recordCount, looksLikeBackup, practiceState, checkPractice, correctAnswer, startRun, recordPractice, runScore,
+  finishRun, practiceSummary, normalizeTyped,
 } from '../js/core.js';
 
 const index = JSON.parse(readFileSync(new URL('../data/v4/lessons.json', import.meta.url)));
@@ -59,6 +60,72 @@ for (const { meta, data: L } of lessons) {
     }
   });
 }
+
+for (const { meta, data: L } of lessons) {
+  test(`${meta.id}: practice com cerca de 10 exercícios válidos`, () => {
+    const P = L.practice;
+    assert.ok(P.length >= 8 && P.length <= 12, `${P.length} exercícios`);
+    assert.equal(new Set(P.map(x => x.id)).size, P.length);
+    const slideItems = new Set(L.slides.flatMap(s => s.items.map(i => i.id)));
+    for (const x of P) {
+      assert.ok(!slideItems.has(x.id), `${x.id} repete id de lâmina`);
+      assert.ok(['mc', 'gap', 'fix', 'order'].includes(x.type), x.id);
+      assert.ok(['teacher', 'extra'].includes(x.source), x.id);
+      assert.ok(L.slides.some(s => s.n === x.slide), `${x.id}: lâmina inexistente`);
+      assert.ok(x.skill && x.explain && words(x.explain) <= 30, `${x.id}: explicação`);
+      assert.ok(!PT.test(x.explain + ' ' + (x.tip || '')), `${x.id}: português`);
+      if (x.type === 'mc') {
+        assert.ok(x.prompt.includes('___'));
+        assert.equal(new Set(x.options).size, x.options.length);
+        x.options.forEach((_, k) => assert.equal(checkPractice(x, k), k === x.answer, `${x.id}:${k}`));
+      } else if (x.type === 'gap') {
+        assert.ok(x.prompt.includes('___'));
+        for (const a of x.accept) assert.ok(checkPractice(x, a));
+        assert.ok(!checkPractice(x, 'xyz'));
+      } else if (x.type === 'fix') {
+        for (const a of x.accept) assert.ok(checkPractice(x, a));
+        assert.ok(!checkPractice(x, x.prompt), `${x.id}: frase errada aceita`);
+      } else {
+        assert.ok(x.blocks.length >= 3 && x.blocks.length <= 6);
+        assert.ok(checkPractice(x, x.blocks.map((_, i) => i)));
+        assert.ok(!checkPractice(x, x.blocks.map((_, i) => i).reverse()));
+      }
+      assert.match(correctAnswer(x), /^[A-Z].*[.?!]$/, `${x.id}: resposta completa`);
+    }
+    const types = new Set(P.map(x => x.type));
+    assert.ok(types.size >= 3, 'variedade de tipos');
+  });
+}
+
+test('digitação: ignora maiúsculas, pontuação e contrações', () => {
+  assert.equal(normalizeTyped("She DIDN'T  give in."), 'she did not give in');
+  const fix = { type: 'fix', accept: ['I take inspiration from people who changed careers.'] };
+  assert.ok(checkPractice(fix, 'i take inspiration from people who changed careers'));
+});
+
+test('rodada de practice: ordem embaralhada, percentual, último e melhor', () => {
+  const L = lessons[0].data;
+  const s = emptyState();
+  const ps = practiceState(s, L.id);
+  assert.equal(practiceSummary(ps), null);
+  const cur = startRun(L, ps, () => 0.3);
+  assert.deepEqual([...cur.order].sort(), L.practice.map(p => p.id).sort());
+  L.practice.forEach((item, i) => recordPractice(ps, item, 0, i % 2 === 0));
+  const sc = runScore(L, ps.current.answers);
+  assert.equal(sc.n, L.practice.length);
+  assert.equal(sc.pct, Math.round((sc.ok / sc.n) * 100));
+  finishRun(L, ps);
+  assert.equal(ps.current, null);
+  startRun(L, ps);
+  L.practice.forEach(item => recordPractice(ps, item, 0, true));
+  finishRun(L, ps);
+  assert.deepEqual(practiceSummary(ps), { last: 100, best: 100, count: 2 });
+  const m = migrateState(JSON.parse(JSON.stringify(s)));
+  assert.equal(m.lessons[L.id].practice.runs.length, 2);
+  assert.equal(recordCount(m), recordCount(s));
+  const bad = migrateState({ lessons: { l001: { practice: { runs: [{ ok: 1 }, 5], current: { order: [1] } } } } });
+  assert.deepEqual(bad.lessons.l001.practice, { runs: [], current: null });
+});
 
 test('isCorrect compara texto; normalize', () => {
   assert.ok(isCorrect({ blocks: ['very', 'very', 'good.'] }, [1, 0, 2]));

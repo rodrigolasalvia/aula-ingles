@@ -289,3 +289,12 @@ details.understand[open] { padding-bottom: 18px; }
 .qitem .explain { font-size: 15px; }
 .done-card.small { margin-top: 16px; padding: 18px; }
 .done-card.small .big-check svg { width: 36px; height: 36px; }
+
+/* ---------- v5: Practice ---------- */
+.practice-card { margin-top: 18px; border-color: var(--accent); }
+.scores { display: flex; gap: 16px; flex-wrap: wrap; margin: 0 0 4px; color: var(--muted); }
+.scores strong { color: var(--text); font-size: 18px; }
+.teacher { color: var(--accent); }
+.wrong-sentence { text-decoration: underline wavy var(--bad); text-underline-offset: 5px; }
+.tip { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid rgba(0,0,0,.08); font-size: 15px; }
+.fb .listen { margin-top: 4px; }

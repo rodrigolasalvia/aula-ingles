@@ -280,5 +280,159 @@
     }
    ]
   }
+ ],
+ "practice": [
+  {
+   "id": "x01",
+   "type": "mc",
+   "skill": "Prepositions",
+   "slide": 1,
+   "source": "extra",
+   "prompt": "Don't take every perfect post ___ face value.",
+   "options": [
+    "at",
+    "in",
+    "on",
+    "by"
+   ],
+   "answer": 0,
+   "explain": "The expression is fixed: take something AT face value.",
+   "tip": "Use it with news, reviews or sales promises: \"I never take reviews at face value.\""
+  },
+  {
+   "id": "x02",
+   "type": "mc",
+   "skill": "Vocabulary",
+   "slide": 1,
+   "source": "extra",
+   "prompt": "An influencer who shows only beautiful, edited moments presents a carefully ___ image.",
+   "options": [
+    "curated",
+    "cured",
+    "curious",
+    "careful"
+   ],
+   "answer": 0,
+   "explain": "\"Curated\" means carefully selected and organised.",
+   "tip": "Common at work too: \"a curated list of suppliers\"."
+  },
+  {
+   "id": "x03",
+   "type": "gap",
+   "skill": "Prepositions",
+   "slide": 1,
+   "source": "extra",
+   "prompt": "Constant comparison can distort your perception ___ reality.",
+   "accept": [
+    "of"
+   ],
+   "explain": "We say perception OF something.",
+   "tip": "Also: \"the perception of risk\", \"the perception of quality\"."
+  },
+  {
+   "id": "x04",
+   "type": "mc",
+   "skill": "Prepositions",
+   "slide": 2,
+   "source": "extra",
+   "prompt": "Sarah made her choices based ___ appearances.",
+   "options": [
+    "on",
+    "in",
+    "at",
+    "of"
+   ],
+   "answer": 0,
+   "explain": "Based ON. \"Based in\" is only for places: a company based in London.",
+   "tip": "In meetings: \"This decision is based on data.\""
+  },
+  {
+   "id": "x05",
+   "type": "fix",
+   "skill": "Phrasal verbs",
+   "slide": 2,
+   "source": "extra",
+   "prompt": "She gave on to social pressure and bought a luxury bag.",
+   "accept": [
+    "She gave in to social pressure and bought a luxury bag."
+   ],
+   "explain": "The phrasal verb is GIVE IN TO (= stop resisting).",
+   "tip": "\"Don't give in to pressure from the supplier.\""
+  },
+  {
+   "id": "x06",
+   "type": "order",
+   "skill": "Expressions",
+   "slide": 2,
+   "source": "extra",
+   "prompt": "Build the sentence: what happened to Sarah?",
+   "blocks": [
+    "She lost sight of",
+    "her own priorities",
+    "and started",
+    "seeking external validation."
+   ],
+   "explain": "Lose sight OF something = forget what matters. After \"started\" you can use -ING: started seeking.",
+   "tip": "\"In a busy week, it's easy to lose sight of your priorities.\""
+  },
+  {
+   "id": "x07",
+   "type": "gap",
+   "skill": "Expressions",
+   "slide": 2,
+   "source": "extra",
+   "prompt": "I prefer to measure success on my own ___.",
+   "accept": [
+    "terms"
+   ],
+   "explain": "The expression is \"on your own terms\" = by your own rules.",
+   "tip": "\"I want to retire on my own terms.\""
+  },
+  {
+   "id": "x08",
+   "type": "mc",
+   "skill": "Word forms",
+   "slide": 3,
+   "source": "extra",
+   "prompt": "He felt ___ of his colleague's promotion.",
+   "options": [
+    "envious",
+    "envy",
+    "enviable",
+    "envying"
+   ],
+   "answer": 0,
+   "explain": "After \"feel\" we need an adjective: envious. \"Enviable\" means something others want (an enviable job).",
+   "tip": "\"Envious\" = wanting what someone else has; \"jealous\" = afraid of losing someone."
+  },
+  {
+   "id": "x09",
+   "type": "fix",
+   "skill": "Prepositions",
+   "slide": 3,
+   "source": "extra",
+   "prompt": "I take inspiration in people who changed careers.",
+   "accept": [
+    "I take inspiration from people who changed careers."
+   ],
+   "explain": "Take inspiration FROM someone — not \"in\".",
+   "tip": "\"I take inspiration from leaders who listen to their teams.\""
+  },
+  {
+   "id": "x10",
+   "type": "order",
+   "skill": "Expressions",
+   "slide": 3,
+   "source": "extra",
+   "prompt": "Build the sentence: when can envy be useful?",
+   "blocks": [
+    "Envy can be useful",
+    "if you turn it",
+    "into motivation",
+    "instead of resentment."
+   ],
+   "explain": "Turn X INTO Y = transform X into Y.",
+   "tip": "\"She turned the feedback into an action plan.\""
+  }
  ]
 }

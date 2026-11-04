@@ -1,6 +1,7 @@
 import {
   APP_VERSION, SLOW_RATE, formatDate, dayKey, migrateState, emptyState, slideProgress, doneCount, nextSlide,
-  isCorrect, sentenceOf, scramble, looksLikeBackup,
+  isCorrect, sentenceOf, scramble, looksLikeBackup, practiceState, checkPractice, correctAnswer, startRun,
+  recordPractice, runScore, finishRun, practiceSummary, shuffledOrder,
 } from './core.js';
 import {
   loadState, saveState, hasLocal, recoverRicher, snapshot, listSnapshots, readSnapshot, requestPersistence, answerCount,
@@ -97,13 +98,14 @@ function speak(text, rate = 1) {
 async function route() {
   document.getElementById('toast').hidden = true;
   try { speechSynthesis.cancel(); } catch { /* ignore */ }
-  view = null;
+  view = null; pview = null;
   const parts = (location.hash.replace(/^#\/?/, '') || '').split('/').filter(Boolean);
   try {
     if (!index.length) await loadIndex();
     if (parts[0] === 'lesson' && parts[1]) {
       const lesson = await getLesson(parts[1]);
       if (!lesson) return notFound();
+      if (parts[2] === 'practice') return parts[3] === 'result' ? renderPracticeResult(lesson) : renderPractice(lesson);
       if (parts[2] === 'slide' && parts[3]) {
         const slide = lesson.slides.find(s => String(s.n) === parts[3]);
         return slide ? renderSlide(lesson, slide) : notFound();
@@ -149,7 +151,21 @@ function renderLesson(lesson, isHome) {
         <span class="step-n">${s.n}</span>
         <span class="step-body"><strong>${esc(s.title)}</strong><span>${esc(s.question)}</span></span>
         <span class="chip ${all ? 'ok' : ''}">${all ? ICON.check : ''}${c}/${s.items.length}</span></a></li>`;
-    }).join('')}</ol>`;
+    }).join('')}</ol>
+    ${practiceCard(lesson)}`;
+}
+
+function practiceCard(lesson) {
+  if (!Array.isArray(lesson.practice) || !lesson.practice.length) return '';
+  const ps = practiceState(state, lesson.id);
+  const sum = practiceSummary(ps);
+  const cur = ps.current;
+  return `<div class="card practice-card">
+    <h2 class="card-title">Practice · ${lesson.practice.length} exercises</h2>
+    <p class="hint">Quick check on the lesson: choose, complete, correct and build sentences.</p>
+    ${sum ? `<p class="scores"><span>Last: <strong>${sum.last}%</strong></span><span>Best: <strong>${sum.best}%</strong></span><span>${sum.count}×</span></p>` : ''}
+    <a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">${cur ? `Continue (${cur.pos + 1}/${cur.order.length})` : sum ? 'Practice again' : 'Start practice'}</a>
+  </div>`;
 }
 
 function renderLessons() {
@@ -246,6 +262,94 @@ function drawSlide(scrollToActive = false) {
   }
 }
 
+/* ---------- Practice: um exercício por vez, percentual no fim ---------- */
+
+let pview = null; // { lesson, ps, item, typed, perm, picked }
+
+function renderPractice(lesson) {
+  setTab('lessons');
+  const ps = practiceState(state, lesson.id);
+  if (!ps.current || ps.current.order.some(id => !lesson.practice.some(p => p.id === id))) { startRun(lesson, ps); save(); }
+  if (ps.current.pos >= ps.current.order.length) { finishRun(lesson, ps); save(); location.replace(`#/lesson/${lesson.id}/practice/result`); return; }
+  const item = lesson.practice.find(p => p.id === ps.current.order[ps.current.pos]);
+  pview = { lesson, ps, item, typed: item.type === 'fix' ? item.prompt : '', picked: [],
+    perm: item.type === 'order' ? scramble(item.blocks) : item.type === 'mc' ? shuffledOrder(item.options.length) : [] };
+  drawPractice();
+}
+
+const INSTR = { mc: 'Choose the right answer', gap: 'Complete the sentence', fix: 'Correct the sentence', order: 'Tap the blocks to build the sentence' };
+
+function drawPractice() {
+  const { lesson, ps, item, perm, picked, typed } = pview;
+  const cur = ps.current;
+  const ans = cur.answers[item.id];
+  const n = cur.order.length;
+  const done = cur.pos + (ans ? 1 : 0);
+  let body = '';
+  if (item.type === 'mc') {
+    body = `<p class="prompt">${esc(item.prompt)}</p><div class="opts">${perm.map(i => {
+      let cls = 'opt';
+      if (ans) cls += i === item.answer ? ' right' : String(i) === ans.given ? ' wrong' : ' dim';
+      return `<button class="${cls}" data-action="p-mc" data-i="${i}" ${ans ? 'disabled' : ''}>${esc(item.options[i])}</button>`;
+    }).join('')}</div>`;
+  } else if (item.type === 'gap') {
+    body = `<p class="prompt">${esc(item.prompt)}</p>
+      <input class="input" data-p="typed" value="${esc(ans ? ans.given : typed)}" ${ans ? 'disabled' : ''} autocapitalize="none" autocomplete="off" spellcheck="false" enterkeyhint="done" placeholder="Type the missing word">`;
+  } else if (item.type === 'fix') {
+    body = `<p class="prompt wrong-sentence">${esc(item.prompt)}</p>
+      <textarea class="input" rows="3" data-p="typed" ${ans ? 'disabled' : ''} autocapitalize="sentences" spellcheck="false">${esc(ans ? ans.given : typed)}</textarea>`;
+  } else {
+    const chosen = ans ? ans.given.split(',').map(Number) : picked;
+    body = `<p class="prompt">${esc(item.prompt)}</p>
+      <div class="built ${ans ? (ans.ok ? 'right' : 'wrong') : ''}">${chosen.map((k, j) => `<button class="word on" data-action="p-unpick" data-j="${j}" ${ans ? 'disabled' : ''}>${esc(item.blocks[k])}</button>`).join('') || '<span class="hint">Your sentence appears here…</span>'}</div>
+      ${ans ? '' : `<div class="bank">${perm.filter(k => !picked.includes(k)).map(k => `<button class="word" data-action="p-pick" data-k="${k}">${esc(item.blocks[k])}</button>`).join('')}</div>`}`;
+  }
+  const right = correctAnswer(item);
+  const canCheck = item.type === 'order' ? picked.length === item.blocks.length : item.type !== 'mc';
+  main.innerHTML = `
+    <div class="s-top"><a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a><span class="count">Practice · ${cur.pos + 1}/${n}</span></div>
+    <div class="bar"><span data-w="${Math.round((done / n) * 100)}"></span></div>
+    <p class="tag">${esc(item.skill)} · Slide ${item.slide}${item.source === 'teacher' ? ' · <span class="teacher">From your teacher</span>' : ''}</p>
+    <p class="instr">${INSTR[item.type]}</p>
+    ${body}
+    ${ans ? `<div class="fb ${ans.ok ? 'ok' : 'bad'}">
+        <p class="fb-title">${ans.ok ? `${ICON.check} Correct!` : 'Not quite'}</p>
+        ${ans.ok && item.type === 'mc' ? '' : `<p class="fb-right">${esc(right)}</p>`}
+        ${listen(right, true)}
+        <p class="explain">${esc(item.explain)}</p>
+        ${item.tip ? `<p class="tip"><strong>In real life:</strong> ${esc(item.tip)}</p>` : ''}
+      </div>
+      <button class="btn btn-wide" data-action="p-next">${cur.pos + 1 < n ? 'Next' : 'See my result'}</button>`
+      : item.type === 'mc' ? '' : `<div class="two">${item.type === 'order' ? `<button class="btn btn-ghost" data-action="p-clear" ${picked.length ? '' : 'disabled'}>Start over</button>` : '<span></span>'}
+        <button class="btn" data-action="p-check" ${canCheck ? '' : 'disabled'}>Check</button></div>`}`;
+}
+
+function renderPracticeResult(lesson) {
+  setTab('lessons');
+  const ps = practiceState(state, lesson.id);
+  const run = ps.runs[ps.runs.length - 1];
+  if (!run) { location.replace(`#/lesson/${lesson.id}/practice`); return; }
+  const sc = runScore(lesson, run.answers);
+  const sum = practiceSummary(ps);
+  const wrong = lesson.practice.filter(p => run.answers[p.id] && !run.answers[p.id].ok);
+  const skills = Object.entries(sc.bySkill).sort((a, b) => a[1].ok / a[1].n - b[1].ok / b[1].n);
+  const weak = skills.filter(([, v]) => v.ok < v.n).map(([k]) => k);
+  main.innerHTML = `
+    <a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a>
+    <div class="card score-card">
+      <p class="eyebrow">Practice result</p>
+      <p class="score">${sc.pct}%</p>
+      <p class="hint">${sc.ok} of ${sc.n} correct · Best: ${sum.best}%</p>
+      ${skills.map(([k, v]) => { const pc = Math.round((v.ok / v.n) * 100); return `<div class="tagbar"><span>${esc(k)}</span><span class="tb"><span class="${pc >= 80 ? 'ok' : pc < 60 ? 'bad' : 'mid'}" data-w="${pc}"></span></span><span>${v.ok}/${v.n}</span></div>`; }).join('')}
+    </div>
+    <div class="card"><h2 class="card-title">Focus on</h2>
+      <p>${weak.length ? `Review: <strong>${weak.map(esc).join(', ')}</strong>.` : 'Everything right. Now say the answers out loud on each slide.'}</p></div>
+    ${wrong.length ? `<div class="card"><h2 class="card-title">Your mistakes</h2>${wrong.map(p => `<div class="err">
+      <p class="tag">${esc(p.skill)}</p><p class="good-txt">${esc(correctAnswer(p))}</p><p class="hint">${esc(p.explain)}</p></div>`).join('')}</div>` : ''}
+    <a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">Practice again</a>
+    <a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`;
+}
+
 /* ---------- Settings ---------- */
 
 async function renderSettings() {
@@ -311,6 +415,7 @@ main.addEventListener('click', async e => {
     await snapshot(state, 'before restore');
     state = snap; save({ reason: 'before restore' }); toast('Copy restored.'); return route();
   }
+  if (a.startsWith('p-') && pview) return practiceAction(a, el);
   if (!view) return;
   const item = view.active != null ? view.slide.items[view.active] : null;
   if (a === 'pick') { view.picked.push(Number(el.dataset.k)); view.status = 'idle'; return drawSlide(); }
@@ -329,6 +434,42 @@ main.addEventListener('click', async e => {
     drawSlide();
     document.getElementById(`q-${item.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+});
+
+function practiceAction(a, el) {
+  const { lesson, ps, item } = pview;
+  const answer = given => {
+    recordPractice(ps, item, given, checkPractice(item, given));
+    save(); requestPersistence(); drawPractice();
+  };
+  if (a === 'p-mc' && !ps.current.answers[item.id]) return answer(Number(el.dataset.i));
+  if (a === 'p-pick') { pview.picked.push(Number(el.dataset.k)); return drawPractice(); }
+  if (a === 'p-unpick') { pview.picked.splice(Number(el.dataset.j), 1); return drawPractice(); }
+  if (a === 'p-clear') { pview.picked = []; return drawPractice(); }
+  if (a === 'p-check' && !ps.current.answers[item.id]) {
+    if (item.type === 'order') return answer(pview.picked.slice());
+    const text = (pview.typed || '').trim();
+    if (!text) { toast('Type your answer first.'); return; }
+    if (item.type === 'fix' && text === item.prompt.trim()) { toast("You haven't changed the sentence yet."); return; }
+    return answer(text);
+  }
+  if (a === 'p-next') {
+    ps.current.pos++;
+    save();
+    if (ps.current.pos >= ps.current.order.length) {
+      finishRun(lesson, ps); save();
+      location.hash = `#/lesson/${lesson.id}/practice/result`;
+    } else renderPractice(lesson);
+    window.scrollTo(0, 0);
+  }
+}
+
+main.addEventListener('input', e => {
+  if (e.target.dataset.p === 'typed' && pview) pview.typed = e.target.value;
+});
+
+main.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.matches('input[data-p="typed"]')) { e.preventDefault(); main.querySelector('[data-action="p-check"]')?.click(); }
 });
 
 main.addEventListener('change', e => {
