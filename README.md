@@ -10,6 +10,7 @@ Princípio: **READ → BUILD → LISTEN → REPEAT → SPEAK**. Interface toda e
 - "Try without looking" esconde as respostas e deixa só as perguntas, para treinar falando.
 - **Banco de exercícios (v6):** cada rodada do Practice sorteia 10 do banco da lição, primeiro os nunca feitos, depois os errados. Lacunas podem ter mais de um campo ("___ (study) … ___ (pass)").
 - **My answers for the teacher (v6):** página só com os exercícios da professora, na ordem dela, com a última resposta do aluno (✓/✗ e correção), respostas próprias opcionais para as perguntas abertas e botão "Save as PDF" (impressão do navegador).
+- **Refazer (v6.1):** nas lâminas, "Redo" em cada resposta e "Redo all" no fim; na página da professora, "Redo this exercise" (os itens na ordem dela) e "Redo" por item; perguntas abertas abrem na lâmina. A nova resposta substitui a anterior; rodadas de refazer não contam no último/melhor do Practice.
 - **Practice (v5):** cerca de 10 exercícios objetivos por lição (escolher, completar, corrigir a frase, montar com blocos), um por vez, com correção na hora, explicação e dica de uso; no fim, percentual, acerto por habilidade e erros. A tela da lição mostra o último e o melhor resultado. Exercícios da professora levam `source: "teacher"` (aparece "From your teacher"); os criados a partir do tema, `source: "extra"`. Gabarito da professora quando ela mandar; senão, criado.
 
 Lição em `data/v4/lNNN.json`, listada em `data/v4/lessons.json`. Pastas `data/`, `data/v2/` e `data/v3/` ficam só para quem ainda não atualizou o app.

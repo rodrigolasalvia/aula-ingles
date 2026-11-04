@@ -1,6 +1,6 @@
 // Lógica pura do app (sem DOM). Testada em tests/core.test.js.
 
-export const APP_VERSION = '6.0.0';
+export const APP_VERSION = '6.1.0';
 export const STATE_VERSION = 6;
 export const SESSION_SIZE = 10;
 export const SLOW_RATE = 0.85;
@@ -200,7 +200,12 @@ export function latestAnswers(ps) {
 }
 
 // Sessão de até SESSION_SIZE exercícios do banco: primeiro os nunca feitos, depois os errados na última vez, depois o resto.
-export function startRun(lesson, ps, rnd = Math.random) {
+// ids: refazer exercícios escolhidos (na ordem dada), sem sorteio. A nova resposta substitui a anterior.
+export function startRun(lesson, ps, rnd = Math.random, ids = null) {
+  if (Array.isArray(ids) && ids.length) {
+    ps.current = { order: ids.filter(id => lesson.practice.some(p => p.id === id)), pos: 0, answers: {}, startedAt: Date.now(), mode: 'redo' };
+    return ps.current;
+  }
   const last = latestAnswers(ps);
   const shuffle = arr => shuffledOrder(arr.length, rnd).map(i => arr[i]);
   const pool = lesson.practice;
@@ -251,14 +256,16 @@ export function runScore(lesson, answers) {
 
 export function finishRun(lesson, ps, now = Date.now()) {
   const sc = runScore(lesson, ps.current.answers);
-  const run = { ts: now, ok: sc.ok, n: sc.n, pct: sc.pct, answers: ps.current.answers };
+  const run = { ts: now, ok: sc.ok, n: sc.n, pct: sc.pct, answers: ps.current.answers, order: ps.current.order };
+  if (ps.current.mode === 'redo') run.mode = 'redo';
   ps.runs.push(run);
   ps.current = null;
   return run;
 }
 
+// Último e melhor resultado consideram só as rodadas normais (refazer exercícios não conta).
 export function practiceSummary(ps) {
-  const runs = (ps && ps.runs) || [];
+  const runs = ((ps && ps.runs) || []).filter(r => r.mode !== 'redo');
   if (!runs.length) return null;
   const last = runs[runs.length - 1];
   return { last: last.pct, best: Math.max(...runs.map(r => r.pct)), count: runs.length };

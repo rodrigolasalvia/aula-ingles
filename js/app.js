@@ -172,7 +172,7 @@ function practiceCard(lesson) {
       ? `Each round picks ${size} of ${lesson.practice.length} exercises${teacherN ? ` (${teacherN} from your teacher)` : ''}, new ones first. Done so far: ${cov.seen}/${cov.total}.`
       : 'Quick check on the lesson: choose, complete, correct and build sentences.'}</p>
     ${sum ? `<p class="scores"><span>Last: <strong>${sum.last}%</strong></span><span>Best: <strong>${sum.best}%</strong></span><span>${sum.count}×</span></p>` : ''}
-    <a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">${cur ? `Continue (${cur.pos + 1}/${cur.order.length})` : sum ? 'Practice again' : 'Start practice'}</a>
+    <a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">${cur ? `Continue${cur.mode === 'redo' ? ' redo' : ''} (${cur.pos + 1}/${cur.order.length})` : sum ? 'Practice again' : 'Start practice'}</a>
   </div>
   ${teacherN ? `<a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}/teacher">My answers for the teacher (PDF)</a>` : ''}`;
 }
@@ -198,11 +198,15 @@ function activate(i) {
   view.perm = i == null ? [] : scramble(view.slide.items[i].blocks);
 }
 
+let focusQ = null; // pergunta para abrir direto ao chegar na lâmina (vinda do "Redo" da página da professora)
+
 function renderSlide(lesson, slide) {
   setTab('lessons');
   view = { lesson, slide, hidden: false };
-  activate(firstPending(slide, slideProgress(state, lesson.id)));
-  drawSlide();
+  const want = focusQ && slide.items.findIndex(x => x.id === focusQ);
+  focusQ = null;
+  activate(want != null && want >= 0 ? want : firstPending(slide, slideProgress(state, lesson.id)));
+  drawSlide(want != null && want >= 0);
 }
 
 function builder(item) {
@@ -232,7 +236,8 @@ function drawSlide(scrollToActive = false) {
     if (isDone) {
       body = hidden
         ? '<p class="hidden-answer">Say your answer out loud.</p>'
-        : `<p class="answer">${esc(answer)}</p>${listen(answer, true)}${justDone === item.id ? `<p class="explain">${esc(item.explain)}</p>` : ''}`;
+        : `<p class="answer">${esc(answer)}</p>${listen(answer, true)}${justDone === item.id ? `<p class="explain">${esc(item.explain)}</p>` : ''}
+           <button class="btn btn-small btn-ghost redo" data-action="redo-q" data-i="${i}">Redo</button>`;
     } else if (isActive) {
       body = builder(item);
     } else {
@@ -263,7 +268,8 @@ function drawSlide(scrollToActive = false) {
     <ol class="qlist">${cards}</ol>
     ${c === slide.items.length ? `<div class="card done-card small"><p class="big-check">${ICON.check}</p>
       <p><strong>Slide ${slide.n} done.</strong> Your answers stay here for class. Tap "Try without looking" to practise speaking.</p>
-      ${nextS ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/slide/${nextS.n}">Next: Slide ${nextS.n}</a>` : `<a class="btn btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`}</div>`
+      ${nextS ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/slide/${nextS.n}">Next: Slide ${nextS.n}</a>` : `<a class="btn btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`}
+      <button class="btn btn-ghost btn-wide" data-action="redo-slide">Redo all answers on this slide</button></div>`
       : ''}`;
 
   if (scrollToActive && active != null) {
@@ -319,7 +325,7 @@ function drawPractice() {
   const right = correctAnswer(item);
   const canCheck = item.type === 'order' ? picked.length === item.blocks.length : item.type !== 'mc';
   main.innerHTML = `
-    <div class="s-top"><a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a><span class="count">Practice · ${cur.pos + 1}/${n}</span></div>
+    <div class="s-top"><a class="back" href="#/lesson/${lesson.id}${cur.mode === 'redo' ? '/teacher' : ''}">← ${cur.mode === 'redo' ? 'My answers' : `Lesson ${lesson.number}`}</a><span class="count">${cur.mode === 'redo' ? 'Redo' : 'Practice'} · ${cur.pos + 1}/${n}</span></div>
     <div class="bar"><span data-w="${Math.round((done / n) * 100)}"></span></div>
     <p class="tag">${esc(item.skill)} · Slide ${item.slide}${item.source === 'teacher' ? ' · <span class="teacher">From your teacher</span>' : ''}</p>
     <p class="instr">${INSTR[item.type]}</p>
@@ -343,23 +349,28 @@ function renderPracticeResult(lesson) {
   if (!run) { location.replace(`#/lesson/${lesson.id}/practice`); return; }
   const sc = runScore(lesson, run.answers);
   const sum = practiceSummary(ps);
+  const redo = run.mode === 'redo';
   const wrong = lesson.practice.filter(p => run.answers[p.id] && !run.answers[p.id].ok);
   const skills = Object.entries(sc.bySkill).sort((a, b) => a[1].ok / a[1].n - b[1].ok / b[1].n);
   const weak = skills.filter(([, v]) => v.ok < v.n).map(([k]) => k);
   main.innerHTML = `
     <a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a>
     <div class="card score-card">
-      <p class="eyebrow">Practice result</p>
+      <p class="eyebrow">${redo ? 'Redo result' : 'Practice result'}</p>
       <p class="score">${sc.pct}%</p>
-      <p class="hint">${sc.ok} of ${sc.n} correct · Best: ${sum.best}%</p>
+      <p class="hint">${sc.ok} of ${sc.n} correct${!redo && sum ? ` · Best: ${sum.best}%` : ''}${redo ? ' · Your new answers replaced the old ones.' : ''}</p>
       ${skills.map(([k, v]) => { const pc = Math.round((v.ok / v.n) * 100); return `<div class="tagbar"><span>${esc(k)}</span><span class="tb"><span class="${pc >= 80 ? 'ok' : pc < 60 ? 'bad' : 'mid'}" data-w="${pc}"></span></span><span>${v.ok}/${v.n}</span></div>`; }).join('')}
     </div>
     <div class="card"><h2 class="card-title">Focus on</h2>
       <p>${weak.length ? `Review: <strong>${weak.map(esc).join(', ')}</strong>.` : 'Everything right. Now say the answers out loud on each slide.'}</p></div>
     ${wrong.length ? `<div class="card"><h2 class="card-title">Your mistakes</h2>${wrong.map(p => `<div class="err">
       <p class="tag">${esc(p.skill)}</p><p class="good-txt">${esc(correctAnswer(p))}</p><p class="hint">${esc(p.explain)}</p></div>`).join('')}</div>` : ''}
-    <a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">Practice again</a>
-    <a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`;
+    ${redo
+      ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/teacher">Back to my answers</a>
+         <button class="btn btn-ghost btn-wide" data-action="redo-again">Redo these again</button>`
+      : `<a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">Practice again</a>
+         <a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`}`;
+  pview = { lesson, ps, lastRun: run };
 }
 
 /* ---------- Página para a professora: só os exercícios dela, com as respostas do aluno ---------- */
@@ -390,7 +401,7 @@ function renderTeacher(lesson) {
           total++;
           const a = last[p.id];
           if (a) answered++;
-          return `<li><p class="t-q">${esc(p.type === 'order' ? p.prompt : p.prompt)}</p>
+          return `<li><p class="t-q">${esc(p.prompt)}<button class="btn btn-small btn-ghost no-print t-redo" data-action="redo-items" data-ids="${p.id}">${a ? 'Redo' : 'Do it'}</button></p>
             ${a ? `<p class="t-a">${esc(givenText(p, a))} <span class="${a.ok ? 'good-txt' : 'bad-txt'}">${a.ok ? '✓' : '✗'}</span></p>
                    ${a.ok ? '' : `<p class="t-c">Correct: ${esc(correctAnswer(p))}</p>`}`
               : '<p class="t-a missing">Not done yet</p>'}</li>`;
@@ -399,20 +410,21 @@ function renderTeacher(lesson) {
           total++;
           const own = (notes[q.id] || '').trim();
           if (own) answered++;
-          return `<li><p class="t-q">${esc(q.question)}</p>
+          return `<li><p class="t-q">${esc(q.question)}<button class="btn btn-small btn-ghost no-print t-redo" data-action="redo-open" data-id="${q.id}" data-slide="${slide.n}">Build</button></p>
             <textarea class="input no-print" rows="2" data-note="${q.id}" placeholder="Write your own answer (optional)">${esc(notes[q.id] || '')}</textarea>
             <p class="t-a print-only">${own ? esc(own) : '<span class="missing">Answered orally in class.</span>'}</p>
             ${done[q.id] ? `<p class="t-c no-print">Model you built: ${esc(sentenceOf(q.blocks))}</p>` : ''}</li>`;
         }),
       ];
-      return `<section class="t-ex"><h3>${esc(title)}</h3><ol>${rows.join('')}</ol></section>`;
+      const head = objs.length ? `<button class="btn btn-small btn-ghost no-print" data-action="redo-items" data-ids="${objs.map(o => o.id).join(',')}">Redo this exercise</button>` : '';
+      return `<section class="t-ex"><h3>${esc(title)}</h3>${head}<ol>${rows.join('')}</ol></section>`;
     }).join('');
     return `<section class="t-sec"><h2>${esc(slide.title)}</h2>${blocks}</section>`;
   }).join('');
   main.innerHTML = `
     <a class="back no-print" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a>
     <div class="card no-print"><h2 class="card-title">My answers for the teacher</h2>
-      <p class="hint">Only your teacher's exercises, with your latest answers. ${answered}/${total} done. Do more Practice rounds to fill the rest.</p>
+      <p class="hint">Only your teacher's exercises, with your latest answers. ${answered}/${total} done. Tap "Redo" on any item, or "Redo this exercise", to do it again: the new answer replaces the old one.</p>
       <label class="field">Your name<input class="input" data-setting="name" value="${esc(state.settings.name || '')}" placeholder="Your name"></label>
       <button class="btn btn-wide" data-action="print">Save as PDF</button>
       <p class="hint">On the next screen, choose "Save as PDF" as the printer.</p></div>
@@ -490,6 +502,25 @@ main.addEventListener('click', async e => {
     await snapshot(state, 'before restore');
     state = snap; save({ reason: 'before restore' }); toast('Copy restored.'); return route();
   }
+  if (a === 'redo-items' || a === 'redo-again') {
+    const id = (location.hash.split('/')[2] || '');
+    const lesson = await getLesson(id);
+    const ps = practiceState(state, lesson.id);
+    const ids = a === 'redo-again' ? (pview && pview.lastRun && pview.lastRun.order) || Object.keys(pview.lastRun.answers) : el.dataset.ids.split(',');
+    if (ps.current && Object.keys(ps.current.answers).length && ps.current.mode !== 'redo'
+      && !confirm('You have a practice round in progress. Leave it and redo these exercises?')) return;
+    startRun(lesson, ps, Math.random, ids); save();
+    const target = `#/lesson/${lesson.id}/practice`;
+    if (location.hash === target) route(); else location.hash = target;
+    return;
+  }
+  if (a === 'redo-open') {
+    const id = location.hash.split('/')[2];
+    delete slideProgress(state, id)[el.dataset.id];
+    save(); focusQ = el.dataset.id;
+    location.hash = `#/lesson/${id}/slide/${el.dataset.slide}`;
+    return;
+  }
   if (a.startsWith('p-') && pview) return practiceAction(a, el);
   if (!view) return;
   const item = view.active != null ? view.slide.items[view.active] : null;
@@ -497,6 +528,16 @@ main.addEventListener('click', async e => {
   if (a === 'unpick') { view.picked.splice(Number(el.dataset.j), 1); view.status = 'idle'; return drawSlide(); }
   if (a === 'clear') { view.picked = []; view.status = 'idle'; return drawSlide(); }
   if (a === 'activate') { activate(Number(el.dataset.i)); return drawSlide(true); }
+  if (a === 'redo-q') {
+    const i = Number(el.dataset.i);
+    delete slideProgress(state, view.lesson.id)[view.slide.items[i].id];
+    save(); view.justDone = null; activate(i); return drawSlide(true);
+  }
+  if (a === 'redo-slide') {
+    const done = slideProgress(state, view.lesson.id);
+    for (const q of view.slide.items) delete done[q.id];
+    save(); view.justDone = null; view.hidden = false; activate(0); drawSlide(); window.scrollTo(0, 0); return;
+  }
   if (a === 'hide') { view.hidden = true; try { speechSynthesis.cancel(); } catch { /* ignore */ } return drawSlide(); }
   if (a === 'show') { view.hidden = false; return drawSlide(); }
   if (a === 'check' && item) {
