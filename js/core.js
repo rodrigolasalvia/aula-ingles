@@ -1,7 +1,8 @@
 // Lógica pura do app (sem DOM). Testada em tests/core.test.js.
 
-export const APP_VERSION = '5.0.0';
-export const STATE_VERSION = 5;
+export const APP_VERSION = '6.0.0';
+export const STATE_VERSION = 6;
+export const SESSION_SIZE = 10;
 export const SLOW_RATE = 0.85;
 
 export function dayKey(ts) {
@@ -28,7 +29,7 @@ export function migrateState(raw) {
   const s = emptyState();
   if (!isObj(raw)) return s;
   if (typeof raw.createdAt === 'number') s.createdAt = raw.createdAt;
-  if (isObj(raw.settings)) s.settings = { ...raw.settings, voice: typeof raw.settings.voice === 'string' ? raw.settings.voice : '' };
+  if (isObj(raw.settings)) s.settings = { ...raw.settings, voice: typeof raw.settings.voice === 'string' ? raw.settings.voice : '', name: typeof raw.settings.name === 'string' ? raw.settings.name : '' };
   if (Array.isArray(raw.log)) s.log = raw.log.filter(isObj).slice(-500);
   if (isObj(raw.lessons)) {
     for (const [id, ls] of Object.entries(raw.lessons)) {
@@ -41,6 +42,7 @@ export function migrateState(raw) {
         v3: { understood: p.understood === true, build: flags(p.build), speak: flags(p.speak) },
         v4: { done: flags(q.done) },
         practice: { runs: Array.isArray(r.runs) ? r.runs.filter(validRun).slice(-50) : [], current: validCurrent(r.current) ? r.current : null },
+        notes: isObj(ls.notes) ? Object.fromEntries(Object.entries(ls.notes).filter(([, v]) => typeof v === 'string')) : {},
       };
     }
   }
@@ -80,6 +82,7 @@ export function recordCount(s) {
       for (const run of Array.isArray(ls.practice.runs) ? ls.practice.runs : []) if (isObj(run)) n += keys(run.answers);
       if (isObj(ls.practice.current)) n += keys(ls.practice.current.answers);
     }
+    n += keys(ls.notes);
     for (const b of Object.values(isObj(ls.blocks) ? ls.blocks : {})) if (isObj(b)) n += keys(b.answers) + keys(b.writes);
     n += keys(ls.writes);
     for (const r of Object.values(isObj(ls.sessions) ? ls.sessions : {})) if (isObj(r)) n += keys(r.answers);
@@ -143,7 +146,8 @@ export function practiceState(state, lessonId) {
 const CONTRACTIONS = [
   [/\bdon't\b/g, 'do not'], [/\bdoesn't\b/g, 'does not'], [/\bdidn't\b/g, 'did not'], [/\bisn't\b/g, 'is not'],
   [/\baren't\b/g, 'are not'], [/\bcan't\b/g, 'cannot'], [/\bwon't\b/g, 'will not'], [/\bi'm\b/g, 'i am'],
-  [/\bi'd\b/g, 'i would'], [/\bit's\b/g, 'it is'], [/\bthat's\b/g, 'that is'], [/\bshe's\b/g, 'she is'], [/\bhe's\b/g, 'he is'],
+  [/\bi'd\b/g, 'i would'], [/\bhadn't\b/g, 'had not'], [/\bwouldn't\b/g, 'would not'], [/\bwasn't\b/g, 'was not'],
+  [/\bweren't\b/g, 'were not'], [/\bcouldn't\b/g, 'could not'], [/\bit's\b/g, 'it is'], [/\bthat's\b/g, 'that is'], [/\bshe's\b/g, 'she is'], [/\bhe's\b/g, 'he is'],
 ];
 
 // Texto digitado: ignora maiúsculas, pontuação, espaços extras e contrações.
@@ -153,9 +157,17 @@ export function normalizeTyped(text) {
   return t.replace(/[.,!?;:"()]/g, '').replace(/\s+/g, ' ').trim();
 }
 
+// Lacunas: uma ou mais "___", cada uma podendo ter a dica do verbo entre parênteses logo depois: "___ (study)".
+const BLANK = /___(\s*\([^)]*\))?/g;
+export const blankCount = item => (item.prompt.match(/___/g) || []).length;
+export const blankHints = item => [...item.prompt.matchAll(BLANK)].map(m => (m[1] || '').trim().replace(/^\(|\)$/g, ''));
+// accept: lista de respostas (uma lacuna) ou lista de listas (uma por lacuna).
+export const gapAccepts = item => (Array.isArray(item.accept[0]) ? item.accept : [item.accept]);
+const fillBlanks = (item, fills) => { let i = 0; return item.prompt.replace(BLANK, () => fills[i++] ?? '___'); };
+
 export function correctAnswer(item) {
-  if (item.type === 'mc') return item.prompt.replace('___', item.options[item.answer]);
-  if (item.type === 'gap') return item.prompt.replace('___', item.accept[0]);
+  if (item.type === 'mc') return fillBlanks(item, [item.options[item.answer]]);
+  if (item.type === 'gap') return fillBlanks(item, gapAccepts(item).map(a => a[0]));
   if (item.type === 'fix') return item.accept[0];
   return sentenceOf(item.blocks);
 }
@@ -163,7 +175,15 @@ export function correctAnswer(item) {
 // given: índice (mc), texto (gap/fix) ou lista de índices dos blocos (order).
 export function checkPractice(item, given) {
   if (item.type === 'mc') return Number(given) === item.answer;
-  if (item.type === 'gap' || item.type === 'fix') {
+  if (item.type === 'gap') {
+    const parts = Array.isArray(given) ? given : [given];
+    const acc = gapAccepts(item);
+    return parts.length === acc.length && acc.every((list, i) => {
+      const g = normalizeTyped(parts[i]);
+      return !!g && list.some(a => normalizeTyped(a) === g);
+    });
+  }
+  if (item.type === 'fix') {
     const g = normalizeTyped(given);
     return !!g && item.accept.some(a => normalizeTyped(a) === g);
   }
@@ -171,13 +191,50 @@ export function checkPractice(item, given) {
   return false;
 }
 
+// Última resposta de cada exercício (rodadas concluídas e a rodada atual).
+export function latestAnswers(ps) {
+  const out = {};
+  for (const r of (ps && ps.runs) || []) for (const [id, a] of Object.entries(r.answers || {})) out[id] = { ...a, ts: a.ts || r.ts };
+  if (ps && ps.current) for (const [id, a] of Object.entries(ps.current.answers)) out[id] = a;
+  return out;
+}
+
+// Sessão de até SESSION_SIZE exercícios do banco: primeiro os nunca feitos, depois os errados na última vez, depois o resto.
 export function startRun(lesson, ps, rnd = Math.random) {
-  ps.current = { order: shuffledOrder(lesson.practice.length, rnd).map(i => lesson.practice[i].id), pos: 0, answers: {}, startedAt: Date.now() };
+  const last = latestAnswers(ps);
+  const shuffle = arr => shuffledOrder(arr.length, rnd).map(i => arr[i]);
+  const pool = lesson.practice;
+  const fresh = shuffle(pool.filter(p => !last[p.id]));
+  const wrong = shuffle(pool.filter(p => last[p.id] && !last[p.id].ok));
+  const rest = shuffle(pool.filter(p => last[p.id] && last[p.id].ok));
+  const pick = [...fresh, ...wrong, ...rest].slice(0, Math.min(SESSION_SIZE, pool.length));
+  ps.current = { order: shuffle(pick).map(p => p.id), pos: 0, answers: {}, startedAt: Date.now() };
   return ps.current;
 }
 
 export function recordPractice(ps, item, given, ok) {
-  ps.current.answers[item.id] = { ok: !!ok, given: Array.isArray(given) ? given.join(',') : String(given) };
+  const g = !Array.isArray(given) ? String(given) : item.type === 'order' ? given.join(',') : given.join(' | ');
+  ps.current.answers[item.id] = { ok: !!ok, given: g, ts: Date.now() };
+}
+
+// Resposta dada pelo aluno, em texto legível.
+export function givenText(item, a) {
+  if (!a) return '';
+  if (item.type === 'mc') return item.options[Number(a.given)] ?? '';
+  if (item.type === 'order') return sentenceOf(String(a.given).split(',').filter(x => x !== '').map(k => item.blocks[Number(k)]));
+  if (item.type === 'gap') return fillBlanks(item, String(a.given).split(' | '));
+  return a.given;
+}
+
+export function bankCoverage(lesson, ps) {
+  const last = latestAnswers(ps);
+  return { seen: lesson.practice.filter(p => last[p.id]).length, total: lesson.practice.length };
+}
+
+export function lessonNotes(state, lessonId) {
+  const ls = state.lessons[lessonId] || (state.lessons[lessonId] = {});
+  if (!isObj(ls.notes)) ls.notes = {};
+  return ls.notes;
 }
 
 export function runScore(lesson, answers) {

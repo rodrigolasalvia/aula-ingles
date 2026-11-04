@@ -7,6 +7,14 @@
    "title": "Comparison, Choices & Envy",
    "subtitle": "Social media, social pressure and envy",
    "file": "data/v4/l001.json"
+  },
+  {
+   "id": "l002",
+   "number": 2,
+   "date": "2026-11-04",
+   "title": "Second & Third Conditionals",
+   "subtitle": "Imaginary situations now and in the past",
+   "file": "data/v4/l002.json"
   }
  ]
 }

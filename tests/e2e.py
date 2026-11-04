@@ -118,66 +118,103 @@ with sync_playwright() as p:
 
     print("Practice")
     P = {x["id"]: x for x in L["practice"]}
+    SIZE = min(10, len(P))
     page.goto(BASE); page.wait_for_selector(".practice-card")
     check("Start practice" in page.inner_text(".practice-card"), "cartão de Practice na tela da lição")
-    page.click(".practice-card .btn"); page.wait_for_selector(".count")
-    wrong_ids = {L["practice"][0]["id"], L["practice"][4]["id"]}
-    for k in range(len(P)):
-        page.wait_for_selector(".count")
-        cnt = page.inner_text(".count")
-        check(f"{k + 1}/{len(P)}" in cnt, f"progresso {k + 1}/{len(P)}") if k in (0, len(P) - 1) else None
-        typ = None
+
+    def answer_current(wrong):
+        prompt = page.inner_text(".prompt")
         if page.locator("button.opt").count():
-            prompt = page.inner_text(".prompt")
             x = next(i for i in P.values() if i["type"] == "mc" and i["prompt"] == prompt)
-            target = x["options"][x["answer"]] if x["id"] not in wrong_ids else x["options"][(x["answer"] + 1) % len(x["options"])]
+            target = x["options"][(x["answer"] + (1 if wrong else 0)) % len(x["options"])]
             page.locator("button.opt", has_text=target).first.click()
         elif page.locator("input[data-p=typed]").count():
-            prompt = page.inner_text(".prompt")
             x = next(i for i in P.values() if i["type"] == "gap" and i["prompt"] == prompt)
-            page.fill("input[data-p=typed]", "wrong" if x["id"] in wrong_ids else x["accept"][0])
+            acc = x["accept"] if isinstance(x["accept"][0], list) else [x["accept"]]
+            check(page.locator("input[data-p=typed]").count() == len(acc), f"{len(acc)} campo(s) para {len(acc)} lacuna(s)") if len(acc) > 1 else None
+            for i, a in enumerate(acc):
+                page.fill(f"input[data-p=typed][data-i='{i}']", "wrong" if wrong else a[0].upper())
             page.click("[data-action=p-check]")
         elif page.locator("textarea[data-p=typed]").count():
-            prompt = page.inner_text(".prompt")
             x = next(i for i in P.values() if i["type"] == "fix" and i["prompt"] == prompt)
-            if k == 1:
-                page.click("[data-action=p-check]")
-                check(page.locator(".fb").count() == 0, "corrigir sem mudar a frase não conta")
-            page.fill("textarea[data-p=typed]", x["prompt"] + " x" if x["id"] in wrong_ids else x["accept"][0].lower().rstrip("."))
+            page.fill("textarea[data-p=typed]", x["prompt"] + " x" if wrong else x["accept"][0].lower().rstrip("."))
             page.click("[data-action=p-check]")
         else:
-            prompt = page.inner_text(".prompt")
             x = next(i for i in P.values() if i["type"] == "order" and i["prompt"] == prompt)
-            seq = list(reversed(x["blocks"])) if x["id"] in wrong_ids else x["blocks"]
-            for b in seq:
+            for b in (list(reversed(x["blocks"])) if wrong else x["blocks"]):
                 btns = page.locator(".bank button.word")
                 for j in range(btns.count()):
                     if btns.nth(j).inner_text().strip() == b:
                         btns.nth(j).click(); break
             page.click("[data-action=p-check]")
         page.wait_for_selector(".fb")
-        ok = page.locator(".fb.ok").count() == 1
-        assert ok == (x["id"] not in wrong_ids), f"{x['id']}: correção inesperada"
-        if k == 0: shot(page, "07-practice-feedback")
-        if k == 2:
-            page.reload(); page.wait_for_selector(".fb")
-            check(True, "recarregar no meio mantém o exercício respondido")
-        page.click("[data-action=p-next]")
-    page.wait_for_selector(".score-card")
-    pct = round(100 * (len(P) - 2) / len(P))
+        assert (page.locator(".fb.ok").count() == 1) == (not wrong), f"{x['id']}: correção inesperada"
+        return x
+
+    def run_round(wrong_positions=(), shots=False):
+        page.click(".practice-card .btn"); page.wait_for_selector(".count")
+        done = []
+        for k in range(SIZE):
+            page.wait_for_selector(".prompt")
+            if k in (0, SIZE - 1): check(f"{k + 1}/{SIZE}" in page.inner_text(".count"), f"progresso {k + 1}/{SIZE}")
+            x = answer_current(k in wrong_positions)
+            done.append(x["id"])
+            if shots and k == 0: shot(page, "07-practice-feedback")
+            if k == 2:
+                page.reload(); page.wait_for_selector(".fb")
+            page.click("[data-action=p-next]")
+        page.wait_for_selector(".score-card")
+        return done
+
+    first = run_round(wrong_positions={0, 4}, shots=True)
+    pct = round(100 * (SIZE - 2) / SIZE)
     check(f"{pct}%" in page.inner_text(".score-card"), f"resultado em percentual ({pct}%)")
     check(page.locator(".err").count() == 2, "lista os erros")
     shot(page, "08-practice-result")
     page.click("a:has-text('Back to the lesson')"); page.wait_for_selector(".practice-card")
     check(f"Last: {pct}%" in page.inner_text(".practice-card"), "último e melhor resultado na lição")
+    rounds = [first]
+    while len(set(sum(rounds, []))) < len(P):
+        rounds.append(run_round())
+        page.click("a:has-text('Back to the lesson')"); page.wait_for_selector(".practice-card")
+        assert len(rounds) < 8
+    if len(P) > SIZE:
+        check(len(set(rounds[1])) == SIZE and not set(rounds[1]) & set(rounds[0]), "segunda rodada traz exercícios novos")
+        check(f"Done so far: {len(P)}/{len(P)}" in page.inner_text(".practice-card"), f"todos os {len(P)} exercícios feitos em {len(rounds)} rodadas")
+
+    if any(x["source"] == "teacher" for x in P.values()):
+        print("Página para a professora")
+        page.click("a:has-text('My answers for the teacher')"); page.wait_for_selector(".t-doc")
+        teacher_n = sum(x["source"] == "teacher" for x in P.values())
+        check(page.locator(".t-doc .t-a").count() >= teacher_n, "todas as respostas da professora listadas")
+        st = page.evaluate("JSON.parse(localStorage.getItem('aula-ingles:state'))")["lessons"][LID]["practice"]["runs"]
+        last = {}
+        for r in st: last.update(r["answers"])
+        exp = sum(1 for i, a in last.items() if not a["ok"] and P[i]["source"] == "teacher")
+        check(page.locator(".t-doc .bad-txt").count() == exp and page.locator(".t-doc .t-c").count() >= exp, f"erros marcados com a correção ({exp})")
+        page.fill("input[data-setting=name]", "Rodrigo Lasalvia"); page.locator("input[data-setting=name]").dispatch_event("change")
+        page.wait_for_selector(".t-doc")
+        page.locator("textarea[data-note]").first.fill("If I had a million dollars, I would help my family first.")
+        page.wait_for_timeout(700)
+        shot(page, "09-teacher-page")
+        page.emulate_media(media="print")
+        check("help my family first" in page.inner_text(".t-doc"), "resposta própria aparece no PDF")
+        page.emulate_media(media="screen")
+        if SHOTS:
+            page.emulate_media(media="print")
+            page.pdf(path=str(SHOTS / "exemplo-respostas-professora.pdf"), format="A4", print_background=True)
+            page.emulate_media(media="screen")
+            check(True, "PDF gerado pela impressão da página")
+        page.reload(); page.wait_for_selector(".t-doc")
+        check("help my family first" in page.input_value("textarea[data-note]"), "resposta própria fica salva")
 
     print("Proteção dos dados e offline")
-    page.wait_for_timeout(600)
+    page.goto(BASE); page.wait_for_selector(".hero"); page.wait_for_timeout(600)
     page.evaluate("localStorage.setItem('aula-ingles:state', '{x'); localStorage.removeItem('aula-ingles:state:prev')")
-    page.reload(); page.wait_for_selector(".hero"); page.wait_for_timeout(500)
+    page.goto(BASE); page.reload(); page.wait_for_selector(".hero"); page.wait_for_timeout(500)
     st = page.evaluate("JSON.parse(localStorage.getItem('aula-ingles:state'))")
     total = sum(len(s["items"]) for s in L["slides"])
-    check(len(st["lessons"][LID]["v4"]["done"]) == total and len(st["lessons"][LID]["practice"]["runs"]) == 1, "dados corrompidos: progresso recuperado")
+    check(len(st["lessons"][LID]["v4"]["done"]) == total and len(st["lessons"][LID]["practice"]["runs"]) >= 1, "dados corrompidos: progresso recuperado")
     page.evaluate("navigator.serviceWorker.ready.then(() => true)")
     page.reload(); page.wait_for_selector(".hero")
     ctx.set_offline(True)

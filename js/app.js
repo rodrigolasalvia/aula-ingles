@@ -1,7 +1,8 @@
 import {
   APP_VERSION, SLOW_RATE, formatDate, dayKey, migrateState, emptyState, slideProgress, doneCount, nextSlide,
   isCorrect, sentenceOf, scramble, looksLikeBackup, practiceState, checkPractice, correctAnswer, startRun,
-  recordPractice, runScore, finishRun, practiceSummary, shuffledOrder,
+  recordPractice, runScore, finishRun, practiceSummary, shuffledOrder, SESSION_SIZE, blankCount, blankHints,
+  latestAnswers, givenText, bankCoverage, lessonNotes,
 } from './core.js';
 import {
   loadState, saveState, hasLocal, recoverRicher, snapshot, listSnapshots, readSnapshot, requestPersistence, answerCount,
@@ -98,13 +99,15 @@ function speak(text, rate = 1) {
 async function route() {
   document.getElementById('toast').hidden = true;
   try { speechSynthesis.cancel(); } catch { /* ignore */ }
-  view = null; pview = null;
+  view = null; pview = null; tview = null;
+  document.body.classList.remove('print-page');
   const parts = (location.hash.replace(/^#\/?/, '') || '').split('/').filter(Boolean);
   try {
     if (!index.length) await loadIndex();
     if (parts[0] === 'lesson' && parts[1]) {
       const lesson = await getLesson(parts[1]);
       if (!lesson) return notFound();
+      if (parts[2] === 'teacher') return renderTeacher(lesson);
       if (parts[2] === 'practice') return parts[3] === 'result' ? renderPracticeResult(lesson) : renderPractice(lesson);
       if (parts[2] === 'slide' && parts[3]) {
         const slide = lesson.slides.find(s => String(s.n) === parts[3]);
@@ -160,12 +163,18 @@ function practiceCard(lesson) {
   const ps = practiceState(state, lesson.id);
   const sum = practiceSummary(ps);
   const cur = ps.current;
+  const size = Math.min(SESSION_SIZE, lesson.practice.length);
+  const cov = bankCoverage(lesson, ps);
+  const teacherN = lesson.practice.filter(x => x.source === 'teacher').length;
   return `<div class="card practice-card">
-    <h2 class="card-title">Practice · ${lesson.practice.length} exercises</h2>
-    <p class="hint">Quick check on the lesson: choose, complete, correct and build sentences.</p>
+    <h2 class="card-title">Practice · ${size} exercises</h2>
+    <p class="hint">${lesson.practice.length > size
+      ? `Each round picks ${size} of ${lesson.practice.length} exercises${teacherN ? ` (${teacherN} from your teacher)` : ''}, new ones first. Done so far: ${cov.seen}/${cov.total}.`
+      : 'Quick check on the lesson: choose, complete, correct and build sentences.'}</p>
     ${sum ? `<p class="scores"><span>Last: <strong>${sum.last}%</strong></span><span>Best: <strong>${sum.best}%</strong></span><span>${sum.count}×</span></p>` : ''}
     <a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">${cur ? `Continue (${cur.pos + 1}/${cur.order.length})` : sum ? 'Practice again' : 'Start practice'}</a>
-  </div>`;
+  </div>
+  ${teacherN ? `<a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}/teacher">My answers for the teacher (PDF)</a>` : ''}`;
 }
 
 function renderLessons() {
@@ -272,7 +281,7 @@ function renderPractice(lesson) {
   if (!ps.current || ps.current.order.some(id => !lesson.practice.some(p => p.id === id))) { startRun(lesson, ps); save(); }
   if (ps.current.pos >= ps.current.order.length) { finishRun(lesson, ps); save(); location.replace(`#/lesson/${lesson.id}/practice/result`); return; }
   const item = lesson.practice.find(p => p.id === ps.current.order[ps.current.pos]);
-  pview = { lesson, ps, item, typed: item.type === 'fix' ? item.prompt : '', picked: [],
+  pview = { lesson, ps, item, typed: item.type === 'fix' ? item.prompt : item.type === 'gap' ? Array(blankCount(item)).fill('') : '', picked: [],
     perm: item.type === 'order' ? scramble(item.blocks) : item.type === 'mc' ? shuffledOrder(item.options.length) : [] };
   drawPractice();
 }
@@ -293,8 +302,11 @@ function drawPractice() {
       return `<button class="${cls}" data-action="p-mc" data-i="${i}" ${ans ? 'disabled' : ''}>${esc(item.options[i])}</button>`;
     }).join('')}</div>`;
   } else if (item.type === 'gap') {
+    const hints = blankHints(item);
+    const vals = ans ? String(ans.given).split(' | ') : typed;
     body = `<p class="prompt">${esc(item.prompt)}</p>
-      <input class="input" data-p="typed" value="${esc(ans ? ans.given : typed)}" ${ans ? 'disabled' : ''} autocapitalize="none" autocomplete="off" spellcheck="false" enterkeyhint="done" placeholder="Type the missing word">`;
+      ${hints.map((h, i) => `<label class="gap-field">${hints.length > 1 ? `<span>${i + 1}${h ? ` · ${esc(h)}` : ''}</span>` : ''}
+        <input class="input" data-p="typed" data-i="${i}" value="${esc(vals[i] || '')}" ${ans ? 'disabled' : ''} autocapitalize="none" autocomplete="off" spellcheck="false" enterkeyhint="${i < hints.length - 1 ? 'next' : 'done'}" placeholder="${hints.length > 1 ? `Blank ${i + 1}` : 'Type the missing word(s)'}"></label>`).join('')}`;
   } else if (item.type === 'fix') {
     body = `<p class="prompt wrong-sentence">${esc(item.prompt)}</p>
       <textarea class="input" rows="3" data-p="typed" ${ans ? 'disabled' : ''} autocapitalize="sentences" spellcheck="false">${esc(ans ? ans.given : typed)}</textarea>`;
@@ -348,6 +360,68 @@ function renderPracticeResult(lesson) {
       <p class="tag">${esc(p.skill)}</p><p class="good-txt">${esc(correctAnswer(p))}</p><p class="hint">${esc(p.explain)}</p></div>`).join('')}</div>` : ''}
     <a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">Practice again</a>
     <a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`;
+}
+
+/* ---------- Página para a professora: só os exercícios dela, com as respostas do aluno ---------- */
+
+let tview = null;
+
+function renderTeacher(lesson) {
+  setTab('lessons');
+  tview = { id: lesson.id };
+  document.body.classList.add('print-page');
+  const ps = practiceState(state, lesson.id);
+  const last = latestAnswers(ps);
+  const notes = lessonNotes(state, lesson.id);
+  const done = slideProgress(state, lesson.id);
+  const titles = lesson.exercises || {};
+  let total = 0, answered = 0;
+  const sections = lesson.slides.map(slide => {
+    const exNums = new Set([
+      ...lesson.practice.filter(p => p.source === 'teacher' && p.slide === slide.n).map(p => p.ex),
+      ...slide.items.filter(i => i.ex).map(i => i.ex),
+    ]);
+    const blocks = [...exNums].sort((a, b) => a - b).map(ex => {
+      const title = (titles[slide.n] && titles[slide.n][ex]) || `Exercise ${ex}`;
+      const openQs = slide.items.filter(i => i.ex === ex);
+      const objs = lesson.practice.filter(p => p.source === 'teacher' && p.slide === slide.n && p.ex === ex);
+      const rows = [
+        ...objs.map((p, k) => {
+          total++;
+          const a = last[p.id];
+          if (a) answered++;
+          return `<li><p class="t-q">${esc(p.type === 'order' ? p.prompt : p.prompt)}</p>
+            ${a ? `<p class="t-a">${esc(givenText(p, a))} <span class="${a.ok ? 'good-txt' : 'bad-txt'}">${a.ok ? '✓' : '✗'}</span></p>
+                   ${a.ok ? '' : `<p class="t-c">Correct: ${esc(correctAnswer(p))}</p>`}`
+              : '<p class="t-a missing">Not done yet</p>'}</li>`;
+        }),
+        ...openQs.map(q => {
+          total++;
+          const own = (notes[q.id] || '').trim();
+          if (own) answered++;
+          return `<li><p class="t-q">${esc(q.question)}</p>
+            <textarea class="input no-print" rows="2" data-note="${q.id}" placeholder="Write your own answer (optional)">${esc(notes[q.id] || '')}</textarea>
+            <p class="t-a print-only">${own ? esc(own) : '<span class="missing">Answered orally in class.</span>'}</p>
+            ${done[q.id] ? `<p class="t-c no-print">Model you built: ${esc(sentenceOf(q.blocks))}</p>` : ''}</li>`;
+        }),
+      ];
+      return `<section class="t-ex"><h3>${esc(title)}</h3><ol>${rows.join('')}</ol></section>`;
+    }).join('');
+    return `<section class="t-sec"><h2>${esc(slide.title)}</h2>${blocks}</section>`;
+  }).join('');
+  main.innerHTML = `
+    <a class="back no-print" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a>
+    <div class="card no-print"><h2 class="card-title">My answers for the teacher</h2>
+      <p class="hint">Only your teacher's exercises, with your latest answers. ${answered}/${total} done. Do more Practice rounds to fill the rest.</p>
+      <label class="field">Your name<input class="input" data-setting="name" value="${esc(state.settings.name || '')}" placeholder="Your name"></label>
+      <button class="btn btn-wide" data-action="print">Save as PDF</button>
+      <p class="hint">On the next screen, choose "Save as PDF" as the printer.</p></div>
+    <article class="t-doc">
+      <header><h1>${esc(lesson.title)}</h1>
+        <p>${state.settings.name ? `${esc(state.settings.name)} · ` : ''}${formatDate(dayKey(Date.now()))}${lesson.source ? ` · Material: ${esc(lesson.source)}` : ''}</p>
+        <p class="t-legend">✓ correct · ✗ wrong (the correct answer is shown below)</p></header>
+      ${sections}
+    </article>`;
 }
 
 /* ---------- Settings ---------- */
@@ -409,6 +483,7 @@ main.addEventListener('click', async e => {
   if (a === 'say') return speak(el.dataset.text, Number(el.dataset.rate) || 1);
   if (a === 'reload') return location.reload();
   if (a === 'export') return exportBackup();
+  if (a === 'print') { save(); return window.print(); }
   if (a === 'restore') {
     const snap = await readSnapshot(el.dataset.key);
     if (!snap || !confirm('Restore this copy? Your current progress is kept as a copy.')) return;
@@ -448,6 +523,11 @@ function practiceAction(a, el) {
   if (a === 'p-clear') { pview.picked = []; return drawPractice(); }
   if (a === 'p-check' && !ps.current.answers[item.id]) {
     if (item.type === 'order') return answer(pview.picked.slice());
+    if (item.type === 'gap') {
+      const parts = pview.typed.map(t => t.trim());
+      if (parts.some(t => !t)) { toast(parts.length > 1 ? 'Fill in all the blanks first.' : 'Type your answer first.'); return; }
+      return answer(parts);
+    }
     const text = (pview.typed || '').trim();
     if (!text) { toast('Type your answer first.'); return; }
     if (item.type === 'fix' && text === item.prompt.trim()) { toast("You haven't changed the sentence yet."); return; }
@@ -465,16 +545,30 @@ function practiceAction(a, el) {
 }
 
 main.addEventListener('input', e => {
-  if (e.target.dataset.p === 'typed' && pview) pview.typed = e.target.value;
+  if (e.target.dataset.p === 'typed' && pview) {
+    if (Array.isArray(pview.typed)) pview.typed[Number(e.target.dataset.i)] = e.target.value;
+    else pview.typed = e.target.value;
+  }
+  if (e.target.dataset.note && tview) {
+    lessonNotes(state, tview.id)[e.target.dataset.note] = e.target.value;
+    const out = e.target.parentElement.querySelector('.print-only');
+    if (out) out.innerHTML = e.target.value.trim() ? esc(e.target.value.trim()) : '<span class="missing">Answered orally in class.</span>';
+    clearTimeout(e.target._t); e.target._t = setTimeout(() => save(), 500);
+  }
 });
 
 main.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && e.target.matches('input[data-p="typed"]')) { e.preventDefault(); main.querySelector('[data-action="p-check"]')?.click(); }
+  if (e.key === 'Enter' && e.target.matches('input[data-p="typed"]')) {
+    e.preventDefault();
+    const next = main.querySelector(`input[data-p="typed"][data-i="${Number(e.target.dataset.i) + 1}"]`);
+    if (next) next.focus(); else main.querySelector('[data-action="p-check"]')?.click();
+  }
 });
 
 main.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.setting === 'voice') { state.settings.voice = t.value; save(); }
+  if (t.dataset.setting === 'name') { state.settings.name = t.value.trim().slice(0, 80); save(); route(); }
   if (t.dataset.action === 'import' && t.files && t.files[0]) importBackup(t.files[0]);
 });
 

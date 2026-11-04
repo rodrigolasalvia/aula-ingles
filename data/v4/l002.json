@@ -1,0 +1,812 @@
+{
+ "id": "l002",
+ "number": 2,
+ "date": "2026-11-04",
+ "format": 4,
+ "title": "Second & Third Conditionals",
+ "subtitle": "Imaginary situations now and in the past",
+ "level": "B2 Grammar",
+ "source": "2nd_3rd_mixed_1.pdf",
+ "exercises": {
+  "1": {
+   "1": "Exercise 1: Use would / wouldn't and the verb in brackets",
+   "2": "Exercise 2: Make second conditional sentences",
+   "3": "Exercise 3: Answer these questions using your own ideas",
+   "4": "Exercise 4: Correct the mistakes"
+  },
+  "2": {
+   "1": "Exercise 1: Complete the sentences",
+   "2": "Exercise 2: Make third conditional sentences",
+   "3": "Exercise 3: Answer these questions with your own ideas",
+   "4": "Exercise 4: Correct the mistakes"
+  }
+ },
+ "slides": [
+  {
+   "id": "s1",
+   "n": 1,
+   "title": "Second Conditional",
+   "question": "What would you do if things were different now?",
+   "summary": "We use the second conditional for imaginary or unlikely situations in the present or future. The if-clause uses the past simple and the main clause uses would + verb. We often say \"were\" instead of \"was\": If I were rich, I would travel.",
+   "expressions": [
+    {
+     "en": "If + past simple, would + verb",
+     "meaning": "an imaginary situation now: If I had time, I would help."
+    },
+    {
+     "en": "If I were…",
+     "meaning": "\"were\" is common for all people: If she were here…"
+    },
+    {
+     "en": "would / wouldn't + verb",
+     "meaning": "the imaginary result: I would go. I wouldn't stay."
+    },
+    {
+     "en": "If I were you, I would…",
+     "meaning": "a very common way to give advice."
+    },
+    {
+     "en": "What would you do if…?",
+     "meaning": "the question form: would comes before the subject."
+    }
+   ],
+   "items": [
+    {
+     "id": "c2a",
+     "kind": "class",
+     "ex": 3,
+     "question": "What would you do if you had a million dollars?",
+     "blocks": [
+      "If I had a million dollars,",
+      "I would buy a house",
+      "and travel around",
+      "the world."
+     ],
+     "explain": "If + past simple (had), then would + verb (would buy)."
+    },
+    {
+     "id": "c2b",
+     "kind": "class",
+     "ex": 3,
+     "question": "If you could live anywhere, where would you live?",
+     "blocks": [
+      "If I could live anywhere,",
+      "I would live",
+      "near the sea",
+      "in Portugal."
+     ],
+     "explain": "\"Could\" is the past of can, so it works in the if-clause."
+    },
+    {
+     "id": "c2c",
+     "kind": "class",
+     "ex": 3,
+     "question": "If you could meet any famous person, who would you meet?",
+     "blocks": [
+      "If I could meet anyone,",
+      "I would meet Roger Federer",
+      "and ask him",
+      "about his discipline."
+     ],
+     "explain": "You can join two results with \"and\": I would meet him and ask him…"
+    },
+    {
+     "id": "c2d",
+     "kind": "class",
+     "ex": 3,
+     "question": "If you had a superpower, what would it be?",
+     "blocks": [
+      "If I had a superpower,",
+      "it would be",
+      "the ability to fly."
+     ],
+     "explain": "\"It would be…\" is a simple way to name your choice."
+    },
+    {
+     "id": "c2e",
+     "kind": "class",
+     "ex": 3,
+     "question": "If you didn't have to work or study, how would you spend your time?",
+     "blocks": [
+      "If I didn't have to work,",
+      "I would spend my time",
+      "travelling with my family."
+     ],
+     "explain": "Negative if-clause: didn't + verb. Spend time + -ING: spend my time travelling."
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "n": 2,
+   "title": "Third Conditional",
+   "question": "How would things have been different in the past?",
+   "summary": "We use the third conditional for imaginary situations in the past: things that didn't happen. The if-clause uses had + past participle and the main clause uses would have + past participle. Use might have or could have when you are less sure.",
+   "expressions": [
+    {
+     "en": "If + had + past participle",
+     "meaning": "the imaginary past: If I had studied…"
+    },
+    {
+     "en": "would have + past participle",
+     "meaning": "the imaginary past result: I would have passed."
+    },
+    {
+     "en": "might have / could have",
+     "meaning": "a less certain result: I might have passed."
+    },
+    {
+     "en": "If I hadn't…, I wouldn't have…",
+     "meaning": "the negative form: If I hadn't missed the bus…"
+    },
+    {
+     "en": "What would you have done if…?",
+     "meaning": "the question form about the past."
+    }
+   ],
+   "items": [
+    {
+     "id": "c3a",
+     "kind": "class",
+     "ex": 3,
+     "question": "What would you have done if you had won the lottery last year?",
+     "blocks": [
+      "If I had won the lottery,",
+      "I would have",
+      "paid off my house",
+      "and travelled more."
+     ],
+     "explain": "If + had won, then would have + past participle (paid, travelled)."
+    },
+    {
+     "id": "c3b",
+     "kind": "class",
+     "ex": 3,
+     "question": "If you had known English earlier, how would your life have been different?",
+     "blocks": [
+      "If I had learned English earlier,",
+      "I would have had",
+      "more opportunities",
+      "at work."
+     ],
+     "explain": "\"Would have had\" is correct: have + the past participle of have (had)."
+    },
+    {
+     "id": "c3c",
+     "kind": "class",
+     "ex": 3,
+     "question": "If you had met your best friend earlier, how would things have changed?",
+     "blocks": [
+      "If I had met him earlier,",
+      "we would have shared",
+      "many more",
+      "good moments."
+     ],
+     "explain": "Met is the past participle of meet: had met."
+    },
+    {
+     "id": "c3d",
+     "kind": "class",
+     "ex": 3,
+     "question": "Where would you have gone if you had had more time last summer?",
+     "blocks": [
+      "If I had had more time,",
+      "I would have gone",
+      "to the beach",
+      "for a week."
+     ],
+     "explain": "\"Had had\" is normal English: past perfect of have. Gone is the participle of go."
+    },
+    {
+     "id": "c3e",
+     "kind": "class",
+     "ex": 3,
+     "question": "If you hadn't chosen your current job, what would you have done instead?",
+     "blocks": [
+      "If I hadn't chosen this job,",
+      "I would have",
+      "studied law",
+      "instead."
+     ],
+     "explain": "Negative past perfect: hadn't + past participle (chosen)."
+    }
+   ]
+  }
+ ],
+ "practice": [
+  {
+   "id": "t2e1a",
+   "type": "gap",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If I had more free time, I ___ (learn) another language.",
+   "accept": [
+    "would learn",
+    "'d learn"
+   ],
+   "explain": "Main clause: would + verb. If + past simple (had).",
+   "tip": "Great for talking about plans you can't do yet."
+  },
+  {
+   "id": "t2e1b",
+   "type": "gap",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If she were here, she ___ (help) us.",
+   "accept": [
+    "would help",
+    "'d help"
+   ],
+   "explain": "\"Were\" in the if-clause, would + verb in the result.",
+   "tip": ""
+  },
+  {
+   "id": "t2e1c",
+   "type": "gap",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If they lived near the sea, they ___ (go) swimming every day.",
+   "accept": [
+    "would go",
+    "'d go"
+   ],
+   "explain": "Would + verb: would go. \"Go swimming\" is a fixed expression.",
+   "tip": ""
+  },
+  {
+   "id": "t2e1d",
+   "type": "gap",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If I were rich, I ___ (travel) around the world.",
+   "accept": [
+    "would travel",
+    "'d travel"
+   ],
+   "explain": "Would + base verb, without \"to\": would travel.",
+   "tip": ""
+  },
+  {
+   "id": "t2e1e",
+   "type": "gap",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If he didn't have to work tomorrow, he ___ (come) with us.",
+   "accept": [
+    "would come",
+    "'d come"
+   ],
+   "explain": "Negative if-clause (didn't have to), positive result (would come).",
+   "tip": ""
+  },
+  {
+   "id": "t2e2a",
+   "type": "order",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "have more money / go on holiday",
+   "blocks": [
+    "If I had",
+    "more money,",
+    "I would go",
+    "on holiday."
+   ],
+   "explain": "If + past simple (had), would + verb (would go).",
+   "tip": ""
+  },
+  {
+   "id": "t2e2b",
+   "type": "order",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "be the president / change the law",
+   "blocks": [
+    "If I were",
+    "the president,",
+    "I would change",
+    "the law."
+   ],
+   "explain": "With \"be\" we usually say \"If I were\".",
+   "tip": ""
+  },
+  {
+   "id": "t2e2c",
+   "type": "order",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "know French / live in Paris",
+   "blocks": [
+    "If I knew French,",
+    "I would live",
+    "in Paris."
+   ],
+   "explain": "Knew is the past simple of know.",
+   "tip": ""
+  },
+  {
+   "id": "t2e2d",
+   "type": "order",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "be taller / play basketball",
+   "blocks": [
+    "If I were taller,",
+    "I would play",
+    "basketball."
+   ],
+   "explain": "If I were + adjective, then would + verb.",
+   "tip": ""
+  },
+  {
+   "id": "t2e2e",
+   "type": "order",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "see a ghost / run away",
+   "blocks": [
+    "If I saw",
+    "a ghost,",
+    "I would",
+    "run away."
+   ],
+   "explain": "Saw is the past simple of see.",
+   "tip": ""
+  },
+  {
+   "id": "t2e4a",
+   "type": "fix",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "If I will see him, I would tell him the news.",
+   "accept": [
+    "If I saw him, I would tell him the news.",
+    "If I see him, I will tell him the news."
+   ],
+   "explain": "Never use will in the if-clause. Second conditional: If I saw him, I would tell him.",
+   "tip": "If you mean a real possibility, the first conditional also works: If I see him, I will tell him."
+  },
+  {
+   "id": "t2e4b",
+   "type": "fix",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "If she have more time, she would learn Spanish.",
+   "accept": [
+    "If she had more time, she would learn Spanish."
+   ],
+   "explain": "The if-clause needs the past simple: had.",
+   "tip": ""
+  },
+  {
+   "id": "t2e4c",
+   "type": "fix",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "I would help you if I am free.",
+   "accept": [
+    "I would help you if I were free.",
+    "I would help you if I was free."
+   ],
+   "explain": "The if-clause needs the past: were (or was). The if-clause can come second.",
+   "tip": ""
+  },
+  {
+   "id": "t2e4d",
+   "type": "fix",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "If they lives in Canada, they would speak English every day.",
+   "accept": [
+    "If they lived in Canada, they would speak English every day."
+   ],
+   "explain": "Past simple in the if-clause: lived.",
+   "tip": ""
+  },
+  {
+   "id": "t2e4e",
+   "type": "fix",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "What you would do if you won the lottery?",
+   "accept": [
+    "What would you do if you won the lottery?"
+   ],
+   "explain": "In questions, would comes before the subject: What would you do…?",
+   "tip": ""
+  },
+  {
+   "id": "t3e1a",
+   "type": "gap",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If I ___ (study) harder, I ___ (pass) the exam.",
+   "accept": [
+    [
+     "had studied",
+     "'d studied"
+    ],
+    [
+     "would have passed",
+     "'d have passed"
+    ]
+   ],
+   "explain": "If + had + past participle; main clause: would have + past participle.",
+   "tip": ""
+  },
+  {
+   "id": "t3e1b",
+   "type": "gap",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If they ___ (leave) earlier, they ___ (catch) the train.",
+   "accept": [
+    [
+     "had left",
+     "'d left"
+    ],
+    [
+     "would have caught",
+     "'d have caught"
+    ]
+   ],
+   "explain": "Irregular participles: leave → left, catch → caught.",
+   "tip": ""
+  },
+  {
+   "id": "t3e1c",
+   "type": "gap",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If she ___ (know) about the meeting, she ___ (come).",
+   "accept": [
+    [
+     "had known",
+     "'d known"
+    ],
+    [
+     "would have come",
+     "'d have come"
+    ]
+   ],
+   "explain": "Irregular participles: know → known, come → come.",
+   "tip": ""
+  },
+  {
+   "id": "t3e1d",
+   "type": "gap",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If we ___ (book) the tickets in advance, we ___ (get) better seats.",
+   "accept": [
+    [
+     "had booked",
+     "'d booked"
+    ],
+    [
+     "would have got",
+     "'d have got",
+     "would have gotten",
+     "'d have gotten"
+    ]
+   ],
+   "explain": "Get → got (British) or gotten (American). Both are correct.",
+   "tip": ""
+  },
+  {
+   "id": "t3e1e",
+   "type": "gap",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 1,
+   "prompt": "If he ___ (drive) more carefully, he ___ (avoid) the accident.",
+   "accept": [
+    [
+     "had driven",
+     "'d driven"
+    ],
+    [
+     "would have avoided",
+     "'d have avoided"
+    ]
+   ],
+   "explain": "Irregular participle: drive → driven.",
+   "tip": ""
+  },
+  {
+   "id": "t3e2a",
+   "type": "order",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "not forget my umbrella / not get wet",
+   "blocks": [
+    "If I hadn't forgotten",
+    "my umbrella,",
+    "I wouldn't have",
+    "gotten wet."
+   ],
+   "explain": "Negative: hadn't + participle, wouldn't have + participle.",
+   "tip": ""
+  },
+  {
+   "id": "t3e2b",
+   "type": "order",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "know about the party / go",
+   "blocks": [
+    "If I had known",
+    "about the party,",
+    "I would have gone."
+   ],
+   "explain": "Know → known, go → gone.",
+   "tip": ""
+  },
+  {
+   "id": "t3e2c",
+   "type": "order",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "study medicine / become a doctor",
+   "blocks": [
+    "If I had studied",
+    "medicine,",
+    "I would have become",
+    "a doctor."
+   ],
+   "explain": "Become → become (same form).",
+   "tip": ""
+  },
+  {
+   "id": "t3e2d",
+   "type": "order",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "set an alarm / wake up on time",
+   "blocks": [
+    "If I had set",
+    "an alarm,",
+    "I would have woken up",
+    "on time."
+   ],
+   "explain": "Set → set, wake → woken.",
+   "tip": ""
+  },
+  {
+   "id": "t3e2e",
+   "type": "order",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 2,
+   "prompt": "save more money / buy a new phone",
+   "blocks": [
+    "If I had saved",
+    "more money,",
+    "I would have bought",
+    "a new phone."
+   ],
+   "explain": "Buy → bought.",
+   "tip": ""
+  },
+  {
+   "id": "t3e4a",
+   "type": "fix",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "If I would have seen her, I would have said hello.",
+   "accept": [
+    "If I had seen her, I would have said hello."
+   ],
+   "explain": "No \"would\" in the if-clause. Use had + past participle: If I had seen her.",
+   "tip": ""
+  },
+  {
+   "id": "t3e4b",
+   "type": "fix",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "If they had knew, they would have helped us.",
+   "accept": [
+    "If they had known, they would have helped us."
+   ],
+   "explain": "After had we need the past participle: known, not knew.",
+   "tip": ""
+  },
+  {
+   "id": "t3e4c",
+   "type": "fix",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "I had come if you had invited me.",
+   "accept": [
+    "I would have come if you had invited me."
+   ],
+   "explain": "The main clause needs would have + past participle.",
+   "tip": ""
+  },
+  {
+   "id": "t3e4d",
+   "type": "fix",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "If she wouldn't have lost her passport, she wouldn't have missed the flight.",
+   "accept": [
+    "If she hadn't lost her passport, she wouldn't have missed the flight."
+   ],
+   "explain": "No \"would\" in the if-clause: If she hadn't lost…",
+   "tip": ""
+  },
+  {
+   "id": "t3e4e",
+   "type": "fix",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 4,
+   "prompt": "What you would have done if it had rained?",
+   "accept": [
+    "What would you have done if it had rained?"
+   ],
+   "explain": "In questions, would comes before the subject: What would you have done…?",
+   "tip": ""
+  },
+  {
+   "id": "x2a",
+   "type": "mc",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "prompt": "If I ___ you, I would talk to her.",
+   "options": [
+    "were",
+    "am",
+    "will be",
+    "would be"
+   ],
+   "answer": 0,
+   "explain": "\"If I were you\" is the fixed form for advice.",
+   "tip": "At work: \"If I were you, I would check the contract again.\""
+  },
+  {
+   "id": "x2b",
+   "type": "mc",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "prompt": "If she ___ the job, she would move to London.",
+   "options": [
+    "got",
+    "gets",
+    "will get",
+    "would get"
+   ],
+   "answer": 0,
+   "explain": "Second conditional: past simple in the if-clause.",
+   "tip": ""
+  },
+  {
+   "id": "x2c",
+   "type": "fix",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "prompt": "If I would know the answer, I would tell you.",
+   "accept": [
+    "If I knew the answer, I would tell you."
+   ],
+   "explain": "Never would in the if-clause. Know → knew.",
+   "tip": ""
+  },
+  {
+   "id": "x3a",
+   "type": "mc",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "prompt": "If I had known about the traffic, I ___ earlier.",
+   "options": [
+    "would have left",
+    "would leave",
+    "will leave",
+    "left"
+   ],
+   "answer": 0,
+   "explain": "Past situation → third conditional: would have + past participle.",
+   "tip": "\"If I had known, I would have…\" is very common in apologies."
+  },
+  {
+   "id": "x3b",
+   "type": "mc",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "prompt": "I wouldn't have missed the meeting if I ___ the email.",
+   "options": [
+    "had read",
+    "read",
+    "would read",
+    "have read"
+   ],
+   "answer": 0,
+   "explain": "If-clause about the past: had + past participle (read).",
+   "tip": ""
+  },
+  {
+   "id": "x3c",
+   "type": "order",
+   "skill": "Third conditional",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "prompt": "Build the sentence: a past regret at work.",
+   "blocks": [
+    "If I had spoken",
+    "better English,",
+    "I would have got",
+    "the promotion."
+   ],
+   "explain": "Speak → spoken. Get → got.",
+   "tip": "Useful to talk about past chances."
+  }
+ ]
+}

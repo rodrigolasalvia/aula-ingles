@@ -298,3 +298,28 @@ details.understand[open] { padding-bottom: 18px; }
 .wrong-sentence { text-decoration: underline wavy var(--bad); text-underline-offset: 5px; }
 .tip { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid rgba(0,0,0,.08); font-size: 15px; }
 .fb .listen { margin-top: 4px; }
+
+/* ---------- v6: lacunas e página da professora ---------- */
+.gap-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; font-weight: 700; font-size: 14px; color: var(--muted); }
+.print-only { display: none; }
+.t-doc { background: #fff; color: #111; border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-top: 8px; }
+.t-doc header h1 { margin: 0 0 4px; font-size: 24px; }
+.t-doc header p { margin: 0; color: #555; font-size: 14px; }
+.t-doc .t-legend { margin-top: 4px; }
+.t-doc h2 { font-size: 20px; margin: 22px 0 6px; border-bottom: 2px solid #2F5D50; padding-bottom: 4px; color: #2F5D50; }
+.t-doc h3 { font-size: 16px; margin: 14px 0 6px; }
+.t-doc ol { margin: 0; padding-left: 22px; }
+.t-doc li { margin: 0 0 10px; break-inside: avoid; }
+.t-q { margin: 0; color: #444; font-size: 15px; }
+.t-a { margin: 2px 0 0; font-weight: 700; color: #1F4E79; }
+.t-c { margin: 2px 0 0; font-size: 14px; color: #0B7A4B; }
+.missing { color: #888; font-weight: 400; font-style: italic; }
+.t-doc .good-txt { color: #0B7A4B; } .t-doc .bad-txt { color: #B42318; }
+@media print {
+  @page { margin: 14mm; }
+  body { background: #fff !important; }
+  .tabbar, .update-banner, .toast, .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  .main { padding: 0 !important; max-width: none; }
+  .t-doc { border: 0; padding: 0; margin: 0; }
+}

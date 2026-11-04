@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import {
   isCorrect, scramble, sentenceOf, normalize, migrateState, emptyState, slideProgress, doneCount, nextSlide,
   recordCount, looksLikeBackup, practiceState, checkPractice, correctAnswer, startRun, recordPractice, runScore,
-  finishRun, practiceSummary, normalizeTyped,
+  finishRun, practiceSummary, normalizeTyped, gapAccepts, blankCount, latestAnswers, givenText, bankCoverage, SESSION_SIZE,
 } from '../js/core.js';
 
 const index = JSON.parse(readFileSync(new URL('../data/v4/lessons.json', import.meta.url)));
@@ -64,7 +64,7 @@ for (const { meta, data: L } of lessons) {
 for (const { meta, data: L } of lessons) {
   test(`${meta.id}: practice com cerca de 10 exercícios válidos`, () => {
     const P = L.practice;
-    assert.ok(P.length >= 8 && P.length <= 12, `${P.length} exercícios`);
+    assert.ok(P.length >= 8 && P.length <= 60, `${P.length} exercícios`);
     assert.equal(new Set(P.map(x => x.id)).size, P.length);
     const slideItems = new Set(L.slides.flatMap(s => s.items.map(i => i.id)));
     for (const x of P) {
@@ -79,9 +79,13 @@ for (const { meta, data: L } of lessons) {
         assert.equal(new Set(x.options).size, x.options.length);
         x.options.forEach((_, k) => assert.equal(checkPractice(x, k), k === x.answer, `${x.id}:${k}`));
       } else if (x.type === 'gap') {
-        assert.ok(x.prompt.includes('___'));
-        for (const a of x.accept) assert.ok(checkPractice(x, a));
-        assert.ok(!checkPractice(x, 'xyz'));
+        const acc = gapAccepts(x);
+        assert.equal(acc.length, blankCount(x), `${x.id}: lacunas × respostas`);
+        assert.ok(checkPractice(x, acc.map(a => a[0])), `${x.id}: gabarito`);
+        for (let i = 0; i < acc.length; i++) for (const alt of acc[i]) {
+          const g = acc.map(a => a[0]); g[i] = alt; assert.ok(checkPractice(x, g), `${x.id}: ${alt}`);
+        }
+        assert.ok(!checkPractice(x, acc.map(() => 'xyz')));
       } else if (x.type === 'fix') {
         for (const a of x.accept) assert.ok(checkPractice(x, a));
         assert.ok(!checkPractice(x, x.prompt), `${x.id}: frase errada aceita`);
@@ -91,6 +95,8 @@ for (const { meta, data: L } of lessons) {
         assert.ok(!checkPractice(x, x.blocks.map((_, i) => i).reverse()));
       }
       assert.match(correctAnswer(x), /^[A-Z].*[.?!]$/, `${x.id}: resposta completa`);
+      assert.ok(!correctAnswer(x).includes('___') && !/\(\w+\)/.test(correctAnswer(x)), `${x.id}: lacuna ou dica sobrando`);
+      if (x.source === 'teacher') assert.ok([1, 2, 4].includes(x.ex) && L.exercises[x.slide][x.ex], `${x.id}: exercício da professora sem título`);
     }
     const types = new Set(P.map(x => x.type));
     assert.ok(types.size >= 3, 'variedade de tipos');
@@ -101,6 +107,34 @@ test('digitação: ignora maiúsculas, pontuação e contrações', () => {
   assert.equal(normalizeTyped("She DIDN'T  give in."), 'she did not give in');
   const fix = { type: 'fix', accept: ['I take inspiration from people who changed careers.'] };
   assert.ok(checkPractice(fix, 'i take inspiration from people who changed careers'));
+});
+
+test('sessão de 10 do banco: novos primeiro, depois errados; cobertura e respostas legíveis', () => {
+  const L = lessons.find(l => l.data.practice.length > SESSION_SIZE).data;
+  const s = emptyState();
+  const ps = practiceState(s, L.id);
+  const seen = new Set();
+  let rounds = 0;
+  while (seen.size < L.practice.length) {
+    const cur = startRun(L, ps);
+    assert.equal(cur.order.length, SESSION_SIZE);
+    if (rounds < Math.floor(L.practice.length / SESSION_SIZE)) assert.ok(cur.order.every(id => !seen.has(id)), 'repetiu antes de ver todos');
+    for (const id of cur.order) {
+      const item = L.practice.find(p => p.id === id);
+      recordPractice(ps, item, item.type === 'order' ? item.blocks.map((_, i) => i) : item.type === 'gap' ? gapAccepts(item).map(a => a[0]) : item.type === 'mc' ? 0 : 'x', id.endsWith('a'));
+      seen.add(id);
+    }
+    finishRun(L, ps); rounds++;
+    assert.ok(rounds < 10);
+  }
+  assert.deepEqual(bankCoverage(L, ps), { seen: L.practice.length, total: L.practice.length });
+  const cur = startRun(L, ps);
+  const wrongNow = Object.entries(latestAnswers(ps)).filter(([, a]) => !a.ok).map(([id]) => id);
+  assert.ok(cur.order.filter(id => wrongNow.includes(id)).length === Math.min(SESSION_SIZE, wrongNow.length), 'errados primeiro');
+  const g = L.practice.find(p => p.type === 'gap' && blankCount(p) === 2);
+  if (g) assert.equal(givenText(g, { given: 'had studied | would have passed' }).startsWith('If I had studied harder, I would have passed'), true);
+  const o = L.practice.find(p => p.type === 'order');
+  assert.equal(givenText(o, { given: o.blocks.map((_, i) => i).join(',') }), o.blocks.join(' '));
 });
 
 test('rodada de practice: ordem embaralhada, percentual, último e melhor', () => {
