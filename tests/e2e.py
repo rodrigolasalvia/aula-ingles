@@ -199,7 +199,7 @@ with sync_playwright() as p:
         for r in st: last.update(r["answers"])
         exp = sum(1 for i, a in last.items() if not a["ok"] and P[i]["source"] == "teacher")
         check(page.locator(".t-doc .bad-txt").count() == exp and page.locator(".t-doc .t-c").count() >= exp, f"erros marcados com a correção ({exp})")
-        page.fill("input[data-setting=name]", "Rodrigo Lasalvia"); page.locator("input[data-setting=name]").dispatch_event("change")
+        page.fill("input[data-setting=name]", "Test Student"); page.locator("input[data-setting=name]").dispatch_event("change")
         page.wait_for_selector(".t-doc")
         page.locator("textarea[data-note]").first.fill("If I had a million dollars, I would help my family first.")
         page.wait_for_timeout(700)
