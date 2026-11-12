@@ -15,6 +15,14 @@
    "title": "Second & Third Conditionals",
    "subtitle": "Imaginary situations now and in the past",
    "file": "data/v4/l002.json"
+  },
+  {
+   "id": "l003",
+   "number": 3,
+   "date": "2026-11-12",
+   "title": "Five Recurring Errors",
+   "subtitle": "This is · a million · no repeated subject · What if I…? · enroll in",
+   "file": "data/v4/l003.json"
   }
  ]
 }

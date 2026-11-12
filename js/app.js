@@ -328,7 +328,7 @@ function drawPractice() {
     <div class="s-top"><a class="back" href="#/lesson/${lesson.id}${cur.mode === 'redo' ? '/teacher' : ''}">← ${cur.mode === 'redo' ? 'My answers' : `Lesson ${lesson.number}`}</a><span class="count">${cur.mode === 'redo' ? 'Redo' : 'Practice'} · ${cur.pos + 1}/${n}</span></div>
     <div class="bar"><span data-w="${Math.round((done / n) * 100)}"></span></div>
     <p class="tag">${esc(item.skill)} · Slide ${item.slide}${item.source === 'teacher' ? ' · <span class="teacher">From your teacher</span>' : ''}</p>
-    <p class="instr">${INSTR[item.type]}</p>
+    <p class="instr">${esc(item.task || INSTR[item.type])}${item.strict ? ' · <span class="strict">Capital letters and punctuation count</span>' : ''}</p>
     ${body}
     ${ans ? `<div class="fb ${ans.ok ? 'ok' : 'bad'}">
         <p class="fb-title">${ans.ok ? `${ICON.check} Correct!` : 'Not quite'}</p>
@@ -391,6 +391,7 @@ function renderTeacher(lesson) {
     const exNums = new Set([
       ...lesson.practice.filter(p => p.source === 'teacher' && p.slide === slide.n).map(p => p.ex),
       ...slide.items.filter(i => i.ex).map(i => i.ex),
+      ...(lesson.writing || []).filter(w => w.slide === slide.n).map(w => w.ex),
     ]);
     const blocks = [...exNums].sort((a, b) => a - b).map(ex => {
       const title = (titles[slide.n] && titles[slide.n][ex]) || `Exercise ${ex}`;
@@ -401,7 +402,7 @@ function renderTeacher(lesson) {
           total++;
           const a = last[p.id];
           if (a) answered++;
-          return `<li><p class="t-q">${esc(p.prompt)}<button class="btn btn-small btn-ghost no-print t-redo" data-action="redo-items" data-ids="${p.id}">${a ? 'Redo' : 'Do it'}</button></p>
+          return `<li><p class="t-q"><span class="t-qt">${p.task ? `<span class="t-task">${esc(p.task)}:</span> ` : ''}${esc(p.prompt)}</span><button class="btn btn-small btn-ghost no-print t-redo" data-action="redo-items" data-ids="${p.id}">${a ? 'Redo' : 'Do it'}</button></p>
             ${a ? `<p class="t-a">${esc(givenText(p, a))} <span class="${a.ok ? 'good-txt' : 'bad-txt'}">${a.ok ? '✓' : '✗'}</span></p>
                    ${a.ok ? '' : `<p class="t-c">Correct: ${esc(correctAnswer(p))}</p>`}`
               : '<p class="t-a missing">Not done yet</p>'}</li>`;
@@ -410,10 +411,20 @@ function renderTeacher(lesson) {
           total++;
           const own = (notes[q.id] || '').trim();
           if (own) answered++;
-          return `<li><p class="t-q">${esc(q.question)}<button class="btn btn-small btn-ghost no-print t-redo" data-action="redo-open" data-id="${q.id}" data-slide="${slide.n}">Build</button></p>
+          return `<li><p class="t-q"><span class="t-qt">${esc(q.question)}</span><button class="btn btn-small btn-ghost no-print t-redo" data-action="redo-open" data-id="${q.id}" data-slide="${slide.n}">Build</button></p>
             <textarea class="input no-print" rows="2" data-note="${q.id}" placeholder="Write your own answer (optional)">${esc(notes[q.id] || '')}</textarea>
-            <p class="t-a print-only">${own ? esc(own) : '<span class="missing">Answered orally in class.</span>'}</p>
+            <p class="t-a print-only" data-empty="Answered orally in class.">${own ? esc(own) : '<span class="missing">Answered orally in class.</span>'}</p>
             ${done[q.id] ? `<p class="t-c no-print">Model you built: ${esc(sentenceOf(q.blocks))}</p>` : ''}</li>`;
+        }),
+        ...(lesson.writing || []).filter(w => w.slide === slide.n && w.ex === ex).map(w => {
+          total++;
+          const own = (notes[w.id] || '').trim();
+          if (own) answered++;
+          return `<li class="t-writing"><p class="t-q">${esc(w.prompt)}</p>
+            ${w.checklist && w.checklist.length ? `<ul class="t-check">${w.checklist.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}
+            <textarea class="input no-print" rows="7" data-note="${w.id}" placeholder="Write your paragraph here">${esc(notes[w.id] || '')}</textarea>
+            <p class="t-a print-only t-para" data-empty="Not written yet.">${own ? esc(own) : '<span class="missing">Not written yet.</span>'}</p>
+            ${w.model ? `<details class="no-print"><summary>See an example paragraph</summary><p class="t-c">${esc(w.model)}</p></details>` : ''}</li>`;
         }),
       ];
       const head = objs.length ? `<button class="btn btn-small btn-ghost no-print" data-action="redo-items" data-ids="${objs.map(o => o.id).join(',')}">Redo this exercise</button>` : '';
@@ -593,7 +604,7 @@ main.addEventListener('input', e => {
   if (e.target.dataset.note && tview) {
     lessonNotes(state, tview.id)[e.target.dataset.note] = e.target.value;
     const out = e.target.parentElement.querySelector('.print-only');
-    if (out) out.innerHTML = e.target.value.trim() ? esc(e.target.value.trim()) : '<span class="missing">Answered orally in class.</span>';
+    if (out) out.innerHTML = e.target.value.trim() ? esc(e.target.value.trim()) : `<span class="missing">${esc(out.dataset.empty || '')}</span>`;
     clearTimeout(e.target._t); e.target._t = setTimeout(() => save(), 500);
   }
 });

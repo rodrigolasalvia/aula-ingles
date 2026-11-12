@@ -26,7 +26,8 @@ for (const { meta, data: L } of lessons) {
       assert.ok(s.expressions.length >= 3 && s.expressions.length <= 6, `${s.id}: expressões`);
       for (const x of s.expressions) assert.ok(x.en && words(x.meaning) <= 15, `${x.en}: explicação longa`);
       assert.ok(s.items.length >= 3 && s.items.length <= 5, `${s.id}: ${s.items.length} perguntas`);
-      assert.ok(s.items.filter(i => i.kind === 'class').length >= 3, `${s.id}: faltam perguntas da aula`);
+      // Material em lâminas: as perguntas da professora; material em texto corrido: frases de aquecimento.
+      if (s.items.some(i => i.kind === 'class')) assert.ok(s.items.filter(i => i.kind === 'class').length >= 3, `${s.id}: faltam perguntas da aula`);
     }
   });
 
@@ -75,7 +76,7 @@ for (const { meta, data: L } of lessons) {
       assert.ok(x.skill && x.explain && words(x.explain) <= 30, `${x.id}: explicação`);
       assert.ok(!PT.test(x.explain + ' ' + (x.tip || '')), `${x.id}: português`);
       if (x.type === 'mc') {
-        assert.ok(x.prompt.includes('___'));
+        assert.ok(x.prompt.includes('___') || x.options.every(o => /^[A-Z].*[.?!]$/.test(o)), `${x.id}: lacuna ou opções completas`);
         assert.equal(new Set(x.options).size, x.options.length);
         x.options.forEach((_, k) => assert.equal(checkPractice(x, k), k === x.answer, `${x.id}:${k}`));
       } else if (x.type === 'gap') {
@@ -96,12 +97,27 @@ for (const { meta, data: L } of lessons) {
       }
       assert.match(correctAnswer(x), /^[A-Z].*[.?!]$/, `${x.id}: resposta completa`);
       assert.ok(!correctAnswer(x).includes('___') && !/\(\w+\)/.test(correctAnswer(x)), `${x.id}: lacuna ou dica sobrando`);
-      if (x.source === 'teacher') assert.ok([1, 2, 4].includes(x.ex) && L.exercises[x.slide][x.ex], `${x.id}: exercício da professora sem título`);
+      if (x.source === 'teacher') assert.ok(Number.isInteger(x.ex) && L.exercises[x.slide][x.ex], `${x.id}: exercício da professora sem título`);
+      if (x.strict) for (const a of x.accept) assert.match(a, /^[A-Z].*[.?!]$/, `${x.id}: gabarito estrito sem maiúscula/pontuação`);
     }
     const types = new Set(P.map(x => x.type));
     assert.ok(types.size >= 3, 'variedade de tipos');
   });
 }
+
+test('correção estrita: maiúscula e ponto de interrogação contam', () => {
+  const it = { type: 'fix', strict: true, prompt: 'what if I try one more time here', accept: ['What if I try one more time here?'] };
+  assert.ok(checkPractice(it, 'What if I try one more time here?'));
+  assert.ok(checkPractice(it, '  What if I try one more time here ? '));
+  assert.ok(!checkPractice(it, 'what if I try one more time here?'));
+  assert.ok(!checkPractice(it, 'What if I try one more time here'));
+  assert.ok(!checkPractice(it, 'What if I try one more time here.'));
+});
+
+test('múltipla escolha sem lacuna: a resposta certa é a própria frase', () => {
+  const it = { type: 'mc', prompt: 'Choose the correct sentence.', options: ['My wife is angry.', 'My wife are angry.'], answer: 0 };
+  assert.equal(correctAnswer(it), 'My wife is angry.');
+});
 
 test('digitação: ignora maiúsculas, pontuação e contrações', () => {
   assert.equal(normalizeTyped("She DIDN'T  give in."), 'she did not give in');

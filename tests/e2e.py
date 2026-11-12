@@ -85,9 +85,9 @@ with sync_playwright() as p:
     check(page.locator(f"#q-{s1['items'][1]['id']}.active").count() == 1, "próxima pergunta abre sozinha")
     shot(page, "03-slide-one-done")
     # Pular para outra pergunta e voltar
-    page.click(f"#q-{s1['items'][3]['id']} [data-action=activate]")
-    check(page.locator(f"#q-{s1['items'][3]['id']}.active").count() == 1, "dá para escolher qualquer pergunta")
-    build(page, s1["items"][3])
+    page.click(f"#q-{s1['items'][min(3, len(s1['items']) - 1)]['id']} [data-action=activate]")
+    check(page.locator(f"#q-{s1['items'][min(3, len(s1['items']) - 1)]['id']}.active").count() == 1, "dá para escolher qualquer pergunta")
+    build(page, s1["items"][min(3, len(s1["items"]) - 1)])
     page.reload(); page.wait_for_selector(".qlist")
     check(page.locator(".qitem.done").count() == 2, "recarregar mantém as frases fixas")
     for item in s1["items"]:
@@ -144,7 +144,8 @@ with sync_playwright() as p:
             page.click("[data-action=p-check]")
         elif page.locator("textarea[data-p=typed]").count():
             x = next(i for i in P.values() if i["type"] == "fix" and i["prompt"] == prompt)
-            page.fill("textarea[data-p=typed]", x["prompt"] + " x" if wrong else x["accept"][0].lower().rstrip("."))
+            right = x["accept"][0] if x.get("strict") else x["accept"][0].lower().rstrip(".")
+            page.fill("textarea[data-p=typed]", x["prompt"] + " x" if wrong else right)
             page.click("[data-action=p-check]")
         else:
             x = next(i for i in P.values() if i["type"] == "order" and i["prompt"] == prompt)
@@ -180,10 +181,14 @@ with sync_playwright() as p:
     shot(page, "08-practice-result")
     page.click("a:has-text('Back to the lesson')"); page.wait_for_selector(".practice-card")
     check(f"Last: {pct}%" in page.inner_text(".practice-card"), "último e melhor resultado na lição")
-    rounds = [first]
+    def seen_ids():
+        runs = page.evaluate("JSON.parse(localStorage.getItem('aula-ingles:state'))")["lessons"][LID]["practice"]["runs"]
+        return [list(r["order"]) for r in runs]
+    rounds = seen_ids()
     while len(set(sum(rounds, []))) < len(P):
-        rounds.append(run_round())
+        run_round()
         page.click("a:has-text('Back to the lesson')"); page.wait_for_selector(".practice-card")
+        rounds = seen_ids()
         assert len(rounds) < 8
     if len(P) > SIZE:
         check(len(set(rounds[1])) == SIZE and not set(rounds[1]) & set(rounds[0]), "segunda rodada traz exercícios novos")

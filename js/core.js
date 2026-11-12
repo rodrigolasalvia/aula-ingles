@@ -1,6 +1,6 @@
 // Lógica pura do app (sem DOM). Testada em tests/core.test.js.
 
-export const APP_VERSION = '6.1.0';
+export const APP_VERSION = '6.2.0';
 export const STATE_VERSION = 6;
 export const SESSION_SIZE = 10;
 export const SLOW_RATE = 0.85;
@@ -165,8 +165,11 @@ export const blankHints = item => [...item.prompt.matchAll(BLANK)].map(m => (m[1
 export const gapAccepts = item => (Array.isArray(item.accept[0]) ? item.accept : [item.accept]);
 const fillBlanks = (item, fills) => { let i = 0; return item.prompt.replace(BLANK, () => fills[i++] ?? '___'); };
 
+export const strictText = t => String(t ?? '').replace(/[\u2018\u2019]/g, "'").replace(/\s+/g, ' ').replace(/\s+([?.!,])/g, '$1').trim();
+
 export function correctAnswer(item) {
-  if (item.type === 'mc') return fillBlanks(item, [item.options[item.answer]]);
+  // Múltipla escolha com lacuna → frase completa; sem lacuna (escolher a frase certa) → a própria opção.
+  if (item.type === 'mc') return item.prompt.includes('___') ? fillBlanks(item, [item.options[item.answer]]) : item.options[item.answer];
   if (item.type === 'gap') return fillBlanks(item, gapAccepts(item).map(a => a[0]));
   if (item.type === 'fix') return item.accept[0];
   return sentenceOf(item.blocks);
@@ -182,6 +185,11 @@ export function checkPractice(item, given) {
       const g = normalizeTyped(parts[i]);
       return !!g && list.some(a => normalizeTyped(a) === g);
     });
+  }
+  if (item.type === 'fix' && item.strict) {
+    // strict: maiúsculas e pontuação contam (exercícios de capitalização e pontuação).
+    const g = strictText(given);
+    return !!g && item.accept.some(a => strictText(a) === g);
   }
   if (item.type === 'fix') {
     const g = normalizeTyped(given);
