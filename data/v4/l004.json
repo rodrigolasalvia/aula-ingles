@@ -91,6 +91,12 @@
      "hl": [
       "If I knew",
       "I would"
+     ],
+     "gloss": [
+      {
+       "en": "If I knew…, I would…",
+       "pt": "se eu soubesse…, eu… (situação imaginária)"
+      }
      ]
     }
    ]
@@ -142,6 +148,12 @@
      "explain": "make the most OF + noun.",
      "hl": [
       "make the most of"
+     ],
+     "gloss": [
+      {
+       "en": "make the most of",
+       "pt": "aproveitar ao máximo"
+      }
      ]
     },
     {
@@ -159,6 +171,16 @@
      "hl": [
       "putting off",
       "reach out to"
+     ],
+     "gloss": [
+      {
+       "en": "put off",
+       "pt": "adiar"
+      },
+      {
+       "en": "reach out to",
+       "pt": "procurar, entrar em contato com"
+      }
      ]
     },
     {
@@ -176,6 +198,16 @@
      "hl": [
       "leave behind",
       "hold on to"
+     ],
+     "gloss": [
+      {
+       "en": "leave behind",
+       "pt": "deixar para trás"
+      },
+      {
+       "en": "hold on to",
+       "pt": "manter, não largar"
+      }
      ]
     }
    ]
@@ -241,6 +273,16 @@
      "hl": [
       "give up",
       "a once-in-a-lifetime opportunity"
+     ],
+     "gloss": [
+      {
+       "en": "give up",
+       "pt": "abrir mão de, desistir de"
+      },
+      {
+       "en": "a once-in-a-lifetime opportunity",
+       "pt": "uma oportunidade única na vida"
+      }
      ]
     },
     {
@@ -257,6 +299,12 @@
      "explain": "weigh up is separable: weigh everything up.",
      "hl": [
       "weighing everything up"
+     ],
+     "gloss": [
+      {
+       "en": "weigh up",
+       "pt": "pesar os prós e contras"
+      }
      ]
     }
    ]
@@ -308,6 +356,12 @@
      "explain": "stick TO your decisions = not change them.",
      "hl": [
       "a slim chance"
+     ],
+     "gloss": [
+      {
+       "en": "a slim chance",
+       "pt": "uma chance mínima"
+      }
      ]
     },
     {
@@ -324,6 +378,16 @@
      "hl": [
       "brace yourself for",
       "hold on to"
+     ],
+     "gloss": [
+      {
+       "en": "brace yourself for",
+       "pt": "preparar-se para (algo ruim)"
+      },
+      {
+       "en": "hold on to hope",
+       "pt": "manter a esperança"
+      }
      ]
     },
     {
@@ -388,6 +452,12 @@
      "explain": "take someone FOR GRANTED (past participle: taken).",
      "hl": [
       "taken him for granted"
+     ],
+     "gloss": [
+      {
+       "en": "take someone for granted",
+       "pt": "não dar o devido valor a alguém"
+      }
      ]
     },
     {
@@ -405,6 +475,16 @@
      "hl": [
       "means the world to me",
       "get it off my chest"
+     ],
+     "gloss": [
+      {
+       "en": "mean the world to someone",
+       "pt": "significar tudo para alguém"
+      },
+      {
+       "en": "get something off your chest",
+       "pt": "desabafar"
+      }
      ]
     },
     {
@@ -421,6 +501,12 @@
      "explain": "Second conditional: If he didn't…, I would…",
      "hl": [
       "what needs to be said"
+     ],
+     "gloss": [
+      {
+       "en": "say what needs to be said",
+       "pt": "dizer o que precisa ser dito"
+      }
      ]
     }
    ]
@@ -465,6 +551,16 @@
      "hl": [
       "In the end",
       "what really matters"
+     ],
+     "gloss": [
+      {
+       "en": "in the end",
+       "pt": "no fim das contas"
+      },
+      {
+       "en": "what really matters",
+       "pt": "o que realmente importa"
+      }
      ]
     },
     {
@@ -495,6 +591,16 @@
      "hl": [
       "make a difference",
       "leave a legacy"
+     ],
+     "gloss": [
+      {
+       "en": "make a difference",
+       "pt": "fazer a diferença"
+      },
+      {
+       "en": "leave a legacy",
+       "pt": "deixar um legado"
+      }
      ]
     }
    ]

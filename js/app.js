@@ -51,6 +51,9 @@ const ICON = {
 // Áudio: velocidade normal e lenta (0.85x), quantas vezes quiser.
 // Frase com as expressões da lição destacadas em azul.
 const hi = (text, hl) => highlightParts(text, hl).map(p => (p.hl ? `<mark class="xp">${esc(p.t)}</mark>` : esc(p.t))).join('');
+// Expressões destacadas: forma base em inglês = significado em português (exceção à regra de tudo em inglês, pedida por ele).
+const gloss = item => (Array.isArray(item.gloss) && item.gloss.length
+  ? `<ul class="gloss">${item.gloss.map(g => `<li><span class="g-en">${esc(g.en)}</span> = ${esc(g.pt)}</li>`).join('')}</ul>` : '');
 const listen = (text, compact = false) => `<div class="listen ${compact ? 'compact' : ''}">
   <button class="lbtn" data-action="say" data-rate="1" data-text="${esc(text)}">${ICON.play}${compact ? '' : ' Listen'}</button>
   <button class="lbtn slow" data-action="say" data-rate="${SLOW_RATE}" data-text="${esc(text)}">Slow</button></div>`;
@@ -242,7 +245,7 @@ function drawSlide(scrollToActive = false) {
     if (isDone) {
       body = hidden
         ? '<p class="hidden-answer">Say your answer out loud.</p>'
-        : `<p class="answer">${hi(answer, item.hl)}</p>${listen(answer, true)}${justDone === item.id ? `<p class="explain">${esc(item.explain)}</p>` : ''}
+        : `<p class="answer">${hi(answer, item.hl)}</p>${gloss(item)}${listen(answer, true)}${justDone === item.id ? `<p class="explain">${esc(item.explain)}</p>` : ''}
            <button class="btn btn-small btn-ghost redo" data-action="redo-q" data-i="${i}">Redo</button>`;
     } else if (isActive) {
       body = builder(item);

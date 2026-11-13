@@ -47,7 +47,7 @@ for (const { meta, data: L } of lessons) {
   });
 
   test(`${meta.id}: tudo em inglês`, () => {
-    const text = JSON.stringify(L.slides);
+    const text = JSON.stringify(L.slides, (k, v) => (k === 'gloss' ? undefined : v)); // gloss = tradução em PT, permitida
     assert.ok(!PT.test(text), `trecho em português: ${text.match(PT)}`);
   });
 
@@ -242,3 +242,12 @@ test('destaque: marca as expressões sem sobrepor e preserva o texto', () => {
   assert.deepEqual(parts.filter(p => p.hl).map(p => p.t), ['putting off', 'reach out to']);
   assert.deepEqual(highlightParts('No highlights here.', []), [{ t: 'No highlights here.', hl: false }]);
 });
+
+for (const { meta, data: L } of lessons) {
+  test(`${meta.id}: frases com destaque trazem a explicação (inglês = português)`, () => {
+    for (const s of L.slides) for (const i of s.items) {
+      if ((i.hl || []).length && L.id >= 'l004') assert.ok(Array.isArray(i.gloss) && i.gloss.length, `${i.id}: destaque sem explicação`);
+      for (const g of i.gloss || []) assert.ok(g.en && g.pt && g.pt.split(/\s+/).length <= 12, `${i.id}: explicação incompleta ou longa`);
+    }
+  });
+}

@@ -127,9 +127,27 @@ HL = {
   "s5a": ["taken him for granted"], "s5b": ["means the world to me", "get it off my chest"], "s5c": ["what needs to be said"],
   "s6a": ["In the end", "what really matters"], "s6c": ["make a difference", "leave a legacy"],
 }
+# Explicação abaixo da frase: forma base em inglês = significado em português (regra de 13/11/2026).
+G = lambda *pairs: [{"en": e, "pt": t} for e, t in pairs]
+GLOSS = {
+  "s1c": G(("If I knew…, I would…", "se eu soubesse…, eu… (situação imaginária)")),
+  "s2a": G(("make the most of", "aproveitar ao máximo")),
+  "s2b": G(("put off", "adiar"), ("reach out to", "procurar, entrar em contato com")),
+  "s2c": G(("leave behind", "deixar para trás"), ("hold on to", "manter, não largar")),
+  "s3b": G(("give up", "abrir mão de, desistir de"), ("a once-in-a-lifetime opportunity", "uma oportunidade única na vida")),
+  "s3c": G(("weigh up", "pesar os prós e contras")),
+  "s4a": G(("a slim chance", "uma chance mínima")),
+  "s4b": G(("brace yourself for", "preparar-se para (algo ruim)"), ("hold on to hope", "manter a esperança")),
+  "s5a": G(("take someone for granted", "não dar o devido valor a alguém")),
+  "s5b": G(("mean the world to someone", "significar tudo para alguém"), ("get something off your chest", "desabafar")),
+  "s5c": G(("say what needs to be said", "dizer o que precisa ser dito")),
+  "s6a": G(("in the end", "no fim das contas"), ("what really matters", "o que realmente importa")),
+  "s6c": G(("make a difference", "fazer a diferença"), ("leave a legacy", "deixar um legado")),
+}
 for _s in SLIDES:
     for _i in _s["items"]:
         if _i["id"] in HL: _i["hl"] = HL[_i["id"]]
+        if _i["id"] in GLOSS: _i["gloss"] = GLOSS[_i["id"]]
 
 EX_TITLES = {s["n"]: {1: "Discussion questions"} for s in SLIDES}
 

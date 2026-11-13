@@ -341,3 +341,9 @@ details.understand[open] { padding-bottom: 18px; }
 .answer, .fb .fb-right { color: var(--text); }
 mark.xp { background: #DCEBFA; color: #1F4E79; font-weight: 800; border-radius: 4px; padding: 0 3px; }
 @media (prefers-color-scheme: dark) { mark.xp { background: #1E3550; color: #9CC4EA; } }
+
+/* ---------- v6.5: explicação das expressões destacadas ---------- */
+.gloss { list-style: none; margin: 8px 0 2px; padding: 8px 12px; border-left: 3px solid #9CC4EA; background: rgba(220, 235, 250, .45); border-radius: 0 10px 10px 0; font-size: 15px; }
+.gloss li { margin: 2px 0; }
+.g-en { color: #1F4E79; font-weight: 800; }
+@media (prefers-color-scheme: dark) { .gloss { background: rgba(30, 53, 80, .5); } .g-en { color: #9CC4EA; } }
