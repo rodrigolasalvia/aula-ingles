@@ -27,7 +27,7 @@ for (const { meta, data: L } of lessons) {
       for (const x of s.expressions) assert.ok(x.en && words(x.meaning) <= 15, `${x.en}: explicação longa`);
       assert.ok(s.items.length >= 3 && s.items.length <= 5, `${s.id}: ${s.items.length} perguntas`);
       // Material em lâminas: as perguntas da professora; material em texto corrido: frases de aquecimento.
-      if (s.items.some(i => i.kind === 'class')) assert.ok(s.items.filter(i => i.kind === 'class').length >= 3, `${s.id}: faltam perguntas da aula`);
+      if (s.items.some(i => i.kind === 'class')) assert.ok(s.items.filter(i => i.kind === 'class').every(i => Number.isInteger(i.ex) && L.exercises && L.exercises[s.n] && L.exercises[s.n][i.ex]) || !L.exercises, `${s.id}: pergunta da aula sem exercício`);
     }
   });
 

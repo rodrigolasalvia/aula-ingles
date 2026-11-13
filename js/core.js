@@ -1,6 +1,6 @@
 // Lógica pura do app (sem DOM). Testada em tests/core.test.js.
 
-export const APP_VERSION = '6.2.0';
+export const APP_VERSION = '6.3.0';
 export const STATE_VERSION = 6;
 export const SESSION_SIZE = 10;
 export const SLOW_RATE = 0.85;

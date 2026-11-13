@@ -23,6 +23,14 @@
    "title": "Five Recurring Errors",
    "subtitle": "This is · a million · no repeated subject · What if I…? · enroll in",
    "file": "data/v4/l003.json"
+  },
+  {
+   "id": "l004",
+   "number": 4,
+   "date": "2026-11-13",
+   "title": "The Last 24 Hours on Earth",
+   "subtitle": "Choices, priorities and what really matters",
+   "file": "data/v4/l004.json"
   }
  ]
 }

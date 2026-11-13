@@ -158,6 +158,10 @@ function renderLesson(lesson, isHome) {
     ${practiceCard(lesson)}`;
 }
 
+// Há algo da professora para devolver em PDF: exercícios dela, perguntas dela nas lâminas ou escrita.
+const hasTeacherWork = lesson => (lesson.practice || []).some(x => x.source === 'teacher')
+  || lesson.slides.some(s => s.items.some(i => i.ex)) || (lesson.writing || []).length > 0;
+
 function practiceCard(lesson) {
   if (!Array.isArray(lesson.practice) || !lesson.practice.length) return '';
   const ps = practiceState(state, lesson.id);
@@ -174,7 +178,7 @@ function practiceCard(lesson) {
     ${sum ? `<p class="scores"><span>Last: <strong>${sum.last}%</strong></span><span>Best: <strong>${sum.best}%</strong></span><span>${sum.count}×</span></p>` : ''}
     <a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">${cur ? `Continue${cur.mode === 'redo' ? ' redo' : ''} (${cur.pos + 1}/${cur.order.length})` : sum ? 'Practice again' : 'Start practice'}</a>
   </div>
-  ${teacherN ? `<a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}/teacher">My answers for the teacher (PDF)</a>` : ''}`;
+  ${hasTeacherWork(lesson) ? `<a class="btn btn-ghost btn-wide" href="#/lesson/${lesson.id}/teacher">My answers for the teacher (PDF)</a>` : ''}`;
 }
 
 function renderLessons() {

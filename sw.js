@@ -2,7 +2,7 @@
 // Código e visual: cache primeiro (versão nova só com o botão "Atualizar").
 // Lições (pasta data/): rede primeiro, para lições novas aparecerem sem atualizar o app; cache como reserva offline.
 // Ao publicar mudança de código, aumente CACHE_VERSION (igual a APP_VERSION em js/core.js).
-const CACHE_VERSION = '6.2.0';
+const CACHE_VERSION = '6.3.0';
 const CACHE = `aula-ingles-${CACHE_VERSION}`;
 const DATA = 'aula-ingles-data';
 const ASSETS = [
