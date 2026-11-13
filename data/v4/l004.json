@@ -87,7 +87,11 @@
       "I would call my family",
       "and tell them I love them."
      ],
-     "explain": "If + past (knew, had), then would + verb."
+     "explain": "If + past (knew, had), then would + verb.",
+     "hl": [
+      "If I knew",
+      "I would"
+     ]
     }
    ]
   },
@@ -135,7 +139,10 @@
       "and make the most of",
       "every minute with them."
      ],
-     "explain": "make the most OF + noun."
+     "explain": "make the most OF + noun.",
+     "hl": [
+      "make the most of"
+     ]
     },
     {
      "id": "s2b",
@@ -148,7 +155,11 @@
       "with an old friend,",
       "so I would finally reach out to him."
      ],
-     "explain": "put off + noun (have been putting off); reach out TO someone."
+     "explain": "put off + noun (have been putting off); reach out TO someone.",
+     "hl": [
+      "putting off",
+      "reach out to"
+     ]
     },
     {
      "id": "s2c",
@@ -161,7 +172,11 @@
       "and hold on to",
       "my best memories with my family."
      ],
-     "explain": "leave behind / hold on to + noun."
+     "explain": "leave behind / hold on to + noun.",
+     "hl": [
+      "leave behind",
+      "hold on to"
+     ]
     }
    ]
   },
@@ -222,7 +237,11 @@
       "because seeing Paris is",
       "a once-in-a-lifetime opportunity."
      ],
-     "explain": "give up + noun; gerund as subject: seeing Paris is…"
+     "explain": "give up + noun; gerund as subject: seeing Paris is…",
+     "hl": [
+      "give up",
+      "a once-in-a-lifetime opportunity"
+     ]
     },
     {
      "id": "s3c",
@@ -235,7 +254,10 @@
       "but after weighing everything up,",
       "they also show who I am."
      ],
-     "explain": "weigh up is separable: weigh everything up."
+     "explain": "weigh up is separable: weigh everything up.",
+     "hl": [
+      "weighing everything up"
+     ]
     }
    ]
   },
@@ -283,7 +305,10 @@
       "because a 5% chance",
       "is still a slim chance."
      ],
-     "explain": "stick TO your decisions = not change them."
+     "explain": "stick TO your decisions = not change them.",
+     "hl": [
+      "a slim chance"
+     ]
     },
     {
      "id": "s4b",
@@ -295,7 +320,11 @@
       "brace yourself for the worst",
       "but still hold on to hope."
      ],
-     "explain": "brace yourself FOR; hold on TO."
+     "explain": "brace yourself FOR; hold on TO.",
+     "hl": [
+      "brace yourself for",
+      "hold on to"
+     ]
     },
     {
      "id": "s4c",
@@ -356,7 +385,10 @@
       "and never found",
       "the right moment."
      ],
-     "explain": "take someone FOR GRANTED (past participle: taken)."
+     "explain": "take someone FOR GRANTED (past participle: taken).",
+     "hl": [
+      "taken him for granted"
+     ]
     },
     {
      "id": "s5b",
@@ -369,7 +401,11 @@
       "and finally get it",
       "off my chest."
      ],
-     "explain": "mean the world TO someone; get something off your chest."
+     "explain": "mean the world TO someone; get something off your chest.",
+     "hl": [
+      "means the world to me",
+      "get it off my chest"
+     ]
     },
     {
      "id": "s5c",
@@ -382,7 +418,10 @@
       "and still say",
       "what needs to be said."
      ],
-     "explain": "Second conditional: If he didn't…, I would…"
+     "explain": "Second conditional: If he didn't…, I would…",
+     "hl": [
+      "what needs to be said"
+     ]
     }
    ]
   },
@@ -422,7 +461,11 @@
       "is how we treat",
       "each other."
      ],
-     "explain": "\"What really matters is…\" introduces your main idea."
+     "explain": "\"What really matters is…\" introduces your main idea.",
+     "hl": [
+      "In the end",
+      "what really matters"
+     ]
     },
     {
      "id": "s6b",
@@ -448,7 +491,11 @@
       "can make a difference",
       "and leave a legacy."
      ],
-     "explain": "make a difference / leave a legacy."
+     "explain": "make a difference / leave a legacy.",
+     "hl": [
+      "make a difference",
+      "leave a legacy"
+     ]
     }
    ]
   }
@@ -470,7 +517,10 @@
    ],
    "answer": 0,
    "explain": "put off = delay. After \"been\" we use -ING: putting off.",
-   "tip": "\"I keep putting off my tax return.\""
+   "tip": "\"I keep putting off my tax return.\"",
+   "hl": [
+    "putting off"
+   ]
   },
   {
    "id": "p02",
@@ -484,7 +534,10 @@
     "of"
    ],
    "explain": "make the most OF something.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "make the most of"
+   ]
   },
   {
    "id": "p03",
@@ -498,7 +551,10 @@
     "with"
    ],
    "explain": "come to terms WITH something.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "came to terms with"
+   ]
   },
   {
    "id": "p04",
@@ -512,7 +568,10 @@
     "I would reach out to my brother and say sorry."
    ],
    "explain": "The phrasal verb is reach OUT TO someone.",
-   "tip": "\"Feel free to reach out to me if you have questions.\" (common in emails)"
+   "tip": "\"Feel free to reach out to me if you have questions.\" (common in emails)",
+   "hl": [
+    "reach out to"
+   ]
   },
   {
    "id": "p05",
@@ -530,7 +589,10 @@
    ],
    "answer": 0,
    "explain": "weigh up the options.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "weighing up"
+   ]
   },
   {
    "id": "p06",
@@ -547,7 +609,11 @@
     "my original plan."
    ],
    "explain": "weigh up = compare; go ahead with = do what you planned.",
-   "tip": "Useful in meetings: \"Let's go ahead with option B.\""
+   "tip": "Useful in meetings: \"Let's go ahead with option B.\"",
+   "hl": [
+    "weighing up",
+    "go ahead with"
+   ]
   },
   {
    "id": "p07",
@@ -565,7 +631,10 @@
    ],
    "answer": 0,
    "explain": "a slim chance = a very small chance.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "slim chance"
+   ]
   },
   {
    "id": "p08",
@@ -579,7 +648,10 @@
     "for"
    ],
    "explain": "brace yourself FOR something.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "Brace yourself for"
+   ]
   },
   {
    "id": "p09",
@@ -597,7 +669,10 @@
    ],
    "answer": 0,
    "explain": "against all odds = although it was very unlikely.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "Against all odds"
+   ]
   },
   {
    "id": "p10",
@@ -615,7 +690,10 @@
    ],
    "answer": 0,
    "explain": "rule out = say something is impossible.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "rule out"
+   ]
   },
   {
    "id": "p11",
@@ -629,7 +707,10 @@
     "I took my parents for granted for years."
    ],
    "explain": "The expression is take someone for granted.",
-   "tip": "\"Don't take your health for granted.\""
+   "tip": "\"Don't take your health for granted.\"",
+   "hl": [
+    "took my parents for granted"
+   ]
   },
   {
    "id": "p12",
@@ -643,7 +724,10 @@
     "She means the world to me."
    ],
    "explain": "mean the world TO someone.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "means the world to me"
+   ]
   },
   {
    "id": "p13",
@@ -661,7 +745,10 @@
    ],
    "answer": 0,
    "explain": "get something off your chest = finally say it.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "get this off my chest"
+   ]
   },
   {
    "id": "p14",
@@ -675,7 +762,10 @@
     "amends"
    ],
    "explain": "make amends = correct a past mistake.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "make amends"
+   ]
   },
   {
    "id": "p15",
@@ -695,7 +785,11 @@
     ]
    ],
    "explain": "Second conditional: If + past simple, would + verb.",
-   "tip": ""
+   "tip": "",
+   "hl": [
+    "If I had",
+    "I would call"
+   ]
   },
   {
    "id": "p16",
@@ -747,7 +841,10 @@
    ],
    "answer": 0,
    "explain": "make a difference (not do).",
-   "tip": "\"Your feedback really made a difference.\""
+   "tip": "\"Your feedback really made a difference.\"",
+   "hl": [
+    "make a difference"
+   ]
   }
  ]
 }

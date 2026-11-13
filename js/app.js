@@ -2,7 +2,7 @@ import {
   APP_VERSION, SLOW_RATE, formatDate, dayKey, migrateState, emptyState, slideProgress, doneCount, nextSlide,
   isCorrect, sentenceOf, scramble, looksLikeBackup, practiceState, checkPractice, correctAnswer, startRun,
   recordPractice, runScore, finishRun, practiceSummary, shuffledOrder, SESSION_SIZE, blankCount, blankHints,
-  latestAnswers, givenText, bankCoverage, lessonNotes,
+  latestAnswers, givenText, bankCoverage, lessonNotes, highlightParts,
 } from './core.js';
 import {
   loadState, saveState, hasLocal, recoverRicher, snapshot, listSnapshots, readSnapshot, requestPersistence, answerCount,
@@ -49,6 +49,8 @@ const ICON = {
   check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>',
 };
 // Áudio: velocidade normal e lenta (0.85x), quantas vezes quiser.
+// Frase com as expressões da lição destacadas em azul.
+const hi = (text, hl) => highlightParts(text, hl).map(p => (p.hl ? `<mark class="xp">${esc(p.t)}</mark>` : esc(p.t))).join('');
 const listen = (text, compact = false) => `<div class="listen ${compact ? 'compact' : ''}">
   <button class="lbtn" data-action="say" data-rate="1" data-text="${esc(text)}">${ICON.play}${compact ? '' : ' Listen'}</button>
   <button class="lbtn slow" data-action="say" data-rate="${SLOW_RATE}" data-text="${esc(text)}">Slow</button></div>`;
@@ -240,7 +242,7 @@ function drawSlide(scrollToActive = false) {
     if (isDone) {
       body = hidden
         ? '<p class="hidden-answer">Say your answer out loud.</p>'
-        : `<p class="answer">${esc(answer)}</p>${listen(answer, true)}${justDone === item.id ? `<p class="explain">${esc(item.explain)}</p>` : ''}
+        : `<p class="answer">${hi(answer, item.hl)}</p>${listen(answer, true)}${justDone === item.id ? `<p class="explain">${esc(item.explain)}</p>` : ''}
            <button class="btn btn-small btn-ghost redo" data-action="redo-q" data-i="${i}">Redo</button>`;
     } else if (isActive) {
       body = builder(item);
@@ -336,7 +338,7 @@ function drawPractice() {
     ${body}
     ${ans ? `<div class="fb ${ans.ok ? 'ok' : 'bad'}">
         <p class="fb-title">${ans.ok ? `${ICON.check} Correct!` : 'Not quite'}</p>
-        ${ans.ok && item.type === 'mc' ? '' : `<p class="fb-right">${esc(right)}</p>`}
+        ${ans.ok && item.type === 'mc' && !(item.hl || []).length ? '' : `<p class="fb-right">${hi(right, item.hl)}</p>`}
         ${listen(right, true)}
         <p class="explain">${esc(item.explain)}</p>
         ${item.tip ? `<p class="tip"><strong>In real life:</strong> ${esc(item.tip)}</p>` : ''}

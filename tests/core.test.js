@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import {
   isCorrect, scramble, sentenceOf, normalize, migrateState, emptyState, slideProgress, doneCount, nextSlide,
   recordCount, looksLikeBackup, practiceState, checkPractice, correctAnswer, startRun, recordPractice, runScore,
-  finishRun, practiceSummary, normalizeTyped, gapAccepts, blankCount, latestAnswers, givenText, bankCoverage, SESSION_SIZE,
+  finishRun, practiceSummary, normalizeTyped, highlightParts, gapAccepts, blankCount, latestAnswers, givenText, bankCoverage, SESSION_SIZE,
 } from '../js/core.js';
 
 const index = JSON.parse(readFileSync(new URL('../data/v4/lessons.json', import.meta.url)));
@@ -225,4 +225,20 @@ test('service worker e core com a mesma versão; todo arquivo do app está no ca
   for (const dir of ['js', 'css', 'fonts', 'icons']) {
     for (const f of readdirSync(new URL(`../${dir}`, import.meta.url))) assert.ok(sw.includes(`'${dir}/${f}'`), `${dir}/${f} fora do cache`);
   }
+});
+
+for (const { meta, data: L } of lessons) {
+  test(`${meta.id}: expressões destacadas existem nas frases`, () => {
+    for (const s of L.slides) for (const i of s.items) for (const h of i.hl || [])
+      assert.ok(sentenceOf(i.blocks).toLowerCase().includes(h.toLowerCase()), `${i.id}: "${h}" não está na resposta`);
+    for (const x of L.practice || []) for (const h of x.hl || [])
+      assert.ok(correctAnswer(x).toLowerCase().includes(h.toLowerCase()), `${x.id}: "${h}" não está na resposta certa`);
+  });
+}
+
+test('destaque: marca as expressões sem sobrepor e preserva o texto', () => {
+  const parts = highlightParts('Yes, I\'ve been putting off a call, so I would reach out to him.', ['putting off', 'reach out to', 'off']);
+  assert.equal(parts.map(p => p.t).join(''), 'Yes, I\'ve been putting off a call, so I would reach out to him.');
+  assert.deepEqual(parts.filter(p => p.hl).map(p => p.t), ['putting off', 'reach out to']);
+  assert.deepEqual(highlightParts('No highlights here.', []), [{ t: 'No highlights here.', hl: false }]);
 });

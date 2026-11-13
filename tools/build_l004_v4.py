@@ -118,6 +118,19 @@ SLIDES = [
                "make a difference / leave a legacy.")]},
 ]
 
+# Expressões a destacar em azul nas respostas (regra: toolkit / phrasal verbs / estrutura-chave da lâmina).
+HL = {
+  "s1c": ["If I knew", "I would"],
+  "s2a": ["make the most of"], "s2b": ["putting off", "reach out to"], "s2c": ["leave behind", "hold on to"],
+  "s3b": ["give up", "a once-in-a-lifetime opportunity"], "s3c": ["weighing everything up"],
+  "s4a": ["a slim chance"], "s4b": ["brace yourself for", "hold on to"],
+  "s5a": ["taken him for granted"], "s5b": ["means the world to me", "get it off my chest"], "s5c": ["what needs to be said"],
+  "s6a": ["In the end", "what really matters"], "s6c": ["make a difference", "leave a legacy"],
+}
+for _s in SLIDES:
+    for _i in _s["items"]:
+        if _i["id"] in HL: _i["hl"] = HL[_i["id"]]
+
 EX_TITLES = {s["n"]: {1: "Discussion questions"} for s in SLIDES}
 
 def mc(id, skill, slide, prompt, options, answer, explain, tip=""):
@@ -170,6 +183,15 @@ PRACTICE = [
   mc("p18", EXP, 6, "Small actions can ___ a difference.", ["make", "do", "take", "give"], 0,
      "make a difference (not do).", "\"Your feedback really made a difference.\""),
 ]
+
+PHL = {
+  "p01": ["putting off"], "p02": ["make the most of"], "p03": ["came to terms with"], "p04": ["reach out to"],
+  "p05": ["weighing up"], "p06": ["weighing up", "go ahead with"], "p07": ["slim chance"], "p08": ["Brace yourself for"],
+  "p09": ["Against all odds"], "p10": ["rule out"], "p11": ["took my parents for granted"], "p12": ["means the world to me"],
+  "p13": ["get this off my chest"], "p14": ["make amends"], "p15": ["If I had", "I would call"], "p18": ["make a difference"],
+}
+for _p in PRACTICE:
+    if _p["id"] in PHL: _p["hl"] = PHL[_p["id"]]
 
 LESSON = {
   "id": "l004", "number": 4, "date": "2026-11-13", "format": 4,

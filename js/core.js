@@ -1,6 +1,6 @@
 // Lógica pura do app (sem DOM). Testada em tests/core.test.js.
 
-export const APP_VERSION = '6.3.0';
+export const APP_VERSION = '6.4.0';
 export const STATE_VERSION = 6;
 export const SESSION_SIZE = 10;
 export const SLOW_RATE = 0.85;
@@ -277,4 +277,29 @@ export function practiceSummary(ps) {
   if (!runs.length) return null;
   const last = runs[runs.length - 1];
   return { last: last.pct, best: Math.max(...runs.map(r => r.pct)), count: runs.length };
+}
+
+/* ---------- Destaque das expressões (toolkit, phrasal verbs) nas frases ---------- */
+
+// Divide o texto em trechos [{t, hl}] marcando as expressões de `hl` (sem diferenciar maiúsculas).
+export function highlightParts(text, hl) {
+  const t = String(text ?? '');
+  const terms = (Array.isArray(hl) ? hl : []).filter(x => typeof x === 'string' && x.trim()).sort((a, b) => b.length - a.length);
+  if (!terms.length) return [{ t, hl: false }];
+  const lower = t.toLowerCase();
+  const marks = [];
+  for (const term of terms) {
+    const k = lower.indexOf(term.toLowerCase());
+    if (k >= 0 && !marks.some(m => k < m[1] && k + term.length > m[0])) marks.push([k, k + term.length]);
+  }
+  marks.sort((a, b) => a[0] - b[0]);
+  const out = [];
+  let pos = 0;
+  for (const [a, b] of marks) {
+    if (a > pos) out.push({ t: t.slice(pos, a), hl: false });
+    out.push({ t: t.slice(a, b), hl: true });
+    pos = b;
+  }
+  if (pos < t.length) out.push({ t: t.slice(pos), hl: false });
+  return out;
 }
