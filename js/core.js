@@ -1,6 +1,8 @@
 // Lógica pura do app (sem DOM). Testada em tests/core.test.js.
 
-export const APP_VERSION = '6.5.0';
+export const APP_VERSION = '7.0.0';
+export const DAILY_GOAL = 10;      // exercícios por dia (ajustável em Settings)
+export const BACKLOG_CAP_DAYS = 3;  // o acumulado para em 3 dias de meta, para não virar uma montanha
 export const STATE_VERSION = 6;
 export const SESSION_SIZE = 10;
 export const SLOW_RATE = 0.85;
@@ -31,6 +33,14 @@ export function migrateState(raw) {
   if (typeof raw.createdAt === 'number') s.createdAt = raw.createdAt;
   if (isObj(raw.settings)) s.settings = { ...raw.settings, voice: typeof raw.settings.voice === 'string' ? raw.settings.voice : '', name: typeof raw.settings.name === 'string' ? raw.settings.name : '' };
   if (Array.isArray(raw.log)) s.log = raw.log.filter(isObj).slice(-500);
+  if (isObj(raw.daily)) {
+    const d = raw.daily;
+    s.daily = {
+      start: /^\d{4}-\d{2}-\d{2}$/.test(d.start) ? d.start : null,
+      goal: [5, 10, 15, 20].includes(Number(d.goal)) ? Number(d.goal) : DAILY_GOAL,
+      counts: isObj(d.counts) ? Object.fromEntries(Object.entries(d.counts).filter(([k, v]) => /^\d{4}-\d{2}-\d{2}$/.test(k) && Number.isInteger(v) && v >= 0)) : {},
+    };
+  }
   if (isObj(raw.lessons)) {
     for (const [id, ls] of Object.entries(raw.lessons)) {
       if (!isObj(ls)) continue;
@@ -208,10 +218,13 @@ export function latestAnswers(ps) {
 }
 
 // Sessão de até SESSION_SIZE exercícios do banco: primeiro os nunca feitos, depois os errados na última vez, depois o resto.
-// ids: refazer exercícios escolhidos (na ordem dada), sem sorteio. A nova resposta substitui a anterior.
-export function startRun(lesson, ps, rnd = Math.random, ids = null) {
+// ids: exercícios escolhidos, sem sorteio. mode "redo" (refazer, na ordem dada) ou "slide" (prática da lâmina, embaralhada).
+export function startRun(lesson, ps, rnd = Math.random, ids = null, mode = 'redo', slide = null) {
   if (Array.isArray(ids) && ids.length) {
-    ps.current = { order: ids.filter(id => lesson.practice.some(p => p.id === id)), pos: 0, answers: {}, startedAt: Date.now(), mode: 'redo' };
+    let order = ids.filter(id => lesson.practice.some(p => p.id === id));
+    if (mode === 'slide') order = shuffledOrder(order.length, rnd).map(i => order[i]);
+    ps.current = { order, pos: 0, answers: {}, startedAt: Date.now(), mode };
+    if (slide != null) ps.current.slide = slide;
     return ps.current;
   }
   const last = latestAnswers(ps);
@@ -265,7 +278,8 @@ export function runScore(lesson, answers) {
 export function finishRun(lesson, ps, now = Date.now()) {
   const sc = runScore(lesson, ps.current.answers);
   const run = { ts: now, ok: sc.ok, n: sc.n, pct: sc.pct, answers: ps.current.answers, order: ps.current.order };
-  if (ps.current.mode === 'redo') run.mode = 'redo';
+  if (ps.current.mode) run.mode = ps.current.mode;
+  if (ps.current.slide != null) run.slide = ps.current.slide;
   ps.runs.push(run);
   ps.current = null;
   return run;
@@ -273,7 +287,7 @@ export function finishRun(lesson, ps, now = Date.now()) {
 
 // Último e melhor resultado consideram só as rodadas normais (refazer exercícios não conta).
 export function practiceSummary(ps) {
-  const runs = ((ps && ps.runs) || []).filter(r => r.mode !== 'redo');
+  const runs = ((ps && ps.runs) || []).filter(r => !r.mode);
   if (!runs.length) return null;
   const last = runs[runs.length - 1];
   return { last: last.pct, best: Math.max(...runs.map(r => r.pct)), count: runs.length };
@@ -302,4 +316,48 @@ export function highlightParts(text, hl) {
   }
   if (pos < t.length) out.push({ t: t.slice(pos), hl: false });
   return out;
+}
+
+/* ---------- Prática por lâmina: um exercício por expressão ---------- */
+
+export const slideItems = (lesson, n) => (lesson.practice || []).filter(p => p.slide === n);
+
+export function slideSummary(ps, n) {
+  const runs = ((ps && ps.runs) || []).filter(r => r.mode === 'slide' && r.slide === n);
+  if (!runs.length) return null;
+  return { last: runs[runs.length - 1].pct, best: Math.max(...runs.map(r => r.pct)), count: runs.length };
+}
+
+/* ---------- Meta diária com acúmulo ---------- */
+
+export function dailyState(state, today) {
+  if (!isObj(state.daily)) state.daily = { start: today, goal: DAILY_GOAL, counts: {} };
+  if (!state.daily.start) state.daily.start = today;
+  if (!isObj(state.daily.counts)) state.daily.counts = {};
+  if (![5, 10, 15, 20].includes(state.daily.goal)) state.daily.goal = DAILY_GOAL;
+  return state.daily;
+}
+
+export function bumpDaily(state, today, n = 1) {
+  const d = dailyState(state, today);
+  d.counts[today] = (d.counts[today] || 0) + n;
+}
+
+const nextDay = key => { const [y, m, d] = key.split('-').map(Number); return dayKey(new Date(y, m - 1, d + 1, 12)); };
+
+// Cada dia sem cumprir a meta soma o que faltou ao dia seguinte (até BACKLOG_CAP_DAYS metas acumuladas).
+export function dailyStatus(state, today, capDays = BACKLOG_CAP_DAYS) {
+  const d = dailyState(state, today);
+  const goal = d.goal;
+  const cap = goal * capDays;
+  let backlog = 0;
+  let day = d.start;
+  let guard = 0;
+  while (day < today && guard++ < 3660) {
+    backlog = Math.min(cap, Math.max(0, backlog + goal - (d.counts[day] || 0)));
+    day = nextDay(day);
+  }
+  const done = d.counts[today] || 0;
+  const due = goal + backlog;
+  return { goal, backlog, due, done, remaining: Math.max(0, due - done), capped: backlog === cap && cap > 0 };
 }

@@ -608,7 +608,115 @@
  ],
  "practice": [
   {
-   "id": "p01",
+   "id": "a1",
+   "type": "gap",
+   "skill": "Second conditional",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "prompt": "If I ___ (know) the world would end tomorrow, I ___ (call) my parents.",
+   "accept": [
+    [
+     "knew"
+    ],
+    [
+     "would call",
+     "'d call"
+    ]
+   ],
+   "explain": "Second conditional: If + past simple (knew), would + verb.",
+   "tip": "",
+   "expr": "If I knew…, I would…",
+   "hl": [
+    "If I knew",
+    "I would call"
+   ]
+  },
+  {
+   "id": "a2",
+   "type": "order",
+   "skill": "Expressions",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "prompt": "Build the sentence: start your answer clearly.",
+   "blocks": [
+    "The first thing",
+    "I'd do is",
+    "hug my family."
+   ],
+   "explain": "\"The first thing I'd do is…\" + verb without \"to\".",
+   "tip": "",
+   "expr": "The first thing I'd do is…",
+   "hl": [
+    "The first thing I'd do is"
+   ]
+  },
+  {
+   "id": "a3",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "prompt": "I'd rather spend the day at home ___ go to a party.",
+   "options": [
+    "than",
+    "that",
+    "then",
+    "to"
+   ],
+   "answer": 0,
+   "explain": "I'd rather + verb + THAN + verb.",
+   "tip": "",
+   "expr": "I'd rather… than…",
+   "hl": [
+    "I'd rather",
+    "than"
+   ]
+  },
+  {
+   "id": "a4",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "prompt": "There are no second ___: if the asteroid hits, it's over.",
+   "options": [
+    "chances",
+    "times",
+    "tries",
+    "hopes"
+   ],
+   "answer": 0,
+   "explain": "no second chances = you can't try again.",
+   "tip": "",
+   "expr": "No second chances",
+   "hl": [
+    "no second chances"
+   ]
+  },
+  {
+   "id": "b1",
+   "type": "fix",
+   "skill": "Phrasal verbs",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "prompt": "I would reach to my brother and say sorry.",
+   "accept": [
+    "I would reach out to my brother and say sorry."
+   ],
+   "explain": "The phrasal verb is reach OUT TO someone.",
+   "tip": "\"Feel free to reach out to me if you have questions.\"",
+   "expr": "reach out to someone",
+   "hl": [
+    "reach out to"
+   ]
+  },
+  {
+   "id": "b2",
    "type": "mc",
    "skill": "Phrasal verbs",
    "slide": 2,
@@ -623,13 +731,14 @@
    ],
    "answer": 0,
    "explain": "put off = delay. After \"been\" we use -ING: putting off.",
-   "tip": "\"I keep putting off my tax return.\"",
+   "tip": "",
+   "expr": "put something off",
    "hl": [
     "putting off"
    ]
   },
   {
-   "id": "p02",
+   "id": "b3",
    "type": "gap",
    "skill": "Prepositions",
    "slide": 2,
@@ -641,12 +750,31 @@
    ],
    "explain": "make the most OF something.",
    "tip": "",
+   "expr": "make the most of something",
    "hl": [
     "make the most of"
    ]
   },
   {
-   "id": "p03",
+   "id": "b4",
+   "type": "gap",
+   "skill": "Prepositions",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "prompt": "Hold ___ to your dreams, even when it's hard.",
+   "accept": [
+    "on"
+   ],
+   "explain": "hold ON TO something = keep it.",
+   "tip": "",
+   "expr": "hold on to something",
+   "hl": [
+    "Hold on to"
+   ]
+  },
+  {
+   "id": "b5",
    "type": "gap",
    "skill": "Prepositions",
    "slide": 2,
@@ -658,29 +786,35 @@
    ],
    "explain": "come to terms WITH something.",
    "tip": "",
+   "expr": "come to terms with something",
    "hl": [
     "came to terms with"
    ]
   },
   {
-   "id": "p04",
-   "type": "fix",
+   "id": "b6",
+   "type": "mc",
    "skill": "Phrasal verbs",
    "slide": 2,
    "source": "extra",
    "ex": null,
-   "prompt": "I would reach to my brother and say sorry.",
-   "accept": [
-    "I would reach out to my brother and say sorry."
+   "prompt": "What would you like to ___ for your children?",
+   "options": [
+    "leave behind",
+    "leave out",
+    "leave off",
+    "leave over"
    ],
-   "explain": "The phrasal verb is reach OUT TO someone.",
-   "tip": "\"Feel free to reach out to me if you have questions.\" (common in emails)",
+   "answer": 0,
+   "explain": "leave behind = leave something for others after you.",
+   "tip": "",
+   "expr": "leave something behind",
    "hl": [
-    "reach out to"
+    "leave behind"
    ]
   },
   {
-   "id": "p05",
+   "id": "c1",
    "type": "mc",
    "skill": "Phrasal verbs",
    "slide": 3,
@@ -694,14 +828,55 @@
     "in"
    ],
    "answer": 0,
-   "explain": "weigh up the options.",
+   "explain": "weigh up the options = compare them.",
    "tip": "",
+   "expr": "weigh up",
    "hl": [
     "weighing up"
    ]
   },
   {
-   "id": "p06",
+   "id": "c2",
+   "type": "mc",
+   "skill": "Phrasal verbs",
+   "slide": 3,
+   "source": "extra",
+   "ex": null,
+   "prompt": "I ___ adventure because I couldn't travel in 24 hours.",
+   "options": [
+    "ruled out",
+    "ruled off",
+    "gave in",
+    "held on"
+   ],
+   "answer": 0,
+   "explain": "rule out = decide something is not an option.",
+   "tip": "",
+   "expr": "rule out",
+   "hl": [
+    "ruled out"
+   ]
+  },
+  {
+   "id": "c3",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 3,
+   "source": "extra",
+   "ex": null,
+   "prompt": "Which option would be the hardest to give ___?",
+   "accept": [
+    "up"
+   ],
+   "explain": "give up = stop having something.",
+   "tip": "",
+   "expr": "give up",
+   "hl": [
+    "give up"
+   ]
+  },
+  {
+   "id": "c4",
    "type": "order",
    "skill": "Phrasal verbs",
    "slide": 3,
@@ -714,74 +889,55 @@
     "I would go ahead with",
     "my original plan."
    ],
-   "explain": "weigh up = compare; go ahead with = do what you planned.",
+   "explain": "go ahead with = do what you planned.",
    "tip": "Useful in meetings: \"Let's go ahead with option B.\"",
+   "expr": "go ahead with",
    "hl": [
-    "weighing up",
     "go ahead with"
    ]
   },
   {
-   "id": "p07",
+   "id": "c5",
    "type": "mc",
    "skill": "Expressions",
-   "slide": 4,
+   "slide": 3,
    "source": "extra",
    "ex": null,
-   "prompt": "There's only a ___ chance that the asteroid will miss Earth.",
+   "prompt": "Parents often ___ a sacrifice for their children.",
    "options": [
-    "slim",
-    "heavy",
-    "tall",
-    "wide"
+    "make",
+    "do",
+    "take",
+    "have"
    ],
    "answer": 0,
-   "explain": "a slim chance = a very small chance.",
+   "explain": "make a sacrifice (not do).",
    "tip": "",
+   "expr": "make a sacrifice",
    "hl": [
-    "slim chance"
+    "make a sacrifice"
    ]
   },
   {
-   "id": "p08",
-   "type": "gap",
-   "skill": "Prepositions",
-   "slide": 4,
+   "id": "c6",
+   "type": "fix",
+   "skill": "Expressions",
+   "slide": 3,
    "source": "extra",
    "ex": null,
-   "prompt": "Brace yourself ___ bad news.",
+   "prompt": "This trip is a once-in-a-life opportunity.",
    "accept": [
-    "for"
+    "This trip is a once-in-a-lifetime opportunity."
    ],
-   "explain": "brace yourself FOR something.",
+   "explain": "The expression is once-in-a-LIFETIME.",
    "tip": "",
+   "expr": "a once-in-a-lifetime opportunity",
    "hl": [
-    "Brace yourself for"
+    "a once-in-a-lifetime opportunity"
    ]
   },
   {
-   "id": "p09",
-   "type": "mc",
-   "skill": "Expressions",
-   "slide": 4,
-   "source": "extra",
-   "ex": null,
-   "prompt": "Against all ___, the asteroid missed Earth.",
-   "options": [
-    "odds",
-    "chances",
-    "risks",
-    "hopes"
-   ],
-   "answer": 0,
-   "explain": "against all odds = although it was very unlikely.",
-   "tip": "",
-   "hl": [
-    "Against all odds"
-   ]
-  },
-  {
-   "id": "p10",
+   "id": "d1",
    "type": "mc",
    "skill": "Phrasal verbs",
    "slide": 4,
@@ -797,46 +953,115 @@
    "answer": 0,
    "explain": "rule out = say something is impossible.",
    "tip": "",
+   "expr": "rule out",
    "hl": [
     "rule out"
    ]
   },
   {
-   "id": "p11",
-   "type": "fix",
-   "skill": "Expressions",
-   "slide": 5,
-   "source": "extra",
-   "ex": null,
-   "prompt": "I took my parents for grant for years.",
-   "accept": [
-    "I took my parents for granted for years."
-   ],
-   "explain": "The expression is take someone for granted.",
-   "tip": "\"Don't take your health for granted.\"",
-   "hl": [
-    "took my parents for granted"
-   ]
-  },
-  {
-   "id": "p12",
-   "type": "fix",
+   "id": "d2",
+   "type": "gap",
    "skill": "Prepositions",
-   "slide": 5,
+   "slide": 4,
    "source": "extra",
    "ex": null,
-   "prompt": "She means the world for me.",
+   "prompt": "We should hold on ___ hope until the end.",
    "accept": [
-    "She means the world to me."
+    "to"
    ],
-   "explain": "mean the world TO someone.",
+   "explain": "hold on TO hope.",
    "tip": "",
+   "expr": "hold on to hope",
    "hl": [
-    "means the world to me"
+    "hold on to hope"
    ]
   },
   {
-   "id": "p13",
+   "id": "d3",
+   "type": "gap",
+   "skill": "Prepositions",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "prompt": "Brace yourself ___ bad news.",
+   "accept": [
+    "for"
+   ],
+   "explain": "brace yourself FOR something.",
+   "tip": "",
+   "expr": "brace yourself for",
+   "hl": [
+    "Brace yourself for"
+   ]
+  },
+  {
+   "id": "d4",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "prompt": "Against all ___, the asteroid missed Earth.",
+   "options": [
+    "odds",
+    "chances",
+    "risks",
+    "hopes"
+   ],
+   "answer": 0,
+   "explain": "against all odds = although it was very unlikely.",
+   "tip": "",
+   "expr": "against all odds",
+   "hl": [
+    "Against all odds"
+   ]
+  },
+  {
+   "id": "d5",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "prompt": "There's only a ___ chance that the asteroid will miss Earth.",
+   "options": [
+    "slim",
+    "heavy",
+    "tall",
+    "wide"
+   ],
+   "answer": 0,
+   "explain": "a slim chance = a very small chance.",
+   "tip": "",
+   "expr": "a slim chance",
+   "hl": [
+    "slim chance"
+   ]
+  },
+  {
+   "id": "d6",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "prompt": "The worst part is the ___: nobody knows what will happen.",
+   "options": [
+    "uncertainty",
+    "uncertain",
+    "uncertainly",
+    "certainty"
+   ],
+   "answer": 0,
+   "explain": "After \"the\" we need a noun: uncertainty.",
+   "tip": "",
+   "expr": "uncertainty",
+   "hl": [
+    "uncertainty"
+   ]
+  },
+  {
+   "id": "e1",
    "type": "mc",
    "skill": "Expressions",
    "slide": 5,
@@ -852,12 +1077,13 @@
    "answer": 0,
    "explain": "get something off your chest = finally say it.",
    "tip": "",
+   "expr": "get something off your chest",
    "hl": [
     "get this off my chest"
    ]
   },
   {
-   "id": "p14",
+   "id": "e2",
    "type": "gap",
    "skill": "Expressions",
    "slide": 5,
@@ -869,70 +1095,151 @@
    ],
    "explain": "make amends = correct a past mistake.",
    "tip": "",
+   "expr": "make amends",
    "hl": [
     "make amends"
    ]
   },
   {
-   "id": "p15",
-   "type": "gap",
-   "skill": "Second conditional",
-   "slide": 1,
-   "source": "extra",
-   "ex": null,
-   "prompt": "If I ___ (have) only 24 hours, I ___ (call) my family first.",
-   "accept": [
-    [
-     "had"
-    ],
-    [
-     "would call",
-     "'d call"
-    ]
-   ],
-   "explain": "Second conditional: If + past simple, would + verb.",
-   "tip": "",
-   "hl": [
-    "If I had",
-    "I would call"
-   ]
-  },
-  {
-   "id": "p16",
-   "type": "mc",
-   "skill": "Second conditional",
-   "slide": 6,
-   "source": "extra",
-   "ex": null,
-   "prompt": "If you could start again, what ___ you do differently?",
-   "options": [
-    "would",
-    "will",
-    "did",
-    "do"
-   ],
-   "answer": 0,
-   "explain": "Imaginary situation → would.",
-   "tip": ""
-  },
-  {
-   "id": "p17",
-   "type": "order",
-   "skill": "Second conditional",
+   "id": "e3",
+   "type": "fix",
+   "skill": "Expressions",
    "slide": 5,
    "source": "extra",
    "ex": null,
-   "prompt": "Build the sentence: if they didn't answer.",
-   "blocks": [
-    "If she didn't answer,",
-    "I would leave her",
-    "a voice message."
+   "prompt": "I took my parents for grant for years.",
+   "accept": [
+    "I took my parents for granted for years."
    ],
-   "explain": "If + past simple, would + verb.",
-   "tip": ""
+   "explain": "The expression is take someone for granted.",
+   "tip": "\"Don't take your health for granted.\"",
+   "expr": "take someone for granted",
+   "hl": [
+    "took my parents for granted"
+   ]
   },
   {
-   "id": "p18",
+   "id": "e4",
+   "type": "fix",
+   "skill": "Prepositions",
+   "slide": 5,
+   "source": "extra",
+   "ex": null,
+   "prompt": "She means the world for me.",
+   "accept": [
+    "She means the world to me."
+   ],
+   "explain": "mean the world TO someone.",
+   "tip": "",
+   "expr": "mean the world to someone",
+   "hl": [
+    "means the world to me"
+   ]
+  },
+  {
+   "id": "e5",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 5,
+   "source": "extra",
+   "ex": null,
+   "prompt": "When I heard the news, ___ me. I couldn't say anything.",
+   "options": [
+    "words failed",
+    "words lost",
+    "speech failed",
+    "talk failed"
+   ],
+   "answer": 0,
+   "explain": "words fail me = I can't find the words.",
+   "tip": "",
+   "expr": "words fail me",
+   "hl": [
+    "words failed me"
+   ]
+  },
+  {
+   "id": "e6",
+   "type": "order",
+   "skill": "Expressions",
+   "slide": 5,
+   "source": "extra",
+   "ex": null,
+   "prompt": "Build the sentence: the final phone call.",
+   "blocks": [
+    "I would call him",
+    "and say",
+    "what needs to be said."
+   ],
+   "explain": "say what needs to be said = say the important thing.",
+   "tip": "",
+   "expr": "say what needs to be said",
+   "hl": [
+    "what needs to be said"
+   ]
+  },
+  {
+   "id": "f1",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "prompt": "___, what really matters is family.",
+   "options": [
+    "In the end",
+    "At the end",
+    "By the end",
+    "To the end"
+   ],
+   "answer": 0,
+   "explain": "in the end = finally, after everything. \"At the end\" needs \"of\": at the end of the day.",
+   "tip": "",
+   "expr": "in the end",
+   "hl": [
+    "In the end"
+   ]
+  },
+  {
+   "id": "f2",
+   "type": "order",
+   "skill": "Expressions",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "prompt": "Build the sentence: a lesson for humanity.",
+   "blocks": [
+    "What really matters",
+    "is how we",
+    "treat each other."
+   ],
+   "explain": "\"What really matters is…\" introduces the main idea.",
+   "tip": "",
+   "expr": "what really matters",
+   "hl": [
+    "What really matters"
+   ]
+  },
+  {
+   "id": "f3",
+   "type": "gap",
+   "skill": "Expressions",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "prompt": "Great leaders want to leave a ___ for the next generation.",
+   "accept": [
+    "legacy"
+   ],
+   "explain": "leave a legacy.",
+   "tip": "",
+   "expr": "leave a legacy",
+   "hl": [
+    "leave a legacy"
+   ]
+  },
+  {
+   "id": "f4",
    "type": "mc",
    "skill": "Expressions",
    "slide": 6,
@@ -948,6 +1255,7 @@
    "answer": 0,
    "explain": "make a difference (not do).",
    "tip": "\"Your feedback really made a difference.\"",
+   "expr": "make a difference",
    "hl": [
     "make a difference"
    ]

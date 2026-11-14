@@ -194,6 +194,29 @@ with sync_playwright() as p:
         check(len(set(rounds[1]) - set(rounds[0])) == min(SIZE, len(P) - SIZE), "segunda rodada traz primeiro os exercícios novos")
         check(f"Done so far: {len(P)}/{len(P)}" in page.inner_text(".practice-card"), f"todos os {len(P)} exercícios feitos em {len(rounds)} rodadas")
 
+    print("Prática da lâmina e meta diária")
+    sl = next((s for s in L["slides"] if any(x["slide"] == s["n"] for x in L["practice"])), None)
+    if sl:
+        n_items = sum(1 for x in L["practice"] if x["slide"] == sl["n"])
+        page.goto(f"{BASE}#/lesson/{LID}/slide/{sl['n']}"); page.wait_for_selector(".slide-practice")
+        check(f"Practice this slide · {n_items} exercise" in page.inner_text(".slide-practice"), f"lâmina {sl['n']} mostra {n_items} exercícios")
+        page.click(".slide-practice [data-action=slide-practice]"); page.wait_for_selector(".prompt")
+        check(f"Slide {sl['n']} practice · 1/{n_items}" in page.inner_text(".count"), "rodada só com os exercícios da lâmina")
+        for k in range(n_items):
+            page.wait_for_selector(".prompt"); answer_current(False); page.click("[data-action=p-next]")
+        page.wait_for_selector(".score-card")
+        check("100%" in page.inner_text(".score-card"), "resultado da lâmina")
+        shot(page, "10-slide-practice-result")
+        page.click(f"a:has-text('Back to slide {sl['n']}')"); page.wait_for_selector(".slide-practice")
+        check("Best: 100%" in page.inner_text(".slide-practice"), "último e melhor da lâmina")
+    page.goto(BASE); page.wait_for_selector(".daily")
+    daily = page.inner_text(".daily")
+    check("Today's goal" in daily and ("Goal done" in daily or "to go" in daily), "cartão da meta diária na tela inicial")
+    st = page.evaluate("JSON.parse(localStorage.getItem('aula-ingles:state'))")
+    today_n = sum(st["daily"]["counts"].values())
+    check(today_n > 20, f"respostas de hoje contadas na meta ({today_n})")
+    shot(page, "11-home-daily")
+
     has_open = any(i.get("ex") for s in L["slides"] for i in s["items"])
     if any(x["source"] == "teacher" for x in P.values()) or has_open:
         print("Página para a professora")

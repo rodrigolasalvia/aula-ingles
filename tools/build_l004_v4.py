@@ -169,47 +169,76 @@ def order(id, skill, slide, prompt, blocks, explain, tip=""):
 
 PV, EXP, COND, PREP = "Phrasal verbs", "Expressions", "Second conditional", "Prepositions"
 
-PRACTICE = [
-  mc("p01", PV, 2, "I've been ___ calling my old friend for months.", ["putting off", "putting on", "putting up", "putting out"], 0,
-     "put off = delay. After \"been\" we use -ING: putting off.", "\"I keep putting off my tax return.\""),
-  gap("p02", PREP, 2, "Let's make the most ___ the time we have.", ["of"], "make the most OF something."),
-  gap("p03", PREP, 2, "She finally came to terms ___ the news.", ["with"], "come to terms WITH something."),
-  fix("p04", PV, 2, "I would reach to my brother and say sorry.", ["I would reach out to my brother and say sorry."],
-      "The phrasal verb is reach OUT TO someone.", "\"Feel free to reach out to me if you have questions.\" (common in emails)"),
-  mc("p05", PV, 3, "After weighing ___ all the options, I chose family.", ["up", "on", "out", "in"], 0, "weigh up the options."),
-  order("p06", PV, 3, "Build the sentence: a hard choice.", ["After weighing up", "all the options,", "I would go ahead with", "my original plan."],
-        "weigh up = compare; go ahead with = do what you planned.", "Useful in meetings: \"Let's go ahead with option B.\""),
-  mc("p07", EXP, 4, "There's only a ___ chance that the asteroid will miss Earth.", ["slim", "heavy", "tall", "wide"], 0,
-     "a slim chance = a very small chance."),
-  gap("p08", PREP, 4, "Brace yourself ___ bad news.", ["for"], "brace yourself FOR something."),
-  mc("p09", EXP, 4, "Against all ___, the asteroid missed Earth.", ["odds", "chances", "risks", "hopes"], 0,
-     "against all odds = although it was very unlikely."),
-  mc("p10", PV, 4, "We can't ___ the possibility that it will miss.", ["rule out", "give up", "hold on", "leave behind"], 0,
-     "rule out = say something is impossible."),
-  fix("p11", EXP, 5, "I took my parents for grant for years.", ["I took my parents for granted for years."],
-      "The expression is take someone for granted.", "\"Don't take your health for granted.\""),
-  fix("p12", PREP, 5, "She means the world for me.", ["She means the world to me."], "mean the world TO someone."),
-  mc("p13", EXP, 5, "I need to get this off my ___.", ["chest", "heart", "mind", "back"], 0,
-     "get something off your chest = finally say it."),
-  gap("p14", EXP, 5, "I want to make ___ for the mistakes I made.", ["amends"], "make amends = correct a past mistake."),
-  gap("p15", COND, 1, "If I ___ (have) only 24 hours, I ___ (call) my family first.", [["had"], ["would call", "'d call"]],
-      "Second conditional: If + past simple, would + verb."),
-  mc("p16", COND, 6, "If you could start again, what ___ you do differently?", ["would", "will", "did", "do"], 0,
-     "Imaginary situation → would."),
-  order("p17", COND, 5, "Build the sentence: if they didn't answer.", ["If she didn't answer,", "I would leave her", "a voice message."],
-        "If + past simple, would + verb."),
-  mc("p18", EXP, 6, "Small actions can ___ a difference.", ["make", "do", "take", "give"], 0,
-     "make a difference (not do).", "\"Your feedback really made a difference.\""),
-]
+# Regra (14/11/2026): cada lâmina tem um exercício por expressão do toolkit (campo "expr"), sem quantidade fixa.
+# "hl" = trecho destacado em azul na resposta certa.
+def X1(it, expr, hl):
+    it["expr"] = expr
+    it["hl"] = hl
+    return it
 
-PHL = {
-  "p01": ["putting off"], "p02": ["make the most of"], "p03": ["came to terms with"], "p04": ["reach out to"],
-  "p05": ["weighing up"], "p06": ["weighing up", "go ahead with"], "p07": ["slim chance"], "p08": ["Brace yourself for"],
-  "p09": ["Against all odds"], "p10": ["rule out"], "p11": ["took my parents for granted"], "p12": ["means the world to me"],
-  "p13": ["get this off my chest"], "p14": ["make amends"], "p15": ["If I had", "I would call"], "p18": ["make a difference"],
-}
-for _p in PRACTICE:
-    if _p["id"] in PHL: _p["hl"] = PHL[_p["id"]]
+PRACTICE = [
+  # Lâmina 1 (4 expressões)
+  X1(gap("a1", COND, 1, "If I ___ (know) the world would end tomorrow, I ___ (call) my parents.", [["knew"], ["would call", "'d call"]],
+         "Second conditional: If + past simple (knew), would + verb."), "If I knew…, I would…", ["If I knew", "I would call"]),
+  X1(order("a2", EXP, 1, "Build the sentence: start your answer clearly.", ["The first thing", "I'd do is", "hug my family."],
+           "\"The first thing I'd do is…\" + verb without \"to\"."), "The first thing I'd do is…", ["The first thing I'd do is"]),
+  X1(mc("a3", EXP, 1, "I'd rather spend the day at home ___ go to a party.", ["than", "that", "then", "to"], 0,
+        "I'd rather + verb + THAN + verb."), "I'd rather… than…", ["I'd rather", "than"]),
+  X1(mc("a4", EXP, 1, "There are no second ___: if the asteroid hits, it's over.", ["chances", "times", "tries", "hopes"], 0,
+        "no second chances = you can't try again."), "No second chances", ["no second chances"]),
+  # Lâmina 2 (6)
+  X1(fix("b1", PV, 2, "I would reach to my brother and say sorry.", ["I would reach out to my brother and say sorry."],
+         "The phrasal verb is reach OUT TO someone.", "\"Feel free to reach out to me if you have questions.\""), "reach out to someone", ["reach out to"]),
+  X1(mc("b2", PV, 2, "I've been ___ calling my old friend for months.", ["putting off", "putting on", "putting up", "putting out"], 0,
+        "put off = delay. After \"been\" we use -ING: putting off."), "put something off", ["putting off"]),
+  X1(gap("b3", PREP, 2, "Let's make the most ___ the time we have.", ["of"], "make the most OF something."), "make the most of something", ["make the most of"]),
+  X1(gap("b4", PREP, 2, "Hold ___ to your dreams, even when it's hard.", ["on"], "hold ON TO something = keep it."), "hold on to something", ["Hold on to"]),
+  X1(gap("b5", PREP, 2, "She finally came to terms ___ the news.", ["with"], "come to terms WITH something."), "come to terms with something", ["came to terms with"]),
+  X1(mc("b6", PV, 2, "What would you like to ___ for your children?", ["leave behind", "leave out", "leave off", "leave over"], 0,
+        "leave behind = leave something for others after you."), "leave something behind", ["leave behind"]),
+  # Lâmina 3 (6)
+  X1(mc("c1", PV, 3, "After weighing ___ all the options, I chose family.", ["up", "on", "out", "in"], 0, "weigh up the options = compare them."),
+     "weigh up", ["weighing up"]),
+  X1(mc("c2", PV, 3, "I ___ adventure because I couldn't travel in 24 hours.", ["ruled out", "ruled off", "gave in", "held on"], 0,
+        "rule out = decide something is not an option."), "rule out", ["ruled out"]),
+  X1(gap("c3", PV, 3, "Which option would be the hardest to give ___?", ["up"], "give up = stop having something."), "give up", ["give up"]),
+  X1(order("c4", PV, 3, "Build the sentence: a hard choice.", ["After weighing up", "all the options,", "I would go ahead with", "my original plan."],
+           "go ahead with = do what you planned.", "Useful in meetings: \"Let's go ahead with option B.\""), "go ahead with", ["go ahead with"]),
+  X1(mc("c5", EXP, 3, "Parents often ___ a sacrifice for their children.", ["make", "do", "take", "have"], 0, "make a sacrifice (not do)."),
+     "make a sacrifice", ["make a sacrifice"]),
+  X1(fix("c6", EXP, 3, "This trip is a once-in-a-life opportunity.", ["This trip is a once-in-a-lifetime opportunity."],
+         "The expression is once-in-a-LIFETIME."), "a once-in-a-lifetime opportunity", ["a once-in-a-lifetime opportunity"]),
+  # Lâmina 4 (6)
+  X1(mc("d1", PV, 4, "We can't ___ the possibility that it will miss.", ["rule out", "give up", "hold on", "leave behind"], 0,
+        "rule out = say something is impossible."), "rule out", ["rule out"]),
+  X1(gap("d2", PREP, 4, "We should hold on ___ hope until the end.", ["to"], "hold on TO hope."), "hold on to hope", ["hold on to hope"]),
+  X1(gap("d3", PREP, 4, "Brace yourself ___ bad news.", ["for"], "brace yourself FOR something."), "brace yourself for", ["Brace yourself for"]),
+  X1(mc("d4", EXP, 4, "Against all ___, the asteroid missed Earth.", ["odds", "chances", "risks", "hopes"], 0,
+        "against all odds = although it was very unlikely."), "against all odds", ["Against all odds"]),
+  X1(mc("d5", EXP, 4, "There's only a ___ chance that the asteroid will miss Earth.", ["slim", "heavy", "tall", "wide"], 0,
+        "a slim chance = a very small chance."), "a slim chance", ["slim chance"]),
+  X1(mc("d6", EXP, 4, "The worst part is the ___: nobody knows what will happen.", ["uncertainty", "uncertain", "uncertainly", "certainty"], 0,
+        "After \"the\" we need a noun: uncertainty."), "uncertainty", ["uncertainty"]),
+  # Lâmina 5 (6)
+  X1(mc("e1", EXP, 5, "I need to get this off my ___.", ["chest", "heart", "mind", "back"], 0, "get something off your chest = finally say it."),
+     "get something off your chest", ["get this off my chest"]),
+  X1(gap("e2", EXP, 5, "I want to make ___ for the mistakes I made.", ["amends"], "make amends = correct a past mistake."), "make amends", ["make amends"]),
+  X1(fix("e3", EXP, 5, "I took my parents for grant for years.", ["I took my parents for granted for years."],
+         "The expression is take someone for granted.", "\"Don't take your health for granted.\""), "take someone for granted", ["took my parents for granted"]),
+  X1(fix("e4", PREP, 5, "She means the world for me.", ["She means the world to me."], "mean the world TO someone."), "mean the world to someone", ["means the world to me"]),
+  X1(mc("e5", EXP, 5, "When I heard the news, ___ me. I couldn't say anything.", ["words failed", "words lost", "speech failed", "talk failed"], 0,
+        "words fail me = I can't find the words."), "words fail me", ["words failed me"]),
+  X1(order("e6", EXP, 5, "Build the sentence: the final phone call.", ["I would call him", "and say", "what needs to be said."],
+           "say what needs to be said = say the important thing."), "say what needs to be said", ["what needs to be said"]),
+  # Lâmina 6 (4)
+  X1(mc("f1", EXP, 6, "___, what really matters is family.", ["In the end", "At the end", "By the end", "To the end"], 0,
+        "in the end = finally, after everything. \"At the end\" needs \"of\": at the end of the day."), "in the end", ["In the end"]),
+  X1(order("f2", EXP, 6, "Build the sentence: a lesson for humanity.", ["What really matters", "is how we", "treat each other."],
+           "\"What really matters is…\" introduces the main idea."), "what really matters", ["What really matters"]),
+  X1(gap("f3", EXP, 6, "Great leaders want to leave a ___ for the next generation.", ["legacy"], "leave a legacy."), "leave a legacy", ["leave a legacy"]),
+  X1(mc("f4", EXP, 6, "Small actions can ___ a difference.", ["make", "do", "take", "give"], 0,
+        "make a difference (not do).", "\"Your feedback really made a difference.\""), "make a difference", ["make a difference"]),
+]
 
 LESSON = {
   "id": "l004", "number": 4, "date": "2026-11-13", "format": 4,

@@ -2,7 +2,8 @@ import {
   APP_VERSION, SLOW_RATE, formatDate, dayKey, migrateState, emptyState, slideProgress, doneCount, nextSlide,
   isCorrect, sentenceOf, scramble, looksLikeBackup, practiceState, checkPractice, correctAnswer, startRun,
   recordPractice, runScore, finishRun, practiceSummary, shuffledOrder, SESSION_SIZE, blankCount, blankHints,
-  latestAnswers, givenText, bankCoverage, lessonNotes, highlightParts,
+  latestAnswers, givenText, bankCoverage, lessonNotes, highlightParts, slideItems, slideSummary, dailyState,
+  bumpDaily, dailyStatus, BACKLOG_CAP_DAYS,
 } from './core.js';
 import {
   loadState, saveState, hasLocal, recoverRicher, snapshot, listSnapshots, readSnapshot, requestPersistence, answerCount,
@@ -146,6 +147,7 @@ function renderLesson(lesson, isHome) {
   const next = nextSlide(lesson, done);
   main.innerHTML = `
     ${isHome ? '<header class="page-head"><p class="eyebrow">Speaking class</p><h1>Get ready for class</h1></header>' : '<a class="back" href="#/lessons">← Lessons</a>'}
+    ${isHome ? dailyCard() : ''}
     <section class="hero card">
       <p class="eyebrow">Lesson ${lesson.number} · ${formatDate(lesson.date)} · ${esc(lesson.level)}</p>
       <h2 class="hero-title">${esc(lesson.title)}</h2>
@@ -163,6 +165,21 @@ function renderLesson(lesson, isHome) {
     ${practiceCard(lesson)}`;
 }
 
+// Meta diária: o que faltou nos dias anteriores se acumula (até BACKLOG_CAP_DAYS metas).
+function dailyCard() {
+  const st = dailyStatus(state, dayKey(Date.now()));
+  const pct = Math.min(100, Math.round((st.done / st.due) * 100));
+  return `<section class="card daily ${st.remaining ? '' : 'met'}">
+    <div class="daily-head"><h2 class="card-title">Today's goal</h2><span class="daily-n">${Math.min(st.done, st.due)}/${st.due}</span></div>
+    <div class="bar"><span data-w="${pct}"></span></div>
+    <p class="hint">${st.remaining
+      ? `${st.remaining} exercise${st.remaining === 1 ? '' : 's'} to go${st.backlog ? ` · includes ${st.backlog} from previous days${st.capped ? ` (the backlog stops at ${BACKLOG_CAP_DAYS} days)` : ''}` : ''}. Every answer counts: slides, slide practice, review and redo.`
+      : `${ICON.check} Goal done for today${st.done > st.due ? ` (+${st.done - st.due} extra)` : ''}. Anything more is a bonus.`}</p>
+  </section>`;
+}
+
+function countToday(n = 1) { bumpDaily(state, dayKey(Date.now()), n); }
+
 // Há algo da professora para devolver em PDF: exercícios dela, perguntas dela nas lâminas ou escrita.
 const hasTeacherWork = lesson => (lesson.practice || []).some(x => x.source === 'teacher')
   || lesson.slides.some(s => s.items.some(i => i.ex)) || (lesson.writing || []).length > 0;
@@ -176,7 +193,7 @@ function practiceCard(lesson) {
   const cov = bankCoverage(lesson, ps);
   const teacherN = lesson.practice.filter(x => x.source === 'teacher').length;
   return `<div class="card practice-card">
-    <h2 class="card-title">Practice · ${size} exercises</h2>
+    <h2 class="card-title">Mixed review · ${size} exercises</h2>
     <p class="hint">${lesson.practice.length > size
       ? `Each round picks ${size} of ${lesson.practice.length} exercises${teacherN ? ` (${teacherN} from your teacher)` : ''}, new ones first. Done so far: ${cov.seen}/${cov.total}.`
       : 'Quick check on the lesson: choose, complete, correct and build sentences.'}</p>
@@ -275,6 +292,7 @@ function drawSlide(scrollToActive = false) {
     </div>
     <div class="bar"><span data-w="${Math.round((c / slide.items.length) * 100)}"></span></div>
     <ol class="qlist">${cards}</ol>
+    ${slidePracticeCard(lesson, slide)}
     ${c === slide.items.length ? `<div class="card done-card small"><p class="big-check">${ICON.check}</p>
       <p><strong>Slide ${slide.n} done.</strong> Your answers stay here for class. Tap "Try without looking" to practise speaking.</p>
       ${nextS ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/slide/${nextS.n}">Next: Slide ${nextS.n}</a>` : `<a class="btn btn-wide" href="#/lesson/${lesson.id}">Back to the lesson</a>`}
@@ -284,6 +302,22 @@ function drawSlide(scrollToActive = false) {
   if (scrollToActive && active != null) {
     document.getElementById(`q-${slide.items[active].id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+}
+
+function slidePracticeCard(lesson, slide) {
+  const items = slideItems(lesson, slide.n);
+  if (!items.length) return '';
+  const ps = practiceState(state, lesson.id);
+  const sum = slideSummary(ps, slide.n);
+  const cur = ps.current && ps.current.mode === 'slide' && ps.current.slide === slide.n ? ps.current : null;
+  const nx = slide.expressions ? items.filter(i => i.expr).length : 0;
+  return `<div class="card practice-card slide-practice">
+    <h2 class="card-title">Practice this slide · ${items.length} exercise${items.length === 1 ? '' : 's'}</h2>
+    <p class="hint">${nx === items.length && nx ? 'One exercise for each expression on this slide.' : 'The exercises for this slide.'}</p>
+    ${sum ? `<p class="scores"><span>Last: <strong>${sum.last}%</strong></span><span>Best: <strong>${sum.best}%</strong></span><span>${sum.count}×</span></p>` : ''}
+    ${cur ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">Continue (${cur.pos + 1}/${cur.order.length})</a>`
+      : `<button class="btn btn-wide" data-action="slide-practice" data-slide="${slide.n}">${sum ? 'Practice again' : 'Start'}</button>`}
+  </div>`;
 }
 
 /* ---------- Practice: um exercício por vez, percentual no fim ---------- */
@@ -334,7 +368,7 @@ function drawPractice() {
   const right = correctAnswer(item);
   const canCheck = item.type === 'order' ? picked.length === item.blocks.length : item.type !== 'mc';
   main.innerHTML = `
-    <div class="s-top"><a class="back" href="#/lesson/${lesson.id}${cur.mode === 'redo' ? '/teacher' : ''}">← ${cur.mode === 'redo' ? 'My answers' : `Lesson ${lesson.number}`}</a><span class="count">${cur.mode === 'redo' ? 'Redo' : 'Practice'} · ${cur.pos + 1}/${n}</span></div>
+    <div class="s-top"><a class="back" href="#/lesson/${lesson.id}${cur.mode === 'redo' ? '/teacher' : cur.mode === 'slide' ? `/slide/${cur.slide}` : ''}">← ${cur.mode === 'redo' ? 'My answers' : cur.mode === 'slide' ? `Slide ${cur.slide}` : `Lesson ${lesson.number}`}</a><span class="count">${cur.mode === 'redo' ? 'Redo' : cur.mode === 'slide' ? `Slide ${cur.slide} practice` : 'Review'} · ${cur.pos + 1}/${n}</span></div>
     <div class="bar"><span data-w="${Math.round((done / n) * 100)}"></span></div>
     <p class="tag">${esc(item.skill)} · Slide ${item.slide}${item.source === 'teacher' ? ' · <span class="teacher">From your teacher</span>' : ''}</p>
     <p class="instr">${esc(item.task || INSTR[item.type])}${item.strict ? ' · <span class="strict">Capital letters and punctuation count</span>' : ''}</p>
@@ -359,22 +393,27 @@ function renderPracticeResult(lesson) {
   const sc = runScore(lesson, run.answers);
   const sum = practiceSummary(ps);
   const redo = run.mode === 'redo';
+  const sp = run.mode === 'slide' ? run.slide : null;
+  const ssum = sp != null ? slideSummary(ps, sp) : null;
   const wrong = lesson.practice.filter(p => run.answers[p.id] && !run.answers[p.id].ok);
   const skills = Object.entries(sc.bySkill).sort((a, b) => a[1].ok / a[1].n - b[1].ok / b[1].n);
   const weak = skills.filter(([, v]) => v.ok < v.n).map(([k]) => k);
   main.innerHTML = `
     <a class="back" href="#/lesson/${lesson.id}">← Lesson ${lesson.number}</a>
     <div class="card score-card">
-      <p class="eyebrow">${redo ? 'Redo result' : 'Practice result'}</p>
+      <p class="eyebrow">${redo ? 'Redo result' : sp != null ? `Slide ${sp} practice` : 'Review result'}</p>
       <p class="score">${sc.pct}%</p>
-      <p class="hint">${sc.ok} of ${sc.n} correct${!redo && sum ? ` · Best: ${sum.best}%` : ''}${redo ? ' · Your new answers replaced the old ones.' : ''}</p>
+      <p class="hint">${sc.ok} of ${sc.n} correct${sp != null && ssum ? ` · Best: ${ssum.best}%` : !redo && sp == null && sum ? ` · Best: ${sum.best}%` : ''}${redo ? ' · Your new answers replaced the old ones.' : ''}</p>
       ${skills.map(([k, v]) => { const pc = Math.round((v.ok / v.n) * 100); return `<div class="tagbar"><span>${esc(k)}</span><span class="tb"><span class="${pc >= 80 ? 'ok' : pc < 60 ? 'bad' : 'mid'}" data-w="${pc}"></span></span><span>${v.ok}/${v.n}</span></div>`; }).join('')}
     </div>
     <div class="card"><h2 class="card-title">Focus on</h2>
       <p>${weak.length ? `Review: <strong>${weak.map(esc).join(', ')}</strong>.` : 'Everything right. Now say the answers out loud on each slide.'}</p></div>
     ${wrong.length ? `<div class="card"><h2 class="card-title">Your mistakes</h2>${wrong.map(p => `<div class="err">
       <p class="tag">${esc(p.skill)}</p><p class="good-txt">${esc(correctAnswer(p))}</p><p class="hint">${esc(p.explain)}</p></div>`).join('')}</div>` : ''}
-    ${redo
+    ${sp != null
+      ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/slide/${sp}">Back to slide ${sp}</a>
+         <button class="btn btn-ghost btn-wide" data-action="slide-practice" data-slide="${sp}">Practice this slide again</button>`
+      : redo
       ? `<a class="btn btn-wide" href="#/lesson/${lesson.id}/teacher">Back to my answers</a>
          <button class="btn btn-ghost btn-wide" data-action="redo-again">Redo these again</button>`
       : `<a class="btn btn-wide" href="#/lesson/${lesson.id}/practice">Practice again</a>
@@ -464,6 +503,11 @@ async function renderSettings() {
   loadVoices();
   main.innerHTML = `
     <header class="page-head"><p class="eyebrow">Speaking class · v${APP_VERSION}</p><h1>Settings</h1></header>
+    <div class="card"><h2 class="card-title">Daily goal</h2>
+      <p class="hint">Exercises per day. What you miss is added to the next day, up to ${BACKLOG_CAP_DAYS} days of goals.</p>
+      <label class="field">Exercises per day
+        <select class="input" data-setting="goal">${[5, 10, 15, 20].map(g => `<option value="${g}" ${g === dailyState(state, dayKey(Date.now())).goal ? 'selected' : ''}>${g}</option>`).join('')}</select></label>
+    </div>
     <div class="card"><h2 class="card-title">Voice</h2>
       <p class="hint">"Automatic" picks the most natural English voice on this phone.</p>
       <label class="field">English voice
@@ -534,6 +578,18 @@ main.addEventListener('click', async e => {
     if (location.hash === target) route(); else location.hash = target;
     return;
   }
+  if (a === 'slide-practice') {
+    const id = location.hash.split('/')[2];
+    const lesson = await getLesson(id);
+    const ps = practiceState(state, lesson.id);
+    const n = Number(el.dataset.slide);
+    if (ps.current && Object.keys(ps.current.answers).length && !(ps.current.mode === 'slide' && ps.current.slide === n)
+      && !confirm('You have another practice round in progress. Leave it and practise this slide?')) return;
+    startRun(lesson, ps, Math.random, slideItems(lesson, n).map(p => p.id), 'slide', n); save();
+    const target = `#/lesson/${lesson.id}/practice`;
+    if (location.hash === target) route(); else location.hash = target;
+    return;
+  }
   if (a === 'redo-open') {
     const id = location.hash.split('/')[2];
     delete slideProgress(state, id)[el.dataset.id];
@@ -564,6 +620,7 @@ main.addEventListener('click', async e => {
     if (!isCorrect(item, view.picked)) { view.status = 'wrong'; return drawSlide(); }
     const done = slideProgress(state, view.lesson.id);
     done[item.id] = true;
+    countToday();
     save(); requestPersistence();
     view.justDone = item.id;
     activate(firstPending(view.slide, done));
@@ -576,6 +633,7 @@ function practiceAction(a, el) {
   const { lesson, ps, item } = pview;
   const answer = given => {
     recordPractice(ps, item, given, checkPractice(item, given));
+    countToday();
     save(); requestPersistence(); drawPractice();
   };
   if (a === 'p-mc' && !ps.current.answers[item.id]) return answer(Number(el.dataset.i));
@@ -629,6 +687,7 @@ main.addEventListener('keydown', e => {
 main.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.setting === 'voice') { state.settings.voice = t.value; save(); }
+  if (t.dataset.setting === 'goal') { dailyState(state, dayKey(Date.now())).goal = Number(t.value); save(); toast('Daily goal updated.'); }
   if (t.dataset.setting === 'name') { state.settings.name = t.value.trim().slice(0, 80); save(); route(); }
   if (t.dataset.action === 'import' && t.files && t.files[0]) importBackup(t.files[0]);
 });
@@ -669,6 +728,7 @@ function setupSW() {
     if (rec) { state = rec; saveState(state); }
   }
   if (!state || typeof state !== 'object') state = emptyState();
+  dailyState(state, dayKey(Date.now())); // a meta diária começa a contar no primeiro uso desta versão
   setupSW();
   route();
 })();

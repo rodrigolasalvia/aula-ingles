@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import {
   isCorrect, scramble, sentenceOf, normalize, migrateState, emptyState, slideProgress, doneCount, nextSlide,
   recordCount, looksLikeBackup, practiceState, checkPractice, correctAnswer, startRun, recordPractice, runScore,
-  finishRun, practiceSummary, normalizeTyped, highlightParts, gapAccepts, blankCount, latestAnswers, givenText, bankCoverage, SESSION_SIZE,
+  finishRun, practiceSummary, normalizeTyped, highlightParts, slideItems, slideSummary, dailyState, bumpDaily, dailyStatus, gapAccepts, blankCount, latestAnswers, givenText, bankCoverage, SESSION_SIZE,
 } from '../js/core.js';
 
 const index = JSON.parse(readFileSync(new URL('../data/v4/lessons.json', import.meta.url)));
@@ -251,3 +251,47 @@ for (const { meta, data: L } of lessons) {
     }
   });
 }
+
+for (const { meta, data: L } of lessons) {
+  if (!(L.practice || []).some(x => x.expr)) continue;
+  test(`${meta.id}: cada lâmina tem um exercício por expressão`, () => {
+    for (const sl of L.slides) {
+      const items = slideItems(L, sl.n).filter(x => x.source !== 'teacher');
+      assert.equal(items.length, sl.expressions.length, `lâmina ${sl.n}: ${items.length} exercícios para ${sl.expressions.length} expressões`);
+      assert.deepEqual(items.map(x => x.expr).sort(), sl.expressions.map(e => e.en).sort(), `lâmina ${sl.n}: expressões sem exercício`);
+    }
+  });
+}
+
+test('prática da lâmina: só os itens da lâmina, resultado próprio, não mexe no resumo geral', () => {
+  const L = lessons.find(l => l.data.practice.some(x => x.expr)).data;
+  const s = emptyState();
+  const ps = practiceState(s, L.id);
+  const ids = slideItems(L, 2).map(p => p.id);
+  const cur = startRun(L, ps, Math.random, ids, 'slide', 2);
+  assert.deepEqual([...cur.order].sort(), [...ids].sort());
+  for (const id of cur.order) recordPractice(ps, L.practice.find(p => p.id === id), 0, true);
+  finishRun(L, ps);
+  assert.deepEqual(slideSummary(ps, 2), { last: 100, best: 100, count: 1 });
+  assert.equal(slideSummary(ps, 3), null);
+  assert.equal(practiceSummary(ps), null, 'rodada de lâmina não conta no Mixed review');
+});
+
+test('meta diária: acumula o que faltou, para no teto e conta o extra', () => {
+  const s = emptyState();
+  dailyState(s, '2026-11-10');
+  bumpDaily(s, '2026-11-10', 4);
+  assert.deepEqual(dailyStatus(s, '2026-11-10'), { goal: 10, backlog: 0, due: 10, done: 4, remaining: 6, capped: false });
+  assert.equal(dailyStatus(s, '2026-11-11').due, 16, 'faltaram 6 ontem');
+  bumpDaily(s, '2026-11-11', 16);
+  assert.equal(dailyStatus(s, '2026-11-12').due, 10, 'zerou o acumulado');
+  assert.equal(dailyStatus(s, '2026-11-30').backlog, 30, 'teto de 3 dias');
+  assert.ok(dailyStatus(s, '2026-11-30').capped);
+  bumpDaily(s, '2026-11-12', 25);
+  assert.equal(dailyStatus(s, '2026-11-13').due, 10, 'fazer a mais não gera crédito negativo');
+  s.daily.goal = 5;
+  assert.equal(dailyStatus(s, '2026-11-13').due, 5);
+  const m = migrateState(JSON.parse(JSON.stringify(s)));
+  assert.deepEqual(m.daily.counts, s.daily.counts);
+  assert.equal(migrateState({ daily: { start: 'x', goal: 7, counts: { bad: 1, '2026-11-10': -2 } } }).daily.goal, 10);
+});

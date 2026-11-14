@@ -347,3 +347,12 @@ mark.xp { background: #DCEBFA; color: #1F4E79; font-weight: 800; border-radius: 
 .gloss li { margin: 2px 0; }
 .g-en { color: #1F4E79; font-weight: 800; }
 @media (prefers-color-scheme: dark) { .gloss { background: rgba(30, 53, 80, .5); } .g-en { color: #9CC4EA; } }
+
+/* ---------- v7: meta diária e prática por lâmina ---------- */
+.daily .daily-head { display: flex; justify-content: space-between; align-items: baseline; }
+.daily .daily-n { font-family: 'Bricolage', sans-serif; font-weight: 800; font-size: 22px; color: var(--accent); }
+.daily .bar { margin: 6px 0 10px; }
+.daily.met { border-color: var(--ok); }
+.daily.met .bar span { background: var(--ok); }
+.daily .hint { margin: 0; }
+.slide-practice { margin-top: 16px; }
