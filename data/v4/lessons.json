@@ -31,6 +31,14 @@
    "title": "The Last 24 Hours on Earth",
    "subtitle": "Choices, priorities and what really matters",
    "file": "data/v4/l004.json"
+  },
+  {
+   "id": "l005",
+   "number": 5,
+   "date": "2026-11-19",
+   "title": "Behind Closed Doors",
+   "subtitle": "Relationships: phrasal verbs, dilemmas and difficult conversations",
+   "file": "data/v4/l005.json"
   }
  ]
 }

@@ -1,0 +1,1603 @@
+{
+ "id": "l005",
+ "number": 5,
+ "date": "2026-11-19",
+ "format": 4,
+ "title": "Behind Closed Doors",
+ "subtitle": "Relationships: phrasal verbs, dilemmas and difficult conversations",
+ "level": "B2–C1 Speaking",
+ "source": "Behind_closed_doors_b2_c1.pdf",
+ "exercises": {
+  "1": {
+   "1": "Warm-up questions"
+  },
+  "2": {
+   "1": "Your Challenge"
+  },
+  "3": {
+   "1": "Use these expressions: complete the sentences",
+   "2": "Think Beyond the Answer",
+   "3": "Advanced Challenge"
+  },
+  "4": {
+   "1": "Real-life dilemmas",
+   "2": "B2–C1 Challenge"
+  },
+  "5": {
+   "1": "Roleplay: your lines"
+  },
+  "6": {
+   "1": "Take a position"
+  }
+ },
+ "slides": [
+  {
+   "id": "s1",
+   "n": 1,
+   "title": "Behind Closed Doors",
+   "question": "Relationships · Warm-up",
+   "summary": "A warm-up about relationships: someone who stops replying without explaining why, two people who care about each other but are bad for each other, people who stay in unhappy relationships, and staying out of loyalty.",
+   "expressions": [
+    {
+     "en": "confront someone",
+     "meaning": "talk to someone directly about a problem."
+    },
+    {
+     "en": "move on",
+     "meaning": "accept what happened and continue with your life."
+    },
+    {
+     "en": "genuinely care about someone",
+     "meaning": "really care about someone, honestly."
+    },
+    {
+     "en": "out of loyalty",
+     "meaning": "because you feel you must be loyal."
+    }
+   ],
+   "items": [
+    {
+     "id": "s1a",
+     "kind": "class",
+     "ex": 1,
+     "question": "Someone stops replying to your messages without explaining why. Would you confront them or simply move on?",
+     "blocks": [
+      "I would probably",
+      "confront them politely,",
+      "because I'd rather know the truth",
+      "than simply move on."
+     ],
+     "explain": "I'd rather… than… compares two options.",
+     "hl": [
+      "confront them",
+      "move on"
+     ],
+     "gloss": [
+      {
+       "en": "confront someone",
+       "pt": "confrontar alguém, tirar satisfação"
+      },
+      {
+       "en": "move on",
+       "pt": "seguir em frente"
+      }
+     ]
+    },
+    {
+     "id": "s1b",
+     "kind": "class",
+     "ex": 1,
+     "question": "Can two people genuinely care about each other but still be bad for each other?",
+     "blocks": [
+      "Yes, two people can",
+      "genuinely care about each other",
+      "and still bring out",
+      "the worst in each other."
+     ],
+     "explain": "bring out the worst in someone = make someone behave badly.",
+     "hl": [
+      "genuinely care about",
+      "bring out the worst in"
+     ],
+     "gloss": [
+      {
+       "en": "genuinely care about someone",
+       "pt": "se importar de verdade com alguém"
+      },
+      {
+       "en": "bring out the worst in someone",
+       "pt": "despertar o pior de alguém"
+      }
+     ]
+    },
+    {
+     "id": "s1c",
+     "kind": "class",
+     "ex": 1,
+     "question": "Why do people sometimes stay in relationships they are clearly unhappy with?",
+     "blocks": [
+      "Many people stay",
+      "out of fear of being alone",
+      "or because they don't want",
+      "to start again."
+     ],
+     "explain": "out of fear of + -ING: out of fear of being alone.",
+     "hl": [
+      "out of fear of"
+     ],
+     "gloss": [
+      {
+       "en": "out of fear of",
+       "pt": "por medo de"
+      }
+     ]
+    },
+    {
+     "id": "s1d",
+     "kind": "class",
+     "ex": 1,
+     "question": "Should we maintain relationships out of loyalty, even when they no longer make us happy?",
+     "blocks": [
+      "Loyalty matters,",
+      "but staying only out of loyalty",
+      "can make both people",
+      "unhappy in the long run."
+     ],
+     "explain": "in the long run = after a long time.",
+     "hl": [
+      "out of loyalty",
+      "in the long run"
+     ],
+     "gloss": [
+      {
+       "en": "out of loyalty",
+       "pt": "por lealdade"
+      },
+      {
+       "en": "in the long run",
+       "pt": "a longo prazo"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "n": 2,
+   "title": "When Relationships Change",
+   "question": "Phrasal verbs in context · B2–C1",
+   "summary": "Six phrasal verbs about how relationships change: friends who drift apart after moving, people who fall out over something stupid, who patch things up, someone who bottles everything up, someone who finally opens up, and someone who puts up with constant criticism.",
+   "expressions": [
+    {
+     "en": "drift apart",
+     "meaning": "slowly become less close to someone."
+    },
+    {
+     "en": "fall out",
+     "meaning": "stop being friends after an argument."
+    },
+    {
+     "en": "patch things up",
+     "meaning": "make peace after an argument."
+    },
+    {
+     "en": "bottle up",
+     "meaning": "keep your feelings inside instead of expressing them."
+    },
+    {
+     "en": "open up",
+     "meaning": "start talking honestly about your feelings."
+    },
+    {
+     "en": "put up with",
+     "meaning": "accept something annoying without complaining."
+    }
+   ],
+   "items": [
+    {
+     "id": "s2a",
+     "kind": "class",
+     "ex": 1,
+     "question": "Can you guess the meaning of each bold expression from its context?",
+     "blocks": [
+      "From the context,",
+      "drift apart means",
+      "slowly becoming less close",
+      "to someone."
+     ],
+     "explain": "Guessing from context is a key B2–C1 skill.",
+     "hl": [
+      "drift apart"
+     ],
+     "gloss": [
+      {
+       "en": "drift apart",
+       "pt": "distanciar-se aos poucos"
+      }
+     ]
+    },
+    {
+     "id": "s2b",
+     "kind": "class",
+     "ex": 1,
+     "question": "Which expressions describe a temporary situation, and which might describe a long-term change?",
+     "blocks": [
+      "Falling out is often temporary,",
+      "but drifting apart is usually",
+      "a long-term change."
+     ],
+     "explain": "Gerunds as subjects: Falling out is…, drifting apart is…",
+     "hl": [
+      "Falling out",
+      "drifting apart"
+     ],
+     "gloss": [
+      {
+       "en": "fall out",
+       "pt": "brigar e cortar relações"
+      },
+      {
+       "en": "drift apart",
+       "pt": "distanciar-se aos poucos"
+      }
+     ]
+    },
+    {
+     "id": "s2c",
+     "kind": "class",
+     "ex": 1,
+     "question": "Which of these situations have you witnessed in real life?",
+     "blocks": [
+      "I've seen two old friends",
+      "drift apart",
+      "after one of them",
+      "moved abroad."
+     ],
+     "explain": "see someone + verb: I've seen two friends drift apart.",
+     "hl": [
+      "drift apart"
+     ],
+     "gloss": [
+      {
+       "en": "drift apart",
+       "pt": "distanciar-se aos poucos"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "n": 3,
+   "title": "What Would You Say?",
+   "question": "Active vocabulary · Choose & justify",
+   "summary": "Choose the right phrasal verb for six situations. Then think beyond the answer: which situations could seriously damage a relationship, which problems can be solved, and have you experienced one? Advanced challenge: explain why your phrasal verb fits better than another.",
+   "expressions": [
+    {
+     "en": "drift apart",
+     "meaning": "slowly become less close to someone."
+    },
+    {
+     "en": "fall out",
+     "meaning": "stop being friends after an argument."
+    },
+    {
+     "en": "patch things up",
+     "meaning": "make peace after an argument."
+    },
+    {
+     "en": "bottle up",
+     "meaning": "keep your feelings inside instead of expressing them."
+    },
+    {
+     "en": "open up",
+     "meaning": "start talking honestly about your feelings."
+    },
+    {
+     "en": "put up with",
+     "meaning": "accept something annoying without complaining."
+    }
+   ],
+   "items": [
+    {
+     "id": "s3a",
+     "kind": "class",
+     "ex": 2,
+     "question": "Which of these situations could seriously damage a relationship?",
+     "blocks": [
+      "Constantly putting up with criticism",
+      "could seriously damage",
+      "a relationship over time."
+     ],
+     "explain": "put up with + noun; -ING form as subject.",
+     "hl": [
+      "putting up with"
+     ],
+     "gloss": [
+      {
+       "en": "put up with",
+       "pt": "aguentar, tolerar"
+      }
+     ]
+    },
+    {
+     "id": "s3b",
+     "kind": "class",
+     "ex": 2,
+     "question": "Which of these problems can be solved, and which might be irreversible?",
+     "blocks": [
+      "A fight can be solved",
+      "if people patch things up,",
+      "but drifting apart",
+      "is harder to reverse."
+     ],
+     "explain": "can be solved = passive voice.",
+     "hl": [
+      "patch things up",
+      "drifting apart"
+     ],
+     "gloss": [
+      {
+       "en": "patch things up",
+       "pt": "fazer as pazes"
+      },
+      {
+       "en": "drift apart",
+       "pt": "distanciar-se aos poucos"
+      }
+     ]
+    },
+    {
+     "id": "s3c",
+     "kind": "class",
+     "ex": 2,
+     "question": "Have you ever experienced a situation similar to one of these?",
+     "blocks": [
+      "Yes, I used to",
+      "bottle everything up",
+      "until I learned",
+      "to open up to my friends."
+     ],
+     "explain": "used to = a past habit. open up TO someone.",
+     "hl": [
+      "bottle everything up",
+      "open up"
+     ],
+     "gloss": [
+      {
+       "en": "bottle up",
+       "pt": "guardar os sentimentos"
+      },
+      {
+       "en": "open up",
+       "pt": "abrir-se, desabafar"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s4",
+   "n": 4,
+   "title": "The Relationship Crossroads",
+   "question": "Real-life dilemmas · Critical thinking",
+   "summary": "Three real-life dilemmas: a one-sided friendship (your best friend only contacts you when they need something), love vs. self-respect (someone puts up with criticism and controlling behavior), and family expectations (your family disapproves of your partner). Use at least two expressions when defending your opinion.",
+   "expressions": [
+    {
+     "en": "draw the line",
+     "meaning": "set a limit you will not accept beyond."
+    },
+    {
+     "en": "stand up for yourself",
+     "meaning": "defend yourself and your rights."
+    },
+    {
+     "en": "turn a blind eye to",
+     "meaning": "pretend not to see something wrong."
+    },
+    {
+     "en": "come to terms with",
+     "meaning": "slowly accept a difficult situation."
+    },
+    {
+     "en": "make up for",
+     "meaning": "do something good to compensate for something bad."
+    },
+    {
+     "en": "walk away from",
+     "meaning": "leave a situation or a relationship."
+    }
+   ],
+   "items": [
+    {
+     "id": "s4a",
+     "kind": "class",
+     "ex": 1,
+     "question": "The one-sided friendship: Would you confront them, distance yourself, or end the friendship?",
+     "blocks": [
+      "I would talk to them first,",
+      "but if nothing changed,",
+      "I would walk away from",
+      "the friendship."
+     ],
+     "explain": "Second conditional: if nothing changed, I would…",
+     "hl": [
+      "walk away from"
+     ],
+     "gloss": [
+      {
+       "en": "walk away from",
+       "pt": "afastar-se de, abandonar"
+      }
+     ]
+    },
+    {
+     "id": "s4b",
+     "kind": "class",
+     "ex": 1,
+     "question": "How many chances should someone get?",
+     "blocks": [
+      "Two or three chances are fair,",
+      "but at some point",
+      "you have to draw the line."
+     ],
+     "explain": "at some point = eventually.",
+     "hl": [
+      "draw the line"
+     ],
+     "gloss": [
+      {
+       "en": "draw the line",
+       "pt": "impor um limite"
+      }
+     ]
+    },
+    {
+     "id": "s4c",
+     "kind": "class",
+     "ex": 1,
+     "question": "Love vs. self-respect: Can love justify tolerating certain behaviors?",
+     "blocks": [
+      "Love can't justify",
+      "turning a blind eye to",
+      "constant criticism",
+      "and control."
+     ],
+     "explain": "justify + -ING: justify turning…",
+     "hl": [
+      "turning a blind eye to"
+     ],
+     "gloss": [
+      {
+       "en": "turn a blind eye to",
+       "pt": "fazer vista grossa para"
+      }
+     ]
+    },
+    {
+     "id": "s4d",
+     "kind": "class",
+     "ex": 1,
+     "question": "When does compromise become a lack of self-respect?",
+     "blocks": [
+      "It becomes a problem",
+      "when you stop",
+      "standing up for yourself",
+      "to avoid a fight."
+     ],
+     "explain": "stop + -ING = no longer do it.",
+     "hl": [
+      "standing up for yourself"
+     ],
+     "gloss": [
+      {
+       "en": "stand up for yourself",
+       "pt": "defender-se, se impor"
+      }
+     ]
+    },
+    {
+     "id": "s4e",
+     "kind": "class",
+     "ex": 1,
+     "question": "Family expectations: Should family opinions influence your romantic decisions?",
+     "blocks": [
+      "I'd listen to them,",
+      "and hope they would",
+      "come to terms with my choice."
+     ],
+     "explain": "come to terms WITH something.",
+     "hl": [
+      "come to terms with"
+     ],
+     "gloss": [
+      {
+       "en": "come to terms with",
+       "pt": "aceitar aos poucos"
+      }
+     ]
+    },
+    {
+     "id": "s4f",
+     "kind": "class",
+     "ex": 1,
+     "question": "Would you go against your family's wishes to be with someone you love?",
+     "blocks": [
+      "Yes, and later",
+      "I would try to",
+      "make up for the tension",
+      "with time and patience."
+     ],
+     "explain": "make up FOR something = compensate.",
+     "hl": [
+      "make up for"
+     ],
+     "gloss": [
+      {
+       "en": "make up for",
+       "pt": "compensar"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s5",
+   "n": 5,
+   "title": "The Conversation You've Been Avoiding",
+   "question": "Advanced roleplay · 10 minutes",
+   "summary": "You've been close friends for years, but something has changed: your friend only contacts you when they need help, rarely asks how you're doing and gets defensive when you bring it up. You're the frustrated friend; your teacher plays the defensive friend.",
+   "expressions": [
+    {
+     "en": "I don't want to sound harsh, but…",
+     "meaning": "softens a criticism before you say it."
+    },
+    {
+     "en": "That's not the point.",
+     "meaning": "brings the conversation back to the real issue."
+    },
+    {
+     "en": "I get where you're coming from.",
+     "meaning": "I understand your point of view."
+    },
+    {
+     "en": "It's been weighing on me.",
+     "meaning": "it has been worrying me for a while."
+    },
+    {
+     "en": "I can't keep pretending everything is fine.",
+     "meaning": "I can't act as if nothing is wrong."
+    },
+    {
+     "en": "Where do we go from here?",
+     "meaning": "what do we do now?"
+    }
+   ],
+   "items": [
+    {
+     "id": "s5a",
+     "kind": "class",
+     "ex": 1,
+     "question": "Explain what's been bothering you.",
+     "blocks": [
+      "I don't want to sound harsh, but",
+      "you only call me",
+      "when you need help."
+     ],
+     "explain": "Start softly, then say the problem directly.",
+     "hl": [
+      "I don't want to sound harsh, but"
+     ],
+     "gloss": [
+      {
+       "en": "I don't want to sound harsh, but…",
+       "pt": "não quero parecer duro, mas…"
+      }
+     ]
+    },
+    {
+     "id": "s5b",
+     "kind": "class",
+     "ex": 1,
+     "question": "Give a specific example.",
+     "blocks": [
+      "Last month,",
+      "you didn't even ask",
+      "how my new job was going."
+     ],
+     "explain": "\"didn't even\" stresses that it was the minimum."
+    },
+    {
+     "id": "s5c",
+     "kind": "class",
+     "ex": 1,
+     "question": "Your friend says: \"I've just been really busy lately.\"",
+     "blocks": [
+      "I get where you're coming from,",
+      "but it's been weighing on me",
+      "for months."
+     ],
+     "explain": "Accept their point, then explain your feeling.",
+     "hl": [
+      "I get where you're coming from",
+      "it's been weighing on me"
+     ],
+     "gloss": [
+      {
+       "en": "I get where you're coming from",
+       "pt": "entendo o seu lado"
+      },
+      {
+       "en": "it's been weighing on me",
+       "pt": "isso tem me pesado"
+      }
+     ]
+    },
+    {
+     "id": "s5d",
+     "kind": "class",
+     "ex": 1,
+     "question": "Your friend says: \"You're making this bigger than it actually is.\"",
+     "blocks": [
+      "That's not the point.",
+      "I can't keep pretending",
+      "everything is fine."
+     ],
+     "explain": "keep + -ING: keep pretending.",
+     "hl": [
+      "That's not the point.",
+      "I can't keep pretending everything is fine."
+     ],
+     "gloss": [
+      {
+       "en": "That's not the point.",
+       "pt": "a questão não é essa"
+      },
+      {
+       "en": "I can't keep pretending everything is fine.",
+       "pt": "não dá mais para fingir que está tudo bem"
+      }
+     ]
+    },
+    {
+     "id": "s5e",
+     "kind": "class",
+     "ex": 1,
+     "question": "Make your expectations clear.",
+     "blocks": [
+      "I need you to",
+      "ask how I'm doing",
+      "and really listen to the answer."
+     ],
+     "explain": "need someone TO do something."
+    },
+    {
+     "id": "s5f",
+     "kind": "class",
+     "ex": 1,
+     "question": "Decide whether this friendship is worth saving.",
+     "blocks": [
+      "I still care about you,",
+      "so tell me:",
+      "where do we go from here?"
+     ],
+     "explain": "A good way to move from the problem to a solution.",
+     "hl": [
+      "where do we go from here?"
+     ],
+     "gloss": [
+      {
+       "en": "Where do we go from here?",
+       "pt": "e agora, o que fazemos?"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s6",
+   "n": 6,
+   "title": "The Uncomfortable Truth",
+   "question": "Final speaking challenge · 2–3 minutes",
+   "summary": "Are we becoming less tolerant in relationships, or simply learning not to accept things we once put up with? Give a clear opinion, two arguments, a real-life example and an opposing view, and finish strongly. Use at least four expressions. No script, no reading.",
+   "expressions": [
+    {
+     "en": "drift apart",
+     "meaning": "slowly become less close to someone."
+    },
+    {
+     "en": "fall out",
+     "meaning": "stop being friends after an argument."
+    },
+    {
+     "en": "bottle up",
+     "meaning": "keep your feelings inside."
+    },
+    {
+     "en": "open up",
+     "meaning": "start talking honestly about your feelings."
+    },
+    {
+     "en": "draw the line",
+     "meaning": "set a limit you will not accept beyond."
+    },
+    {
+     "en": "stand up for yourself",
+     "meaning": "defend yourself and your rights."
+    },
+    {
+     "en": "walk away from",
+     "meaning": "leave a situation or a relationship."
+    },
+    {
+     "en": "come to terms with",
+     "meaning": "slowly accept a difficult situation."
+    }
+   ],
+   "items": [
+    {
+     "id": "s6a",
+     "kind": "class",
+     "ex": 1,
+     "question": "The big question: Are we becoming less tolerant in relationships, or are we simply learning not to accept things we once put up with?",
+     "blocks": [
+      "I think we're learning",
+      "to draw the line",
+      "at things our parents",
+      "used to put up with."
+     ],
+     "explain": "draw the line AT something.",
+     "hl": [
+      "draw the line",
+      "put up with"
+     ],
+     "gloss": [
+      {
+       "en": "draw the line",
+       "pt": "impor um limite"
+      },
+      {
+       "en": "put up with",
+       "pt": "aguentar, tolerar"
+      }
+     ]
+    },
+    {
+     "id": "s6b",
+     "kind": "class",
+     "ex": 1,
+     "question": "Have people become too quick to walk away from relationships?",
+     "blocks": [
+      "Sometimes, yes:",
+      "many people walk away from",
+      "a relationship",
+      "after the first problem."
+     ],
+     "explain": "too quick TO do something.",
+     "hl": [
+      "walk away from"
+     ],
+     "gloss": [
+      {
+       "en": "walk away from",
+       "pt": "afastar-se de, abandonar"
+      }
+     ]
+    },
+    {
+     "id": "s6c",
+     "kind": "class",
+     "ex": 1,
+     "question": "Is protecting your peace sometimes just an excuse to avoid difficult conversations?",
+     "blocks": [
+      "It can be,",
+      "because bottling things up",
+      "is easier than",
+      "opening up honestly."
+     ],
+     "explain": "Gerunds as subjects and after \"than\".",
+     "hl": [
+      "bottling things up",
+      "opening up"
+     ],
+     "gloss": [
+      {
+       "en": "bottle up",
+       "pt": "guardar os sentimentos"
+      },
+      {
+       "en": "open up",
+       "pt": "abrir-se, desabafar"
+      }
+     ]
+    },
+    {
+     "id": "s6d",
+     "kind": "class",
+     "ex": 1,
+     "question": "Are modern relationships becoming more conditional?",
+     "blocks": [
+      "In a way, yes:",
+      "people stand up for themselves more,",
+      "but they also",
+      "fall out more easily."
+     ],
+     "explain": "stand up for THEMSELVES (plural).",
+     "hl": [
+      "stand up for themselves",
+      "fall out"
+     ],
+     "gloss": [
+      {
+       "en": "stand up for yourself",
+       "pt": "defender-se, se impor"
+      },
+      {
+       "en": "fall out",
+       "pt": "brigar e cortar relações"
+      }
+     ]
+    },
+    {
+     "id": "s6e",
+     "kind": "class",
+     "ex": 1,
+     "question": "Final teacher challenge: What if you're the person someone else decides to walk away from? Would you still feel the same way?",
+     "blocks": [
+      "It would hurt,",
+      "but eventually I would",
+      "come to terms with it",
+      "and move on."
+     ],
+     "explain": "eventually = in the end, after some time (not \"eventualmente\").",
+     "hl": [
+      "come to terms with",
+      "move on"
+     ],
+     "gloss": [
+      {
+       "en": "come to terms with",
+       "pt": "aceitar aos poucos"
+      },
+      {
+       "en": "move on",
+       "pt": "seguir em frente"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "practice": [
+  {
+   "id": "a1",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "expr": "confront someone",
+   "hl": [
+    "confront him"
+   ],
+   "explain": "confront someone = talk directly about a problem.",
+   "tip": "",
+   "prompt": "If he doesn't reply, I'll ___ him and ask what happened.",
+   "options": [
+    "confront",
+    "confess",
+    "conform",
+    "convince"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "a2",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "expr": "move on",
+   "hl": [
+    "move on"
+   ],
+   "explain": "move on = continue with your life.",
+   "tip": "",
+   "prompt": "It's time to forget the past and move ___.",
+   "accept": [
+    "on"
+   ]
+  },
+  {
+   "id": "a3",
+   "type": "order",
+   "skill": "Expressions",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "expr": "genuinely care about someone",
+   "hl": [
+    "genuinely cares about"
+   ],
+   "explain": "care ABOUT someone.",
+   "tip": "",
+   "prompt": "Build the sentence: a good friend.",
+   "blocks": [
+    "She genuinely cares",
+    "about her friends,",
+    "even when they're difficult."
+   ]
+  },
+  {
+   "id": "a4",
+   "type": "fix",
+   "skill": "Expressions",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "expr": "out of loyalty",
+   "hl": [
+    "out of loyalty"
+   ],
+   "explain": "After \"out of\" we need a noun: loyalty.",
+   "tip": "",
+   "prompt": "He stayed in the job out of loyal to his boss.",
+   "accept": [
+    "He stayed in the job out of loyalty to his boss."
+   ]
+  },
+  {
+   "id": "b1",
+   "type": "mc",
+   "skill": "Phrasal verbs",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "expr": "drift apart",
+   "hl": [
+    "drifted apart"
+   ],
+   "explain": "drift apart = slowly become less close.",
+   "tip": "",
+   "prompt": "After college, my roommate and I slowly ___.",
+   "options": [
+    "drifted apart",
+    "fell apart",
+    "drove apart",
+    "broke apart"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "b2",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "expr": "fall out",
+   "hl": [
+    "fell out"
+   ],
+   "explain": "fall out (over something) = stop being friends.",
+   "tip": "",
+   "prompt": "They fell ___ over money and haven't spoken since.",
+   "accept": [
+    "out"
+   ]
+  },
+  {
+   "id": "b3",
+   "type": "order",
+   "skill": "Phrasal verbs",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "expr": "patch things up",
+   "hl": [
+    "patch things up"
+   ],
+   "explain": "patch things up = make peace.",
+   "tip": "",
+   "prompt": "Build the sentence: after a fight.",
+   "blocks": [
+    "After the argument,",
+    "they decided to",
+    "patch things up."
+   ]
+  },
+  {
+   "id": "b4",
+   "type": "fix",
+   "skill": "Phrasal verbs",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "expr": "bottle up",
+   "hl": [
+    "bottle your feelings up"
+   ],
+   "explain": "The phrasal verb is bottle UP (separable).",
+   "tip": "",
+   "prompt": "Don't bottle your feelings down; talk to someone.",
+   "accept": [
+    "Don't bottle your feelings up; talk to someone.",
+    "Don't bottle up your feelings; talk to someone."
+   ]
+  },
+  {
+   "id": "b5",
+   "type": "mc",
+   "skill": "Phrasal verbs",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "expr": "open up",
+   "hl": [
+    "open up"
+   ],
+   "explain": "open up (about something) = talk honestly.",
+   "tip": "",
+   "prompt": "It took him years to open ___ about his childhood.",
+   "options": [
+    "up",
+    "out",
+    "in",
+    "off"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "b6",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "expr": "put up with",
+   "hl": [
+    "put up with"
+   ],
+   "explain": "put up WITH = tolerate.",
+   "tip": "",
+   "prompt": "I can't put up ___ this noise anymore.",
+   "accept": [
+    "with"
+   ]
+  },
+  {
+   "id": "t3a",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 3,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "bottle up",
+   "hl": [
+    "bottle up"
+   ],
+   "explain": "She keeps her emotions inside: bottle up.",
+   "tip": "",
+   "prompt": "Sarah never tells anyone when she's upset. She tends to ___ her emotions.",
+   "accept": [
+    "bottle up"
+   ]
+  },
+  {
+   "id": "t3b",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 3,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "fall out",
+   "hl": [
+    "fell out"
+   ],
+   "explain": "An argument that ends a relationship: fall out. Past: fell out.",
+   "tip": "",
+   "prompt": "After a huge argument about money, the two brothers ___ and stopped speaking.",
+   "accept": [
+    "fell out"
+   ]
+  },
+  {
+   "id": "t3c",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 3,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "drift apart",
+   "hl": [
+    "drift apart"
+   ],
+   "explain": "No fight, just less in common: drift apart.",
+   "tip": "",
+   "prompt": "We haven't had much in common lately. I think we're starting to ___.",
+   "accept": [
+    "drift apart"
+   ]
+  },
+  {
+   "id": "t3d",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 3,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "open up",
+   "hl": [
+    "open up"
+   ],
+   "explain": "open up TO someone ABOUT something.",
+   "tip": "",
+   "prompt": "He finally decided to ___ to his best friend about his relationship problems.",
+   "accept": [
+    "open up"
+   ]
+  },
+  {
+   "id": "t3e",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 3,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "patch things up",
+   "hl": [
+    "patch things up"
+   ],
+   "explain": "\"Despite their disagreements\" → they made peace: patch things up.",
+   "tip": "",
+   "prompt": "Despite their disagreements, they managed to ___.",
+   "accept": [
+    "patch things up"
+   ]
+  },
+  {
+   "id": "t3f",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 3,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "put up with",
+   "hl": [
+    "put up with"
+   ],
+   "explain": "Tolerating something annoying: put up with.",
+   "tip": "",
+   "prompt": "I honestly don't know how you ___ his constant complaining!",
+   "accept": [
+    "put up with"
+   ]
+  },
+  {
+   "id": "f1",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "expr": "draw the line",
+   "hl": [
+    "draw the line"
+   ],
+   "explain": "draw the line AT something = refuse to go further.",
+   "tip": "",
+   "prompt": "I'm happy to help, but I ___ at lending money.",
+   "options": [
+    "draw the line",
+    "make the line",
+    "cross the line",
+    "hold the line"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "f2",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "expr": "stand up for yourself",
+   "hl": [
+    "stand up for yourself"
+   ],
+   "explain": "stand up FOR yourself.",
+   "tip": "Useful at work: \"She always stands up for her team.\"",
+   "prompt": "You need to stand up ___ yourself when your boss is unfair.",
+   "accept": [
+    "for"
+   ]
+  },
+  {
+   "id": "f3",
+   "type": "mc",
+   "skill": "Expressions",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "expr": "turn a blind eye to",
+   "hl": [
+    "turned a blind eye to"
+   ],
+   "explain": "turn a blind eye to = pretend not to see.",
+   "tip": "",
+   "prompt": "The manager turned a ___ eye to the problem.",
+   "options": [
+    "blind",
+    "closed",
+    "dark",
+    "shut"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "f4",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "expr": "come to terms with",
+   "hl": [
+    "come to terms with"
+   ],
+   "explain": "come to terms WITH.",
+   "tip": "",
+   "prompt": "It took her a year to come to terms ___ the loss.",
+   "accept": [
+    "with"
+   ]
+  },
+  {
+   "id": "f5",
+   "type": "fix",
+   "skill": "Phrasal verbs",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "expr": "make up for",
+   "hl": [
+    "make up for"
+   ],
+   "explain": "make up FOR = compensate.",
+   "tip": "",
+   "prompt": "I bought her flowers to make up to the argument.",
+   "accept": [
+    "I bought her flowers to make up for the argument."
+   ]
+  },
+  {
+   "id": "f6",
+   "type": "order",
+   "skill": "Phrasal verbs",
+   "slide": 4,
+   "source": "extra",
+   "ex": null,
+   "expr": "walk away from",
+   "hl": [
+    "walk away from"
+   ],
+   "explain": "walk away FROM something.",
+   "tip": "",
+   "prompt": "Build the sentence: a healthy choice.",
+   "blocks": [
+    "Sometimes the healthiest choice",
+    "is to walk away from",
+    "a toxic relationship."
+   ]
+  },
+  {
+   "id": "h1",
+   "type": "mc",
+   "skill": "Speaking phrases",
+   "slide": 5,
+   "source": "extra",
+   "ex": null,
+   "expr": "I don't want to sound harsh, but…",
+   "hl": [
+    "I don't want to sound harsh"
+   ],
+   "explain": "want TO sound + adjective (harsh).",
+   "tip": "",
+   "prompt": "___, but you're always late.",
+   "options": [
+    "I don't want to sound harsh",
+    "I don't want to sound hard",
+    "I don't want to seem harshly",
+    "I don't want sound harsh"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "h2",
+   "type": "order",
+   "skill": "Speaking phrases",
+   "slide": 5,
+   "source": "extra",
+   "ex": null,
+   "expr": "That's not the point.",
+   "hl": [
+    "That's not the point."
+   ],
+   "explain": "Brings the conversation back to the real issue.",
+   "tip": "",
+   "prompt": "Build the reply.",
+   "blocks": [
+    "That's not the point.",
+    "You promised",
+    "to call me back."
+   ]
+  },
+  {
+   "id": "h3",
+   "type": "gap",
+   "skill": "Speaking phrases",
+   "slide": 5,
+   "source": "extra",
+   "ex": null,
+   "expr": "I get where you're coming from.",
+   "hl": [
+    "I get where you're coming from"
+   ],
+   "explain": "coming FROM = your point of view.",
+   "tip": "",
+   "prompt": "I get where you're coming ___, but I still disagree.",
+   "accept": [
+    "from"
+   ]
+  },
+  {
+   "id": "h4",
+   "type": "fix",
+   "skill": "Speaking phrases",
+   "slide": 5,
+   "source": "extra",
+   "ex": null,
+   "expr": "It's been weighing on me.",
+   "hl": [
+    "weighing on me"
+   ],
+   "explain": "The verb is weigh (weighing), not weight.",
+   "tip": "",
+   "prompt": "This problem has been weighting on me for weeks.",
+   "accept": [
+    "This problem has been weighing on me for weeks."
+   ]
+  },
+  {
+   "id": "h5",
+   "type": "mc",
+   "skill": "Speaking phrases",
+   "slide": 5,
+   "source": "extra",
+   "ex": null,
+   "expr": "I can't keep pretending everything is fine.",
+   "hl": [
+    "I can't keep pretending everything is fine."
+   ],
+   "explain": "keep + -ING: keep pretending.",
+   "tip": "",
+   "prompt": "I can't keep ___ everything is fine.",
+   "options": [
+    "pretending",
+    "to pretend",
+    "pretend",
+    "pretended"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "h6",
+   "type": "mc",
+   "skill": "Speaking phrases",
+   "slide": 5,
+   "source": "extra",
+   "ex": null,
+   "expr": "Where do we go from here?",
+   "hl": [
+    "where do we go from here?"
+   ],
+   "explain": "Where do we go FROM here? = what now?",
+   "tip": "",
+   "prompt": "We both made mistakes. So, where do we go ___ here?",
+   "options": [
+    "from",
+    "to",
+    "for",
+    "at"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "m1",
+   "type": "mc",
+   "skill": "Phrasal verbs",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "expr": "drift apart",
+   "hl": [
+    "drifted apart"
+   ],
+   "explain": "drift apart = slowly become less close.",
+   "tip": "",
+   "prompt": "Over the years, the two cousins slowly ___.",
+   "options": [
+    "drifted apart",
+    "patched up",
+    "opened up",
+    "put up"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "m2",
+   "type": "fix",
+   "skill": "Phrasal verbs",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "expr": "fall out",
+   "hl": [
+    "fell out"
+   ],
+   "explain": "fall OUT = stop being friends after an argument.",
+   "tip": "",
+   "prompt": "We fell off last year and never spoke again.",
+   "accept": [
+    "We fell out last year and never spoke again."
+   ]
+  },
+  {
+   "id": "m3",
+   "type": "gap",
+   "skill": "Phrasal verbs",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "expr": "bottle up",
+   "hl": [
+    "bottle your feelings up"
+   ],
+   "explain": "bottle something UP.",
+   "tip": "",
+   "prompt": "If you bottle your feelings ___, they come out later.",
+   "accept": [
+    "up"
+   ]
+  },
+  {
+   "id": "m4",
+   "type": "mc",
+   "skill": "Phrasal verbs",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "expr": "open up",
+   "hl": [
+    "opened up"
+   ],
+   "explain": "open UP to someone.",
+   "tip": "",
+   "prompt": "He finally opened ___ to his therapist.",
+   "options": [
+    "up",
+    "out",
+    "on",
+    "in"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "m5",
+   "type": "gap",
+   "skill": "Expressions",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "expr": "draw the line",
+   "hl": [
+    "draw the line"
+   ],
+   "explain": "draw the LINE at something.",
+   "tip": "",
+   "prompt": "I don't mind helping, but I draw the ___ at lying.",
+   "accept": [
+    "line"
+   ]
+  },
+  {
+   "id": "m6",
+   "type": "order",
+   "skill": "Phrasal verbs",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "expr": "stand up for yourself",
+   "hl": [
+    "stand up for yourself"
+   ],
+   "explain": "stand up FOR yourself.",
+   "tip": "",
+   "prompt": "Build the sentence: at work.",
+   "blocks": [
+    "You have to",
+    "stand up for yourself",
+    "in difficult meetings."
+   ]
+  },
+  {
+   "id": "m7",
+   "type": "mc",
+   "skill": "Phrasal verbs",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "expr": "walk away from",
+   "hl": [
+    "walk away from"
+   ],
+   "explain": "walk AWAY from.",
+   "tip": "",
+   "prompt": "When respect is gone, it's time to walk ___ from the relationship.",
+   "options": [
+    "away",
+    "off",
+    "out",
+    "back"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "m8",
+   "type": "fix",
+   "skill": "Phrasal verbs",
+   "slide": 6,
+   "source": "extra",
+   "ex": null,
+   "expr": "come to terms with",
+   "hl": [
+    "came to terms with"
+   ],
+   "explain": "come to terms WITH (not about).",
+   "tip": "",
+   "prompt": "He finally came to terms about his divorce.",
+   "accept": [
+    "He finally came to terms with his divorce."
+   ]
+  }
+ ],
+ "writing": [
+  {
+   "id": "w3",
+   "slide": 3,
+   "ex": 3,
+   "prompt": "Advanced Challenge: don't just give the answer. Explain why your chosen phrasal verb fits the situation better than another expression.",
+   "checklist": [
+    "Choose one sentence from the exercise",
+    "Explain what the phrasal verb means in that context",
+    "Compare it with another expression from the list"
+   ],
+   "model": "In sentence 3, \"drift apart\" fits better than \"fall out\" because there was no argument. The two people simply had less and less in common, so the change was slow and natural, not sudden."
+  },
+  {
+   "id": "w4",
+   "slide": 4,
+   "ex": 2,
+   "prompt": "B2–C1 Challenge: choose ONE situation.",
+   "checklist": [
+    "Explain what you would do",
+    "Give at least two reasons",
+    "Consider the opposite point of view",
+    "Use at least TWO phrasal verbs"
+   ],
+   "model": "I'd choose the one-sided friendship. First, I would confront my friend and explain how I feel. If nothing changed, I would draw the line and walk away from the friendship, because a friendship should go both ways and I need to stand up for myself. On the other hand, my friend might be going through a hard time, so I would give them one more chance."
+  }
+ ]
+}

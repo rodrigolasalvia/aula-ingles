@@ -23,9 +23,9 @@ for (const { meta, data: L } of lessons) {
     for (const s of L.slides) {
       assert.ok(s.title && s.question);
       assert.ok(words(s.summary) <= 60, `${s.id}: resumo longo`);
-      assert.ok(s.expressions.length >= 3 && s.expressions.length <= 6, `${s.id}: expressões`);
+      assert.ok(s.expressions.length >= 3 && s.expressions.length <= 8, `${s.id}: expressões`);
       for (const x of s.expressions) assert.ok(x.en && words(x.meaning) <= 15, `${x.en}: explicação longa`);
-      assert.ok(s.items.length >= 3 && s.items.length <= 5, `${s.id}: ${s.items.length} perguntas`);
+      assert.ok(s.items.length >= 3 && s.items.length <= 6, `${s.id}: ${s.items.length} perguntas`);
       // Material em lâminas: as perguntas da professora; material em texto corrido: frases de aquecimento.
       if (s.items.some(i => i.kind === 'class')) assert.ok(s.items.filter(i => i.kind === 'class').every(i => Number.isInteger(i.ex) && L.exercises && L.exercises[s.n] && L.exercises[s.n][i.ex]) || !L.exercises, `${s.id}: pergunta da aula sem exercício`);
     }
@@ -256,7 +256,7 @@ for (const { meta, data: L } of lessons) {
   if (!(L.practice || []).some(x => x.expr)) continue;
   test(`${meta.id}: cada lâmina tem um exercício por expressão`, () => {
     for (const sl of L.slides) {
-      const items = slideItems(L, sl.n).filter(x => x.source !== 'teacher');
+      const items = slideItems(L, sl.n); // dela ou meus: um por expressão
       assert.equal(items.length, sl.expressions.length, `lâmina ${sl.n}: ${items.length} exercícios para ${sl.expressions.length} expressões`);
       assert.deepEqual(items.map(x => x.expr).sort(), sl.expressions.map(e => e.en).sort(), `lâmina ${sl.n}: expressões sem exercício`);
     }

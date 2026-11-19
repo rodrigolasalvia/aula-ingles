@@ -244,10 +244,10 @@ with sync_playwright() as p:
         page.reload(); page.wait_for_selector(".t-doc")
         check("help my family first" in page.input_value("textarea[data-note]"), "resposta própria fica salva")
         if any(x["source"] == "teacher" for x in P.values()):
-            sec = page.locator(".t-ex").first
+            sec = page.locator(".t-ex:has([data-action=redo-items])").first
             n_items = sec.locator("li").count()
             first_q = sec.locator(".t-q").first.inner_text().replace("Redo", "").replace("Do it", "").strip()
-            page.locator(".t-ex [data-action=redo-items]:has-text('Redo this exercise')").first.click()
+            sec.locator("[data-action=redo-items]:has-text('Redo this exercise')").first.click()
             page.wait_for_selector(".count")
             check(f"Redo · 1/{n_items}" in page.inner_text(".count"), f"Redo this exercise abre os {n_items} itens na ordem da professora")
             first_prompt = page.inner_text(".prompt")
@@ -259,13 +259,13 @@ with sync_playwright() as p:
             page.wait_for_selector(".score-card")
             check("redo result" in page.inner_text(".score-card").lower(), "resultado do refazer")
             page.click("a:has-text('Back to my answers')"); page.wait_for_selector(".t-doc")
-            check(page.locator(".t-ex").first.locator(".bad-txt").count() == 1, "resposta nova substitui a antiga no PDF")
-            page.locator(".t-ex").first.locator("[data-action=redo-items]:has-text('Redo')").nth(1).click()
+            check(page.locator(".t-ex:has([data-action=redo-items])").first.locator(".bad-txt").count() == 1, "resposta nova substitui a antiga no PDF")
+            page.locator(".t-ex:has([data-action=redo-items])").first.locator("[data-action=redo-items]:has-text('Redo')").nth(1).click()
             page.wait_for_selector(".count")
             check("Redo · 1/1" in page.inner_text(".count"), "Redo de um item só")
             answer_current(False); page.click("[data-action=p-next]"); page.wait_for_selector(".score-card")
             page.click("a:has-text('Back to my answers')"); page.wait_for_selector(".t-doc")
-            check(page.locator(".t-ex").first.locator(".bad-txt").count() == 0, "item refeito certo some dos erros")
+            check(page.locator(".t-ex:has([data-action=redo-items])").first.locator(".bad-txt").count() == 0, "item refeito certo some dos erros")
             page.goto(BASE); page.wait_for_selector(".practice-card")
             check("Last: " in page.inner_text(".practice-card"), "refazer não altera último/melhor do Practice")
 
