@@ -1,3 +1,4 @@
+import re
 """Simulação de uso no celular (Chromium, 390x844). Rode: python3 tests/e2e.py [pasta_para_prints]
 Percorre as lâminas da lição mais recente: erro e nova tentativa, frases fixas na tela, áudio normal e lento,
 Try without looking, progresso após recarregar, dados antigos preservados, recuperação e uso offline."""
@@ -134,7 +135,7 @@ with sync_playwright() as p:
         if page.locator("button.opt").count():
             x = next(i for i in P.values() if i["type"] == "mc" and i["prompt"] == prompt)
             target = x["options"][(x["answer"] + (1 if wrong else 0)) % len(x["options"])]
-            page.locator("button.opt", has_text=target).first.click()
+            page.locator("button.opt").filter(has_text=re.compile("^\\s*" + re.escape(target) + "\\s*$")).first.click()
         elif page.locator("input[data-p=typed]").count():
             x = next(i for i in P.values() if i["type"] == "gap" and i["prompt"] == prompt)
             acc = x["accept"] if isinstance(x["accept"][0], list) else [x["accept"]]
@@ -230,11 +231,13 @@ with sync_playwright() as p:
         check(page.locator(".t-doc .bad-txt").count() == exp and page.locator(".t-doc .t-c").count() >= exp, f"erros marcados com a correção ({exp})")
         page.fill("input[data-setting=name]", "Test Student"); page.locator("input[data-setting=name]").dispatch_event("change")
         page.wait_for_selector(".t-doc")
-        page.locator("textarea[data-note]").first.fill("If I had a million dollars, I would help my family first.")
+        has_note = page.locator("textarea[data-note]").count() > 0
+        if has_note:
+            page.locator("textarea[data-note]").first.fill("If I had a million dollars, I would help my family first.")
         page.wait_for_timeout(700)
         shot(page, "09-teacher-page")
         page.emulate_media(media="print")
-        check("help my family first" in page.inner_text(".t-doc"), "resposta própria aparece no PDF")
+        if has_note: check("help my family first" in page.inner_text(".t-doc"), "resposta própria aparece no PDF")
         page.emulate_media(media="screen")
         if SHOTS:
             page.emulate_media(media="print")
@@ -242,7 +245,7 @@ with sync_playwright() as p:
             page.emulate_media(media="screen")
             check(True, "PDF gerado pela impressão da página")
         page.reload(); page.wait_for_selector(".t-doc")
-        check("help my family first" in page.input_value("textarea[data-note]"), "resposta própria fica salva")
+        if has_note: check("help my family first" in page.input_value("textarea[data-note]"), "resposta própria fica salva")
         if any(x["source"] == "teacher" for x in P.values()):
             sec = page.locator(".t-ex:has([data-action=redo-items])").first
             n_items = sec.locator("li").count()

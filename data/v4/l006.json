@@ -1,0 +1,872 @@
+{
+ "id": "l006",
+ "number": 6,
+ "date": "2026-11-20",
+ "format": 4,
+ "title": "Error Correction",
+ "subtitle": "Your mistakes from the 20 November class, plus the homework",
+ "level": "B1–B2 Grammar",
+ "source": "Class notes and homework, 20 Nov (screenshots)",
+ "exercises": {
+  "1": {
+   "1": "Exercise 1 – Choose the correct answer"
+  },
+  "2": {
+   "1": "Exercise 1 – Choose the correct answer"
+  },
+  "3": {
+   "1": "Exercise 1 – Choose the correct answer"
+  },
+  "4": {
+   "1": "Exercise 2 – Correct the mistakes"
+  }
+ },
+ "slides": [
+  {
+   "id": "c1",
+   "n": 1,
+   "title": "1. The right preposition",
+   "question": "Which preposition goes with this word?",
+   "summary": "Many of your mistakes were prepositions: important to me (not with me), unhappy with something, related to (not related with), open up to someone (not with), a need for money (not about) and besides (no to after it).",
+   "expressions": [
+    {
+     "en": "important to someone",
+     "meaning": "it matters to that person: important to me."
+    },
+    {
+     "en": "unhappy with someone/something",
+     "meaning": "not satisfied with a person or a situation."
+    },
+    {
+     "en": "related to something",
+     "meaning": "connected to something. Not \"related with\"."
+    },
+    {
+     "en": "open up to someone",
+     "meaning": "talk honestly about your feelings to someone."
+    },
+    {
+     "en": "a need for something",
+     "meaning": "a situation where something is necessary."
+    },
+    {
+     "en": "besides / apart from",
+     "meaning": "in addition to. No \"to\" after besides."
+    }
+   ],
+   "items": [
+    {
+     "id": "c1a",
+     "kind": "warm-up",
+     "question": "Say what matters to you.",
+     "blocks": [
+      "Texting everyone here",
+      "isn't very important to me,",
+      "but calling my family is."
+     ],
+     "explain": "important TO someone expresses an opinion or feeling.",
+     "hl": [
+      "important to me"
+     ],
+     "gloss": [
+      {
+       "en": "important to someone",
+       "pt": "importante para alguém"
+      }
+     ]
+    },
+    {
+     "id": "c1b",
+     "kind": "warm-up",
+     "question": "Describe someone who is not satisfied.",
+     "blocks": [
+      "He is unhappy with",
+      "the situation at work",
+      "and wants to change jobs."
+     ],
+     "explain": "be + unhappy + WITH. Unhappy is an adjective, so it needs the verb be.",
+     "hl": [
+      "unhappy with"
+     ],
+     "gloss": [
+      {
+       "en": "unhappy with",
+       "pt": "insatisfeito com"
+      }
+     ]
+    },
+    {
+     "id": "c1c",
+     "kind": "warm-up",
+     "question": "Explain what an argument was about.",
+     "blocks": [
+      "Our argument was related to",
+      "a simple misunderstanding",
+      "about the weekend."
+     ],
+     "explain": "related TO something.",
+     "hl": [
+      "related to"
+     ],
+     "gloss": [
+      {
+       "en": "related to",
+       "pt": "relacionado a"
+      }
+     ]
+    },
+    {
+     "id": "c1d",
+     "kind": "warm-up",
+     "question": "Talk about an honest conversation at work.",
+     "blocks": [
+      "Last week,",
+      "I finally opened up to my boss",
+      "about my workload."
+     ],
+     "explain": "open up TO someone ABOUT something.",
+     "hl": [
+      "opened up to"
+     ],
+     "gloss": [
+      {
+       "en": "open up to someone",
+       "pt": "abrir-se com alguém"
+      }
+     ]
+    },
+    {
+     "id": "c1e",
+     "kind": "warm-up",
+     "question": "Add one more thing.",
+     "blocks": [
+      "Besides English,",
+      "I would like to learn",
+      "Spanish one day."
+     ],
+     "explain": "Besides = in addition to. No \"to\" after it.",
+     "hl": [
+      "Besides"
+     ],
+     "gloss": [
+      {
+       "en": "besides",
+       "pt": "além de"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "n": 2,
+   "title": "2. Verb patterns",
+   "question": "What form comes after this verb?",
+   "summary": "Some verbs decide the form of the next verb: avoid + -ing (avoid bothering), need to + base verb (need to patch things up, not patching), agree to + base verb, and it depends on (not I depends on).",
+   "expressions": [
+    {
+     "en": "avoid + -ing",
+     "meaning": "after avoid, use the -ing form: avoid bothering."
+    },
+    {
+     "en": "need to + base verb",
+     "meaning": "need to patch, need to improve. No -ing."
+    },
+    {
+     "en": "it depends on",
+     "meaning": "third person: it depends, always followed by on."
+    },
+    {
+     "en": "agree to + base verb",
+     "meaning": "agree to help. Not \"agree for helping\"."
+    }
+   ],
+   "items": [
+    {
+     "id": "c2a",
+     "kind": "warm-up",
+     "question": "Talk about being considerate at work.",
+     "blocks": [
+      "I try to avoid bothering people",
+      "when they are busy",
+      "at work."
+     ],
+     "explain": "avoid + -ing.",
+     "hl": [
+      "avoid bothering"
+     ],
+     "gloss": [
+      {
+       "en": "avoid + -ing",
+       "pt": "evitar fazer algo"
+      }
+     ]
+    },
+    {
+     "id": "c2b",
+     "kind": "warm-up",
+     "question": "Talk about making peace.",
+     "blocks": [
+      "After the misunderstanding,",
+      "we need to patch things up",
+      "this weekend."
+     ],
+     "explain": "need to + base verb (patch).",
+     "hl": [
+      "need to patch things up"
+     ],
+     "gloss": [
+      {
+       "en": "patch things up",
+       "pt": "fazer as pazes"
+      }
+     ]
+    },
+    {
+     "id": "c2c",
+     "kind": "warm-up",
+     "question": "Say you can't answer yet.",
+     "blocks": [
+      "I can't give you an answer now",
+      "because it depends on",
+      "the situation."
+     ],
+     "explain": "it depends ON (with -s).",
+     "hl": [
+      "depends on"
+     ],
+     "gloss": [
+      {
+       "en": "depend on",
+       "pt": "depender de"
+      }
+     ]
+    },
+    {
+     "id": "c2d",
+     "kind": "warm-up",
+     "question": "Talk about help from a colleague.",
+     "blocks": [
+      "She reluctantly agreed to help me",
+      "with the presentation",
+      "on Friday."
+     ],
+     "explain": "agree to + base verb.",
+     "hl": [
+      "agreed to help"
+     ],
+     "gloss": [
+      {
+       "en": "agree to do something",
+       "pt": "concordar em fazer algo"
+      },
+      {
+       "en": "reluctantly",
+       "pt": "a contragosto"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "n": 3,
+   "title": "3. Word forms and sentence structure",
+   "question": "Is the sentence built correctly?",
+   "summary": "Small structure mistakes: there are with plural nouns (not there is a children), no extra it after the subject (Loyalty is, not Loyalty it's), the adverb frequently (not frequency), the noun disagreement, and the time at the end of the sentence.",
+   "expressions": [
+    {
+     "en": "There are + plural noun",
+     "meaning": "there is for one thing, there are for many."
+    },
+    {
+     "en": "Loyalty is… (no extra it)",
+     "meaning": "don't add it after the subject."
+    },
+    {
+     "en": "frequently (adverb)",
+     "meaning": "describes a verb: communicate more frequently."
+    },
+    {
+     "en": "a disagreement (noun)",
+     "meaning": "after a / small we need a noun."
+    },
+    {
+     "en": "time at the end",
+     "meaning": "We had a small disagreement this week."
+    }
+   ],
+   "items": [
+    {
+     "id": "c3a",
+     "kind": "warm-up",
+     "question": "Describe a busy house.",
+     "blocks": [
+      "There are three children",
+      "in the house,",
+      "so it's never quiet."
+     ],
+     "explain": "There are + plural noun (children).",
+     "hl": [
+      "There are"
+     ],
+     "gloss": [
+      {
+       "en": "there are",
+       "pt": "há, existem (plural)"
+      }
+     ]
+    },
+    {
+     "id": "c3b",
+     "kind": "warm-up",
+     "question": "Say what matters most in a friendship.",
+     "blocks": [
+      "Loyalty is",
+      "the most important thing",
+      "in a friendship."
+     ],
+     "explain": "The subject is loyalty: no \"it\" after it. Uncountable → is.",
+     "hl": [
+      "Loyalty is"
+     ],
+     "gloss": [
+      {
+       "en": "Loyalty is… (not Loyalty it's)",
+       "pt": "a lealdade é… sem repetir o sujeito"
+      }
+     ]
+    },
+    {
+     "id": "c3c",
+     "kind": "warm-up",
+     "question": "Suggest better communication.",
+     "blocks": [
+      "We should communicate",
+      "more frequently",
+      "with our family."
+     ],
+     "explain": "frequently = adverb (how often).",
+     "hl": [
+      "more frequently"
+     ],
+     "gloss": [
+      {
+       "en": "frequently",
+       "pt": "com frequência"
+      }
+     ]
+    },
+    {
+     "id": "c3d",
+     "kind": "warm-up",
+     "question": "Talk about a small problem this week.",
+     "blocks": [
+      "We had a small disagreement",
+      "this week,",
+      "but we talked about it."
+     ],
+     "explain": "Subject + verb + object, then the time.",
+     "hl": [
+      "small disagreement"
+     ],
+     "gloss": [
+      {
+       "en": "disagreement",
+       "pt": "desentendimento"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "n": 4,
+   "title": "4. Correct the mistakes",
+   "question": "Can you fix each sentence without looking?",
+   "summary": "Your teacher's Exercise 2: rewrite each sentence correctly. Each one has at least one mistake from the points above: need to + base verb, agree to, there are, open up to and patch things up.",
+   "expressions": [
+    {
+     "en": "need to improve",
+     "meaning": "need to + base verb, not need to improving."
+    },
+    {
+     "en": "agree to help",
+     "meaning": "agree to + base verb, not agree for helping."
+    },
+    {
+     "en": "There are three children",
+     "meaning": "plural noun → there are."
+    },
+    {
+     "en": "open up to someone about something",
+     "meaning": "open up TO a person."
+    },
+    {
+     "en": "need to patch things up",
+     "meaning": "need TO + base verb."
+    }
+   ],
+   "items": [
+    {
+     "id": "c4a",
+     "kind": "warm-up",
+     "question": "Talk about your team.",
+     "blocks": [
+      "I need to improve",
+      "my relationship",
+      "with my colleagues."
+     ],
+     "explain": "need to + base verb.",
+     "hl": [
+      "need to improve"
+     ],
+     "gloss": [
+      {
+       "en": "improve",
+       "pt": "melhorar"
+      }
+     ]
+    },
+    {
+     "id": "c4b",
+     "kind": "warm-up",
+     "question": "Talk about a manager's support.",
+     "blocks": [
+      "My manager agreed to help me",
+      "with the new project",
+      "next month."
+     ],
+     "explain": "agree to + base verb.",
+     "hl": [
+      "agreed to help"
+     ],
+     "gloss": [
+      {
+       "en": "agree to do something",
+       "pt": "concordar em fazer algo"
+      }
+     ]
+    },
+    {
+     "id": "c4c",
+     "kind": "warm-up",
+     "question": "Describe the garden.",
+     "blocks": [
+      "There are several children",
+      "playing in the garden",
+      "right now."
+     ],
+     "explain": "There are + plural noun.",
+     "hl": [
+      "There are"
+     ],
+     "gloss": [
+      {
+       "en": "there are",
+       "pt": "há, existem (plural)"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "practice": [
+  {
+   "id": "h1-2",
+   "type": "mc",
+   "skill": "The right preposition",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "important to someone",
+   "hl": [
+    "important to"
+   ],
+   "explain": "important TO someone, when you give an opinion or a feeling.",
+   "tip": "",
+   "prompt": "Loyalty is very important ___ me.",
+   "options": [
+    "with",
+    "for",
+    "to"
+   ],
+   "answer": 2
+  },
+  {
+   "id": "h1-8",
+   "type": "mc",
+   "skill": "The right preposition",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "unhappy with someone/something",
+   "hl": [
+    "unhappy with"
+   ],
+   "explain": "unhappy WITH someone or something.",
+   "tip": "",
+   "prompt": "He is unhappy ___ his situation.",
+   "options": [
+    "to",
+    "with",
+    "about of"
+   ],
+   "answer": 1
+  },
+  {
+   "id": "h1-7",
+   "type": "mc",
+   "skill": "The right preposition",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "related to something",
+   "hl": [
+    "related to"
+   ],
+   "explain": "related TO something. \"Related with\" is a common mistake.",
+   "tip": "",
+   "prompt": "Their argument was related ___ money.",
+   "options": [
+    "with",
+    "to",
+    "about"
+   ],
+   "answer": 1
+  },
+  {
+   "id": "h1-4",
+   "type": "mc",
+   "skill": "The right preposition",
+   "slide": 1,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "open up to someone",
+   "hl": [
+    "opened up to"
+   ],
+   "explain": "open up TO someone.",
+   "tip": "",
+   "prompt": "She opened up ___ her manager.",
+   "options": [
+    "to",
+    "with",
+    "at"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "x1a",
+   "type": "gap",
+   "skill": "The right preposition",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "expr": "a need for something",
+   "hl": [
+    "need for"
+   ],
+   "explain": "a need FOR something. Not \"a need about\".",
+   "tip": "",
+   "prompt": "There is a need ___ more money in the project.",
+   "accept": [
+    "for"
+   ]
+  },
+  {
+   "id": "x1b",
+   "type": "fix",
+   "skill": "The right preposition",
+   "slide": 1,
+   "source": "extra",
+   "ex": null,
+   "expr": "besides / apart from",
+   "hl": [
+    "Besides"
+   ],
+   "explain": "Besides (with -s), and no \"to\" after it.",
+   "tip": "",
+   "prompt": "Beside to my job, I also study English at night.",
+   "accept": [
+    "Besides my job, I also study English at night.",
+    "Apart from my job, I also study English at night."
+   ]
+  },
+  {
+   "id": "h1-1",
+   "type": "mc",
+   "skill": "Verb patterns",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "avoid + -ing",
+   "hl": [
+    "avoid bothering"
+   ],
+   "explain": "After avoid, use the -ing form.",
+   "tip": "",
+   "prompt": "I avoid ___ people when they are busy.",
+   "options": [
+    "to bother",
+    "bothering",
+    "bother"
+   ],
+   "answer": 1
+  },
+  {
+   "id": "h1-3",
+   "type": "mc",
+   "skill": "Verb patterns",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "need to + base verb",
+   "hl": [
+    "need to patch"
+   ],
+   "explain": "need to + base verb: need to patch things up.",
+   "tip": "",
+   "prompt": "We need to ___ things up.",
+   "options": [
+    "patching",
+    "patched",
+    "patch"
+   ],
+   "answer": 2
+  },
+  {
+   "id": "h1-9",
+   "type": "mc",
+   "skill": "Verb patterns",
+   "slide": 2,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "it depends on",
+   "hl": [
+    "depends on"
+   ],
+   "explain": "it → depends (with -s). Your sentence \"I depends on\" mixed I with the -s form.",
+   "tip": "",
+   "prompt": "It ___ on the situation.",
+   "options": [
+    "depend",
+    "depends",
+    "depending"
+   ],
+   "answer": 1
+  },
+  {
+   "id": "x2a",
+   "type": "order",
+   "skill": "Verb patterns",
+   "slide": 2,
+   "source": "extra",
+   "ex": null,
+   "expr": "agree to + base verb",
+   "hl": [
+    "agreed to talk"
+   ],
+   "explain": "agree to + base verb.",
+   "tip": "",
+   "prompt": "Build the sentence: after the argument.",
+   "blocks": [
+    "He finally agreed",
+    "to talk",
+    "about the problem."
+   ]
+  },
+  {
+   "id": "h1-5",
+   "type": "mc",
+   "skill": "Word forms and sentence structure",
+   "slide": 3,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "There are + plural noun",
+   "hl": [
+    "There are"
+   ],
+   "explain": "Children is plural → there are.",
+   "tip": "",
+   "prompt": "There ___ several children in the garden.",
+   "options": [
+    "is",
+    "are",
+    "was"
+   ],
+   "answer": 1
+  },
+  {
+   "id": "h1-6",
+   "type": "mc",
+   "skill": "Word forms and sentence structure",
+   "slide": 3,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "frequently (adverb)",
+   "hl": [
+    "frequently"
+   ],
+   "explain": "We need an adverb to describe the verb communicate: frequently.",
+   "tip": "",
+   "prompt": "We communicate more ___ now.",
+   "options": [
+    "frequency",
+    "frequent",
+    "frequently"
+   ],
+   "answer": 2
+  },
+  {
+   "id": "h1-10",
+   "type": "mc",
+   "skill": "Word forms and sentence structure",
+   "slide": 3,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "a disagreement (noun)",
+   "hl": [
+    "disagreement"
+   ],
+   "explain": "After \"a small\" we need a noun: disagreement.",
+   "tip": "",
+   "prompt": "We had a small ___ last week.",
+   "options": [
+    "disagreement",
+    "disagree",
+    "disagreeing"
+   ],
+   "answer": 0
+  },
+  {
+   "id": "x3a",
+   "type": "fix",
+   "skill": "Word forms and sentence structure",
+   "slide": 3,
+   "source": "extra",
+   "ex": null,
+   "expr": "Loyalty is… (no extra it)",
+   "hl": [
+    "Loyalty is"
+   ],
+   "explain": "Don't add \"it\" after the subject loyalty.",
+   "tip": "",
+   "prompt": "Loyalty it's the most important thing to me.",
+   "accept": [
+    "Loyalty is the most important thing to me.",
+    "Loyalty is the most important thing for me."
+   ]
+  },
+  {
+   "id": "x3b",
+   "type": "fix",
+   "skill": "Word forms and sentence structure",
+   "slide": 3,
+   "source": "extra",
+   "ex": null,
+   "expr": "time at the end",
+   "hl": [
+    "this week"
+   ],
+   "explain": "Subject + verb + object, then the time: …a small disagreement this week.",
+   "tip": "",
+   "prompt": "We had this week a small disagreement.",
+   "accept": [
+    "We had a small disagreement this week.",
+    "This week we had a small disagreement.",
+    "This week, we had a small disagreement."
+   ]
+  },
+  {
+   "id": "h2-1",
+   "type": "fix",
+   "skill": "Correct the mistakes",
+   "slide": 4,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "need to improve",
+   "hl": [
+    "need to improve"
+   ],
+   "explain": "need to + base verb: improve.",
+   "tip": "",
+   "prompt": "I need to improving my relationship with my colleagues.",
+   "accept": [
+    "I need to improve my relationship with my colleagues."
+   ]
+  },
+  {
+   "id": "h2-2",
+   "type": "fix",
+   "skill": "Correct the mistakes",
+   "slide": 4,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "agree to help",
+   "hl": [
+    "agreed to help"
+   ],
+   "explain": "agree to + base verb: agreed to help.",
+   "tip": "",
+   "prompt": "She reluctantly agreed for helping me.",
+   "accept": [
+    "She reluctantly agreed to help me."
+   ]
+  },
+  {
+   "id": "h2-3",
+   "type": "fix",
+   "skill": "Correct the mistakes",
+   "slide": 4,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "There are three children",
+   "hl": [
+    "There are"
+   ],
+   "explain": "Three children = plural → there are.",
+   "tip": "",
+   "prompt": "There is three children in the house.",
+   "accept": [
+    "There are three children in the house."
+   ]
+  },
+  {
+   "id": "h2-4",
+   "type": "fix",
+   "skill": "Correct the mistakes",
+   "slide": 4,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "open up to someone about something",
+   "hl": [
+    "opened up to"
+   ],
+   "explain": "open up TO someone.",
+   "tip": "",
+   "prompt": "I opened up with my husband about my problems.",
+   "accept": [
+    "I opened up to my husband about my problems."
+   ]
+  },
+  {
+   "id": "h2-5",
+   "type": "fix",
+   "skill": "Correct the mistakes",
+   "slide": 4,
+   "source": "teacher",
+   "ex": 1,
+   "expr": "need to patch things up",
+   "hl": [
+    "need to patch things up"
+   ],
+   "explain": "need TO + base verb: need to patch things up.",
+   "tip": "",
+   "prompt": "We need patching things up after the disagreement.",
+   "accept": [
+    "We need to patch things up after the disagreement."
+   ]
+  }
+ ]
+}
